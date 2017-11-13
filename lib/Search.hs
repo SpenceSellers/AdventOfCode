@@ -17,25 +17,23 @@ makeLenses ''Search
 instance (Show s, Show a) => Show (Search s a) where
     show s = "Search " ++ show  (s ^. state)
 
-bfs :: Search s a -> [Move s a]
-bfs search = bfs' [search]
+type SearchCombiner s a = [Search s a] -> [Search s a] -> [Search s a]
 
-bfs' :: [Search s a] -> [Move s a]
-bfs' (search:rest) = if (search ^. win) (search ^. state) 
-    then search ^. history
-    else bfs' $ rest ++ expandbfs search
-bfs' [] = error "Ran out of states" -- todo make safe
+bfs, dfs :: Search s a -> Maybe [Move s a]
+bfs search = coreSearch (\new old -> old ++ new) [search]
+dfs search = coreSearch (\new old -> new ++ old) [search]
+
+coreSearch :: SearchCombiner s a -> [Search s a] -> Maybe [Move s a]
+coreSearch combiner (search:rest) = if (search ^. win) (search ^. state) 
+    then Just $ search ^. history
+    else coreSearch combiner $ combiner (expand search) rest
+coreSearch _ [] = Nothing
 
 applyMove :: Search s a -> Move s a -> Search s a
 applyMove search move@(Move new' action') = search 
     & state .~ new' 
     & history <>~ [move]
 
-expandbfs :: Search s a -> [Search s a]
-expandbfs search = applyMove search <$> moves
+expand :: Search s a -> [Search s a]
+expand search = applyMove search <$> moves
     where moves = search ^. childNodes $ search ^. state
-
---bfs' :: Search s a -> 
-
--- expandbfs :: SearchNode s a -> [Move s a] -> [SearchNode s a]
--- expandbfs node history = children node
