@@ -27,8 +27,8 @@ data PathState = PathState Grid.Point String deriving Show
 initialState :: PathState
 initialState = PathState (0,0) "njfxhljp"
 
-childGen :: PathState -> [Search.Move PathState ()]
-childGen (PathState point str) = (flip Search.Move) () . newState <$> directions
+childGen :: PathState -> [PathState]
+childGen (PathState point str) = newState <$> directions
     where hash = md5 str
           directions = filter (Grid.canMoveInBound (3,3) point) . hashDirections $ hash
           newState dir = PathState (Grid.shiftPoint point dir) (str ++ [directionChar dir])
@@ -41,5 +41,5 @@ search = Search.Search initialState [] childGen hasWon
 main :: IO ()
 main = do
     print $ childGen initialState
-    let a = Search.bfs search
-    print a
+    print (last <$> Search.bfs search)
+    print . maximum . map (\(PathState p s) -> length (filter (\c -> elem c "UDLR" ) s)) . Search.fullSearch $ search

@@ -4,24 +4,24 @@ module Search where
 import Control.Lens
 import Data.List as List
 
-data Move s a = Move s a deriving Show
-
-data Search s a = Search 
+data Search s = Search 
     { _state :: s
-    , _history :: [Move s a]
-    , _childNodes :: s -> [Move s a]
+    , _history :: [s]
+    , _childNodes :: s -> [s]
     , _win :: s -> Bool
     }
 
 makeLenses ''Search
 
-instance (Show s, Show a) => Show (Search s a) where
-    show s = "Search " ++ show  (s ^. state)
+instance Show s => Show (Search s) where
+    show s = "Search " ++ show (s ^. state)
 
-makeChildGen :: (s -> [a]) -> (s -> a -> s) -> s -> [Move s a]
-makeChildGen genActions transition state = zipWith Move results actions
-    where actions = genActions state
-          results = transition state <$> actions
+isWinning :: Search s -> Bool
+isWinning search = (search ^. win) (search ^. state) 
+
+
+makeChildGen :: (s -> [a]) -> (s -> a -> s) -> s -> [s]
+makeChildGen genActions transition state = transition state <$> genActions state
 
 class FutureNodes n where
     next :: n a -> Maybe (a, n a)
@@ -35,22 +35,30 @@ instance FutureNodes SimpleNodes where
     addNodes new (SimpleNodes DFS old) = SimpleNodes DFS $ new ++ old
     addNodes new (SimpleNodes BFS old) = SimpleNodes BFS $ old ++ new
     
-bfs, dfs :: Search s a -> Maybe [Move s a]
+bfs, dfs :: Search s -> Maybe [s]
 bfs search = coreSearch $ SimpleNodes BFS [search]
 dfs search = coreSearch $ SimpleNodes DFS [search]
 
-coreSearch :: FutureNodes f => f (Search s a) -> Maybe [Move s a]
+coreSearch :: FutureNodes f => f (Search s) -> Maybe [s]
 coreSearch nodes = case next nodes of
-    Just (search, rest) -> if (search ^. win) (search ^. state) 
+    Just (search, rest) -> if isWinning search
         then Just $ search ^. history
         else coreSearch $ addNodes (expand search) rest
     Nothing -> Nothing
 
-applyMove :: Search s a -> Move s a -> Search s a
-applyMove search move@(Move new' action') = search 
-    & state .~ new' 
+applyMove :: Search s -> s -> Search s
+applyMove search move = search 
+    & state .~ move
     & history <>~ [move]
 
-expand :: Search s a -> [Search s a]
+expand :: Search s -> [Search s]
 expand search = applyMove search <$> moves
     where moves = search ^. childNodes $ search ^. state
+
+-- Provides the final state of every possible path
+-- Only use this if there are no loops, and every path ends in a winning state!
+fullSearch :: Search s -> [s]
+fullSearch search = 
+    if isWinning search
+    then [search ^. state]
+    else concat (fullSearch <$> expand search)
