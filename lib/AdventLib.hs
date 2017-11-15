@@ -5,6 +5,7 @@ import Data.List.Split as Split
 import Data.Maybe
 import Data.List
 import Safe
+import Control.Lens
 
 firstArg :: IO (Maybe String)
 firstArg = headMay <$> System.Environment.getArgs
@@ -45,3 +46,6 @@ bitshow :: [[Bool]] -> String
 bitshow = unlines . map (map bit)
     where bit True  = 'X'
           bit False = '.'
+
+transposed :: Iso [[a]] [[a]] [[a]] [[a]]
+transposed = iso transpose transpose

@@ -11,40 +11,42 @@ data ScreenChange
     = Rect Int Int 
     | RotRow Int Int
     | RotCol Int Int
-    deriving Show
 
 parseChange :: Parsec String () ScreenChange
-parseChange = try rect <|> try rotrow <|> try rotcol
-    where 
-        rect = do
-            string "rect" >> spaces
-            x <- parseInt
-            string "x"
-            y <- parseInt
-            return $ Rect x y
-        rotrow = do
-            string "rotate row y="
-            y <- parseInt
-            string " by "
-            by <- parseInt
-            return $ RotRow y by
-        rotcol = do
-            string "rotate column x="
-            x <- parseInt
-            string " by "
-            by <- parseInt
-            return $ RotCol x by
+parseChange = try rect <|> try rotrow <|> try rotcol where 
+    rect = do
+        string "rect" >> spaces
+        x <- parseInt
+        string "x"
+        y <- parseInt
+        return $ Rect x y
+    rotrow = do
+        string "rotate row y="
+        y <- parseInt
+        string " by "
+        by <- parseInt
+        return $ RotRow y by
+    rotcol = do
+        string "rotate column x="
+        x <- parseInt
+        string " by "
+        by <- parseInt
+        return $ RotCol x by
 
 type Screen = [[Bool]]
 
+initial :: Screen 
 initial = replicate 6 (replicate 50 False)
 
+squareCoords :: Int -> Int -> [(Int, Int)]
+squareCoords x y= [(x, y) | x <- [0..x-1], y <- [0..y-1]]
+
 applyChange :: ScreenChange -> Screen -> Screen
-applyChange (Rect x y) screen = foldr (\(x, y) s -> set s x y) screen [(x, y) | x <- [0..x-1], y <- [0..y-1]]
-    where set :: Screen -> Int -> Int -> Screen 
-          set scn x y = scn & ix y . ix x .~ True
-applyChange (RotRow y by) screen = screen & ix y %~ rotate by
-applyChange (RotCol x by) screen = transpose (transpose screen & ix x %~ rotate by)
+applyChange (Rect x y) = \s -> foldr set s (squareCoords x y)
+    where set :: (Int, Int) -> Screen -> Screen 
+          set (x, y) scn = scn & ix y . ix x .~ True
+applyChange (RotRow y by) = ix y %~ rotate by
+applyChange (RotCol x by) = transposed . ix x %~ rotate by
 
 main :: IO ()
 main = do
