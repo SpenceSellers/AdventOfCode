@@ -21,10 +21,13 @@ library
                      , safe
                      , lens
                      , parsec
+                     , pureMD5
+                     , bytestring
 
   exposed-modules:     AdventLib
                      , Search
                      , Parsing
+                     , Grid
 
 executable advent15-1
   hs-source-dirs:      advents/2015
@@ -40,4 +43,12 @@ executable advent16-8
   build-depends:       base >= 4.7 && < 5
                      , advent
                      , parsec
+                     , lens
+
+executable advent16-17
+  hs-source-dirs:      advents/2016
+  main-is:             Advent17.hs
+  default-language:    Haskell2010
+  build-depends:       base >= 4.7 && < 5
+                     , advent
                      , lens

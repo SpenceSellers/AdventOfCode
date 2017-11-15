@@ -6,6 +6,8 @@ import Data.Maybe
 import Data.List
 import Safe
 import Control.Lens
+import qualified Data.Digest.Pure.MD5 as MD5
+import qualified Data.ByteString.Lazy.Char8 as B
 
 firstArg :: IO (Maybe String)
 firstArg = headMay <$> System.Environment.getArgs
@@ -35,7 +37,6 @@ rotate :: Int -> [a] -> [a]
 rotate n a = map nth (indexes a)
     where nth x = a !! ((x - n) `mod` length a)
 
-
 rotateLeft :: [[a]] -> [[a]]
 rotateLeft = reverse . transpose
 
@@ -49,3 +50,8 @@ bitshow = unlines . map (map bit)
 
 transposed :: Iso [[a]] [[a]] [[a]] [[a]]
 transposed = iso transpose transpose
+
+md5 :: String -> String
+md5 = show . MD5.md5 . B.pack
+
+

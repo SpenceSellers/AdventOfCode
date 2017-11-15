@@ -18,6 +18,11 @@ makeLenses ''Search
 instance (Show s, Show a) => Show (Search s a) where
     show s = "Search " ++ show  (s ^. state)
 
+makeChildGen :: (s -> [a]) -> (s -> a -> s) -> s -> [Move s a]
+makeChildGen genActions transition state = zipWith Move results actions
+    where actions = genActions state
+          results = transition state <$> actions
+
 class FutureNodes n where
     next :: n a -> Maybe (a, n a)
     addNodes :: [a] -> n a -> n a
