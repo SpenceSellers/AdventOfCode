@@ -24,9 +24,6 @@ directionChar Grid.Right = 'R'
 
 data PathState = PathState Grid.Point String deriving Show
 
-initialState :: PathState
-initialState = PathState (0,0) "njfxhljp"
-
 childGen :: PathState -> [PathState]
 childGen (PathState point str) = newState <$> directions
     where hash = md5 str
@@ -36,10 +33,13 @@ childGen (PathState point str) = newState <$> directions
 hasWon :: PathState -> Bool
 hasWon (PathState point _) = point == (3,3)
 
+initialState :: PathState
+initialState = PathState (0,0) "njfxhljp"
+
 search = Search.Search initialState [] childGen hasWon
 
 main :: IO ()
 main = do
     print $ childGen initialState
     print (last <$> Search.bfs search)
-    print . maximum . map (\(PathState p s) -> length (filter (\c -> elem c "UDLR" ) s)) . Search.fullSearch $ search
+    print . maximum . map (\(PathState p s) -> length . filter (flip elem "UDLR") $ s) . Search.fullSearch $ search
