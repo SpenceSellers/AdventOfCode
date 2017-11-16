@@ -40,6 +40,5 @@ search = Search.Search initialState [] childGen hasWon
 
 main :: IO ()
 main = do
-    print $ childGen initialState
     print (last <$> Search.bfs search)
     print . maximum . map (\(PathState p s) -> length . filter (flip elem "UDLR") $ s) . Search.fullSearch $ search
