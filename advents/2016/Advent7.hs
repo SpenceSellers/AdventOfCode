@@ -3,22 +3,20 @@ module Main where
 import AdventLib
 import Parsing
 import Text.Parsec
-import Text.Parsec.Char
 import Control.Lens
 import Data.List
-import Data.List.Lens
 import Data.Foldable
+import Control.Applicative ((<$))
 
+-- IP (Stuff outside the brackets) (Stuff inside the brackets)
 data IP = IP [String] [String]
     deriving Show
 
 parseIP :: Parsec String () IP
-parseIP = do
-    (ins, outs) <- parseIP'
-    return $ IP ins outs
+parseIP = uncurry IP <$> parseIP'
 
 parseIP' :: Parsec String () ([String], [String])
-parseIP' = (eof >> return ([], [])) <|> do
+parseIP' = ([], []) <$ eof <|> do
     outStart <- many letter
     inStart <- option Nothing $ Just <$> bracketed "[]" (many letter)
     (outside, inside) <- parseIP'
@@ -36,15 +34,15 @@ abas = filter isAba . windows 3
     where isAba (a:b:c:[]) = a == c && a /= b
 
 supportsSSL :: IP -> Bool
-supportsSSL (IP outside inside) = not . null $ intersect outsides (rev <$> insides)
+supportsSSL (IP outside inside) = not . null . intersect outsides $ rev <$> insides
     where outsides = abas =<< outside
           insides = abas =<< inside
-          rev (a:b:_:[]) = [b, a, b]
+          rev (a:b:_) = [b, a, b]
 
 main :: IO ()
 main = do
     lines <- inputLines
     let Right ips = sequence $ parse parseIP "" <$> lines
-    print . length . filter supportsTLS $ ips
-    print . length . filter supportsSSL $ ips
-
+    let numSupporters = length . flip filter ips
+    print . numSupporters $ supportsTLS
+    print . numSupporters $ supportsSSL
