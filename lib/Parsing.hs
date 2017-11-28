@@ -11,8 +11,11 @@ parseInt = read <$> many1 digit
 letterNumber :: Parsec String () (Char, Int)
 letterNumber = do
     c <- letter
-    i <- parseInt 
+    i <- parseInt
     return (c, i)
+
+bracketed :: String -> Parsec String () a -> Parsec String () a
+bracketed (start:stop:_) p = Text.Parsec.between (string [start]) (string [stop]) p
 
 charGrid :: Parsec String () [[Char]]
 charGrid = many1 $ (many1 $ noneOf ['\n']) <* endOfLine

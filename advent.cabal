@@ -36,6 +36,15 @@ executable advent15-1
   build-depends:       base >= 4.7 && < 5
                      , advent
 
+executable advent16-7
+  hs-source-dirs:      advents/2016
+  main-is:             Advent7.hs
+  default-language:    Haskell2010
+  build-depends:       base >= 4.7 && < 5
+                     , advent
+                     , parsec
+                     , lens
+
 executable advent16-8
   hs-source-dirs:      advents/2016
   main-is:             Advent8.hs
