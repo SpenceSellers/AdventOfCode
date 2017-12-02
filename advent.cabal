@@ -69,3 +69,12 @@ executable advent17-1
   build-depends:       base >= 4.7 && < 5
                      , advent
                      , lens
+
+executable advent17-2
+  hs-source-dirs:      advents/2017
+  main-is:             Advent2.hs
+  default-language:    Haskell2010
+  build-depends:       base >= 4.7 && < 5
+                     , advent
+                     , lens
+                     , split
