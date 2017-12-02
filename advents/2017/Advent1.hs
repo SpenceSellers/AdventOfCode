@@ -4,27 +4,14 @@ import AdventLib
 ints :: String -> [Int]
 ints s = read . pure <$> s
 
-one :: [Int] -> Int
-one nums = one' nums'
-    where nums' = nums ++ [head nums]
-
-one' :: [Int] -> Int 
-one' (x:next:xs) 
-    | x == next = x + rest
-    | otherwise = rest
-    where rest = one' (next:xs)
-one' _ = 0
-
-two :: [Int] -> Int
-two l = sum . map (comp . dual) $ [0..length l-1]
-    where dual i = (l !! i, l !! halfIndex i)
-          halfIndex i = (i + length l `div` 2) `mod` length l
-          comp (a, b) = if a == b then a else 0
+sumOffset :: Int -> [Int] -> Int
+sumOffset rotation list = sum $ zipWith compare list $ rotate rotation list
+    where compare a b = if a == b then a else 0
 
 main :: IO ()
 main = do
     input <- inputFile
-    print . one . ints $ input
-    print . two . ints $ input
-
-    
+    let halfLen = length input `div` 2
+    let solve offset = print . sumOffset offset . ints $ input
+    solve 1       -- Part 1
+    solve halfLen -- Part 2
