@@ -106,3 +106,4 @@ executable advent17-5
                      , advent
                      , lens
                      , split
+                     , containers
