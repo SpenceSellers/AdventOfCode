@@ -1,5 +1,5 @@
 module Main where
-import AdventLib    
+import AdventLib
 import Data.List
 
 hasDuplicates :: Eq a => [a] -> Bool
