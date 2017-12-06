@@ -2,6 +2,9 @@ module Main where
 import AdventLib
 import Data.List
 import qualified Data.Map as Map
+import System.Clock
+import Formatting
+import Formatting.Clock
 
 type ProgramMemory = Map.Map Int Int
 
@@ -27,6 +30,7 @@ iterateMaybe f initial = initial : case f initial of
 
 main :: IO ()
 main = do
+    start <- getTime Monotonic
     lines <- inputLines
     let instructions = read <$> lines
     let initialState = ProgramState 0 (buildMemory instructions)
@@ -38,3 +42,5 @@ main = do
     let solve nxt = print $ (length $ iterateMaybe nxt initialState) - 1
     solve part1next
     solve part2next
+    end <- getTime Monotonic
+    fprint (timeSpecs) start end
