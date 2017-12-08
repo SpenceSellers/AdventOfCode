@@ -54,4 +54,20 @@ transposed = iso transpose transpose
 md5 :: String -> String
 md5 = show . MD5.md5 . B.pack
 
+fromBool :: Bool -> a -> Maybe a
+fromBool True = Just
+fromBool False = const Nothing
 
+count :: Eq a => a -> [a] -> Int
+count x = length . filter (x==)
+
+histogram :: Eq a => [a] -> [(a, Int)]
+histogram l = hist <$> uniques
+    where uniques = nub l
+          hist a = (a, count a l)
+
+-- Iterate over a function until we stop getting results.
+iterateMaybe :: (a -> Maybe a) -> a -> [a]
+iterateMaybe f initial = initial : case f initial of
+    Just n -> iterateMaybe f n
+    Nothing -> []

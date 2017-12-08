@@ -3,6 +3,7 @@ import AdventLib
 import Data.List
 import Control.Lens
 import qualified Data.Set as Set
+import Timing
 
 input :: [Int]
 input = [10, 3, 15, 10, 5, 15, 5, 15, 9, 2, 5, 8, 5, 2, 3, 6]
@@ -29,6 +30,8 @@ firstDuplicate' idx seen (x:xs)
 
 main :: IO ()
 main = do
+    start <- startTiming
+    -- An infinite list of successive states, continuing forever.
     let states = iterate next input
 
     -- What's the index of the first duplicate state?
@@ -39,5 +42,5 @@ main = do
 
     print firstIndex
     print (secondIndex + 1) -- We dropped the initial state itself, add one to not forget it.
-    
 
+    showTiming start
