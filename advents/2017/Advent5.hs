@@ -22,12 +22,6 @@ next part2 (ProgramState pos mem) = do
     let incremented = Map.adjust (+ increment) pos mem
     return $ ProgramState (pos + offset) incremented
 
--- Iterate over a function until we stop getting results.
-iterateMaybe :: (a -> Maybe a) -> a -> [a]
-iterateMaybe f initial = initial : case f initial of
-    Just n -> iterateMaybe f n
-    Nothing -> []
-
 main :: IO ()
 main = do
     start <- getTime Monotonic
