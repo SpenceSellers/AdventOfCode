@@ -85,6 +85,6 @@ main = do
     programs <- readPrograms
     let tree = buildTree programs
     -- Part 1: Find the root
-    print $ rootLabel tree
+    print $ Tree.rootLabel tree
     -- Part 2: Find the error
     print $ findError tree

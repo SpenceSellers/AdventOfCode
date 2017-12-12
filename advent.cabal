@@ -144,3 +144,25 @@ executable advent17-8
                      , split
                      , containers > 0.5.10
                      , parsec
+
+executable advent17-9
+  hs-source-dirs:      advents/2017
+  main-is:             Advent9.hs
+  default-language:    Haskell2010
+  build-depends:       base >= 4.7 && < 5
+                     , advent
+                     , lens
+                     , split
+                     , containers > 0.5.10
+                     , parsec
+
+executable advent17-10
+  hs-source-dirs:      advents/2017
+  main-is:             Advent10.hs
+  default-language:    Haskell2010
+  build-depends:       base >= 4.7 && < 5
+                     , advent
+                     , lens
+                     , split
+                     , containers > 0.5.10
+                     , parsec
