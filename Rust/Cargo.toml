@@ -1,0 +1,9 @@
+[package]
+name = "rust_advent"
+version = "0.1.0"
+authors = ["Spencer Sellers"]
+
+[[bin]]
+name = "advent_2018_1"
+path = "src/advent_2018_1.rs"
+[dependencies]
