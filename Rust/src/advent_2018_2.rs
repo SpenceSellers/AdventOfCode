@@ -52,20 +52,20 @@ fn dissimilar_chars(a: &[char], b: &[char]) -> usize {
 
 fn part_2() {
     let lines = read_input();
-    let chars: Vec<Vec<char>> = lines.iter().map(|l| l.chars().collect()).collect();
-    let pair  = chars.iter()
+    let chars: Vec<Vec<char>> = lines.into_iter().map(|l| l.chars().collect()).collect();
+    let (a,b)  = chars.into_iter()
         .combinations(2)
-        .find(|combo| dissimilar_chars(combo[0], combo[1]) == 1)
+        .map(|combo| (combo[0].clone(), combo[1].clone()))
+        .find(|(a, b)| dissimilar_chars(&a, &b) == 1)
         .expect("There are no boxes that differ by a single character");
-    let s1: String = pair[0].iter().collect();
-    let s2: String = pair[1].iter().collect();
-    println!("{}", s1);
-    println!("{}", s2);
+
+    let a_string: String = a.iter().collect();
+    let b_string: String = b.iter().collect();
+    println!("{}", a_string);
+    println!("{}", b_string);
 }
 
 fn main() {
     part_1();
     part_2();
-
-
 }
