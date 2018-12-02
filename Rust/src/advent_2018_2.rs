@@ -5,17 +5,9 @@ use std::collections::HashMap;
 use std::fmt::Debug;
 extern crate itertools;
 use itertools::Itertools;
+use adventlib::read_input;
 
-
-fn read_input() -> Vec<String> {
-    let mut file = File::open("input.txt").expect("Could not find input file");
-    let mut string = String::new();
-    file.read_to_string(&mut string).expect("Could not read file");
-
-    return string.lines()
-        .map(|x| x.to_string())
-        .collect();
-}
+extern crate adventlib;
 
 fn histogram<T>(items: &[T]) -> HashMap<&T, usize>
     where T: Hash + Eq + Debug {
@@ -31,7 +23,7 @@ fn has_entries_that_appear_n_times<T: Hash + Eq>(hist: &HashMap<&T, usize>, n: u
 }
 
 fn part_1() {
-    let chars: Vec<Vec<char>> = read_input().iter()
+    let chars: Vec<Vec<char>> = read_input("input.txt").iter()
         .map(|l| l.chars().collect())
         .collect();
 
@@ -56,7 +48,7 @@ fn dissimilar_chars(a: &[char], b: &[char]) -> usize {
 }
 
 fn part_2() {
-    let chars: Vec<Vec<char>> = read_input()
+    let chars: Vec<Vec<char>> = read_input("input.txt")
         .into_iter()
         .map(|l| l.chars().collect())
         .collect();

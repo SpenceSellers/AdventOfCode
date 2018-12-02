@@ -3,6 +3,10 @@ name = "rust_advent"
 version = "0.1.0"
 authors = ["Spencer Sellers"]
 
+[lib]
+name = "adventlib"
+path = "src/adventlib/lib.rs"
+
 [[bin]]
 name = "advent_2018_1"
 path = "src/advent_2018_1.rs"
