@@ -1,5 +1,3 @@
-use std::fs::File;
-use std::io::prelude::*;
 use std::hash::Hash;
 use std::collections::HashMap;
 use std::fmt::Debug;
@@ -52,14 +50,14 @@ fn part_2() {
         .into_iter()
         .map(|l| l.chars().collect())
         .collect();
-    let (a,b)  = chars.into_iter()
+    let (box_a,box_b)  = chars.into_iter()
         .combinations(2)
         .map(|combo| (combo[0].clone(), combo[1].clone()))
         .find(|(a, b)| dissimilar_chars(&a, &b) == 1)
         .expect("There are no boxes that differ by a single character");
 
-    let a_string: String = a.iter().collect();
-    let b_string: String = b.iter().collect();
+    let a_string: String = box_a.iter().collect();
+    let b_string: String = box_b.iter().collect();
     println!("{}", a_string);
     println!("{}", b_string);
 }
