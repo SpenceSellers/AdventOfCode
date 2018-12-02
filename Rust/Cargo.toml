@@ -6,4 +6,10 @@ authors = ["Spencer Sellers"]
 [[bin]]
 name = "advent_2018_1"
 path = "src/advent_2018_1.rs"
+
+[[bin]]
+name = "advent_2018_2"
+path = "src/advent_2018_2.rs"
+
 [dependencies]
+itertools = "*"
