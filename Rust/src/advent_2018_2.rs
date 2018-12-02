@@ -1,12 +1,11 @@
 use std::fs::File;
 use std::io::prelude::*;
-use std::collections::HashSet;
 use std::hash::Hash;
 use std::collections::HashMap;
 use std::fmt::Debug;
+extern crate itertools;
 use itertools::Itertools;
 
-extern crate itertools;
 
 fn read_input() -> Vec<String> {
     let mut file = File::open("input.txt").expect("Could not find input file");
@@ -32,16 +31,22 @@ fn has_entries_that_appear_n_times<T: Hash + Eq>(hist: &HashMap<&T, usize>, n: u
 }
 
 fn part_1() {
-    let lines = read_input();
-    let chars: Vec<Vec<char>> = lines.iter().map(|l| l.chars().collect()).collect();
-    let histograms: Vec<HashMap<&char, usize>> = chars.iter().map(|l| histogram(l)).collect();
+    let chars: Vec<Vec<char>> = read_input().iter()
+        .map(|l| l.chars().collect())
+        .collect();
 
-    let num_of_2 = histograms.iter()
-        .filter(|hist| has_entries_that_appear_n_times(hist, 2))
-        .count();
-    let num_of_3 = histograms.iter()
-        .filter(|hist| has_entries_that_appear_n_times(hist, 3))
-        .count();
+    let histograms: Vec<HashMap<&char, usize>> = chars.iter()
+        .map(|l| histogram(l))
+        .collect();
+
+    let num_of = |n: usize| {
+        histograms.iter()
+            .filter(|hist| has_entries_that_appear_n_times(hist, n))
+            .count()
+    };
+
+    let num_of_2 = num_of(2);
+    let num_of_3 = num_of(3);
 
     println!("{} * {} = {}", num_of_2, num_of_3, num_of_2 * num_of_3);
 }
@@ -51,8 +56,10 @@ fn dissimilar_chars(a: &[char], b: &[char]) -> usize {
 }
 
 fn part_2() {
-    let lines = read_input();
-    let chars: Vec<Vec<char>> = lines.into_iter().map(|l| l.chars().collect()).collect();
+    let chars: Vec<Vec<char>> = read_input()
+        .into_iter()
+        .map(|l| l.chars().collect())
+        .collect();
     let (a,b)  = chars.into_iter()
         .combinations(2)
         .map(|combo| (combo[0].clone(), combo[1].clone()))
