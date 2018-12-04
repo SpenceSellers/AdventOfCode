@@ -15,5 +15,10 @@ path = "src/advent_2018_1.rs"
 name = "advent_2018_2"
 path = "src/advent_2018_2.rs"
 
+[[bin]]
+name = "advent_2018_3"
+path = "src/advent_2018_3.rs"
+
 [dependencies]
 itertools = "*"
+regex = "*"

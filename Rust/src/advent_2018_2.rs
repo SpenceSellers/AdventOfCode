@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use std::fmt::Debug;
 extern crate itertools;
 use itertools::Itertools;
-use adventlib::read_input;
+use adventlib::read_input_lines;
 
 extern crate adventlib;
 
@@ -21,7 +21,7 @@ fn has_entries_that_appear_n_times<T: Hash + Eq>(hist: &HashMap<&T, usize>, n: u
 }
 
 fn part_1() {
-    let chars: Vec<Vec<char>> = read_input("input.txt").iter()
+    let chars: Vec<Vec<char>> = read_input_lines("input.txt").iter()
         .map(|l| l.chars().collect())
         .collect();
 
@@ -46,7 +46,7 @@ fn dissimilar_chars(a: &[char], b: &[char]) -> usize {
 }
 
 fn part_2() {
-    let chars: Vec<Vec<char>> = read_input("input.txt")
+    let chars: Vec<Vec<char>> = read_input_lines("input.txt")
         .into_iter()
         .map(|l| l.chars().collect())
         .collect();
