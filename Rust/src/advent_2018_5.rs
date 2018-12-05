@@ -18,7 +18,11 @@ fn react(chars: &mut Vec<char>, buffer: &mut Vec<char>) {
         if i >= chars.len() - 1 {
             if i != chars.len() { 
                 // The last character can't cause a reaction that the one before didn't catch.
-                unsafe { unchecked_push(buffer, chars[i]) };
+
+                unsafe {
+                    let last_char = *chars.get_unchecked(i);
+                    unchecked_push(buffer, last_char)
+                };
             };
             if !found_any { break; }
             found_any = false;
