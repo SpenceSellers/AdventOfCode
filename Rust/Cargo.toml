@@ -19,6 +19,11 @@ path = "src/advent_2018_2.rs"
 name = "advent_2018_3"
 path = "src/advent_2018_3.rs"
 
+[[bin]]
+name = "advent_2018_4"
+path = "src/advent_2018_4.rs"
+
 [dependencies]
 itertools = "*"
 regex = "*"
+lazy_static="*"
