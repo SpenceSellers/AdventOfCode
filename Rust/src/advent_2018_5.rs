@@ -18,7 +18,7 @@ fn react(chars: &mut Vec<char>, buffer: &mut Vec<char>) {
         if i >= chars.len() - 1 {
             if i != chars.len() { 
                 // The last character can't cause a reaction that the one before didn't catch.
-                unchecked_push(buffer, chars[i]); 
+                unsafe { unchecked_push(buffer, chars[i]) };
             };
             if !found_any { break; }
             found_any = false;
@@ -46,7 +46,7 @@ fn react(chars: &mut Vec<char>, buffer: &mut Vec<char>) {
 // Will push an element onto the end of a vector, without checking if 
 // the vector needs to allocate more room. Use your imagination for what will 
 // happen if you use this wrong.
-fn unchecked_push<T>(buf: &mut Vec<T>, new: T) {
+unsafe fn unchecked_push<T>(buf: &mut Vec<T>, new: T) {
     let old_len = buf.len();
     unsafe {
         *buf.get_unchecked_mut(old_len) = new;
