@@ -1,6 +1,5 @@
 use adventlib::read_input_lines;
 use regex::Regex;
-use std::borrow::BorrowMut;
 use std::collections::HashMap;
 use adventlib::CountMap;
 use itertools::Itertools;
@@ -103,13 +102,6 @@ fn minutes_asleep(days: &[Day]) -> CountMap<u32> {
     return counts;
 }
 
-fn part_1() {
-}
-
-
-fn part_2() {
-}
-
 fn guard_minutes(days: &[Day], guard_id: u32) -> CountMap<u32> {
     let mut minutes: CountMap<u32> = CountMap::new();
     for i in 0..60 {
@@ -156,7 +148,4 @@ fn main() {
         .expect("There was no high score");
 
     println!("{:?}, {:?}", guard, score);
-
-    part_1();
-    part_2();
 }
