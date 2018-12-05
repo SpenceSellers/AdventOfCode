@@ -72,7 +72,7 @@ fn main() {
         let char_to_remove_upper = char_to_remove.to_ascii_uppercase();
 
         chars_removed.clear();
-        chars_removed.extend(chars.iter().cloned().filter(|c| *c != char_to_remove_upper && *c != char_to_remove));
+        chars_removed.extend(p1_chars.iter().cloned().filter(|c| *c != char_to_remove_upper && *c != char_to_remove));
 
         react(&mut chars_removed, &mut buffer);
         results.push(chars_removed.len());
