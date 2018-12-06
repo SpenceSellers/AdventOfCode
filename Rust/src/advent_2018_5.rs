@@ -89,6 +89,7 @@ fn main() {
 
     let result = results.iter().min().unwrap();
     println!("Part 2: {}", result);
+    
     let duration = now.elapsed();
     println!(
         "Solved in {}.{:09}s",
@@ -100,14 +101,17 @@ fn main() {
 mod test {
     #[test]
     fn uppercase() {
+        // 'a' 'A'
         assert_eq!(super::uppercase(97), 65);
+        // 'y' 'Y'
         assert_eq!(super::uppercase(121), 89);
     }
 
     #[test]
     fn lowercase() {
+        // 'A' 'a'
         assert_eq!(super::lowercase(65), 97);
-        assert_eq!(super::lowercase(89), 121);
-
+        // 'Y' 'y'
+        assert_eq!(super::uppercase(89), 121);
     }
 }
