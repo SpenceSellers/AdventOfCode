@@ -67,13 +67,14 @@ fn p1(points: &[Point]) {
 
     let infinite = infinite_area_points(points);
 
+    println!("Look at these numbers and choose the biggest:");
+    println!("(Proprietary neural-network powered max() function)");
     for (point, count) in space_counts.counts.iter() {
         if infinite.contains(point) {
             continue;
         }
 
-        println!("Look at this and choose the biggest: {:?}: {}", point, count);
-        println!("(Proprietary neural-network powered min() function)");
+        println!("{:?}: {}", point, count);
     }
 }
 
