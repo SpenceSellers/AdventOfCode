@@ -1,5 +1,5 @@
-use adventlib::read_input_lines;
 use std::time::Instant;
+use adventlib::read_single_input_line;
 
 extern crate adventlib;
 
@@ -63,7 +63,7 @@ unsafe fn unchecked_push<T>(buf: &mut Vec<T>, new: T) {
 
 fn main() {
     let now = Instant::now();
-    let input: String = read_input_lines("input.txt").iter().next().unwrap().clone();
+    let input: String = read_single_input_line("input.txt");
     let chars: Vec<u8> = input.bytes().collect();
 
     let mut p1_chars = chars.clone();

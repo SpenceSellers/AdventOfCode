@@ -15,6 +15,12 @@ pub fn read_input_lines(filename: &str) -> Vec<String> {
         .collect();
 }
 
+pub fn read_single_input_line(filename: &str) -> String {
+    let lines = read_input_lines(filename);
+    assert_eq!(lines.len(), 1, "The input was supposed to only have a single line");
+    return lines.into_iter().nth(0).unwrap();
+}
+
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub struct AsciiValue {
     code: u8

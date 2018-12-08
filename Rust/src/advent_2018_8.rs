@@ -54,7 +54,7 @@ fn read_tree(data: &[u32]) -> Option<(Tree, usize)> {
 }
 
 fn main() {
-    let datums: Vec<u32> = adventlib::read_input_lines("input.txt")[0]
+    let datums: Vec<u32> = adventlib::read_single_input_line("input.txt")
         .split(" ")
         .map(|s| s.parse().expect("Was not a number!"))
         .collect();
