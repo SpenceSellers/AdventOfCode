@@ -62,6 +62,7 @@ impl Direction {
 }
 
 mod test {
+    use super::*;
     #[test]
     fn test_manhattan_distance() {
         assert_eq!(Point::new(0,0).manhattan_distance(Point::new(0,0)), 0);

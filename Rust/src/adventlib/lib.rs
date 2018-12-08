@@ -53,6 +53,8 @@ impl AsciiValue {
         else { Some(self.code as usize - 97) }
     }
 
+    pub fn ascii_code(&self) -> u8 { self.code }
+
     // pub fn to_char(self) -> char {
     //     let mut buffer: [u8; 4] = [0;4];
     //     buffer[0] = self.code;
@@ -61,5 +63,17 @@ impl AsciiValue {
 
 
     // }
+}
+
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_ascii() {
+        let v = AsciiValue::from_char('G').unwrap();
+
+        assert_eq!(v.ascii_code(), 71);
+        assert_eq!(v.uppercase_index(), Some(6));
+    }
 }
 
