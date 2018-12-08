@@ -110,6 +110,6 @@ mod test {
         // 'A' 'a'
         assert_eq!(super::lowercase(65), 97);
         // 'Y' 'y'
-        assert_eq!(super::uppercase(89), 121);
+        assert_eq!(super::lowercase(89), 121);
     }
 }

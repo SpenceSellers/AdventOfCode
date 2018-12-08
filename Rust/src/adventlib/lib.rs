@@ -74,6 +74,7 @@ mod test {
 
         assert_eq!(v.ascii_code(), 71);
         assert_eq!(v.uppercase_index(), Some(6));
+        assert_eq!(v.lowercase_index(), None);
     }
 }
 
