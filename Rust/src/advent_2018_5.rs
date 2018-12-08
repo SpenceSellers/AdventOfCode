@@ -3,8 +3,6 @@ use std::time::Instant;
 
 extern crate adventlib;
 
-use adventlib::*;
-
 fn lowercase(x: u8) -> u8 {
     x | 0b0010_0000
 }
@@ -65,8 +63,8 @@ unsafe fn unchecked_push<T>(buf: &mut Vec<T>, new: T) {
 
 fn main() {
     let now = Instant::now();
-    let mut input: String = read_input_lines("input.txt").iter().next().unwrap().clone();
-    let mut chars: Vec<u8> = input.bytes().collect();
+    let input: String = read_input_lines("input.txt").iter().next().unwrap().clone();
+    let chars: Vec<u8> = input.bytes().collect();
 
     let mut p1_chars = chars.clone();
     let mut buffer = Vec::with_capacity(chars.len());

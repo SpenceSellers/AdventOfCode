@@ -143,8 +143,8 @@ fn main() {
     }
 
     let (guard, score) = guard_scores.iter()
-        .map(|(guard, score)| (*guard, score.greatest().next().unwrap()) )
-        .max_by_key(|(guard, (minute, high_score))| *high_score )
+        .map(|(_guard, score)| (*guard, score.greatest().next().unwrap()) )
+        .max_by_key(|(guard, (_minute, high_score))| *high_score )
         .expect("There was no high score");
 
     println!("{:?}, {:?}", guard, score);
