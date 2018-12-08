@@ -1,4 +1,3 @@
-use std::collections::{HashMap};
 
 pub mod point;
 pub use self::point::*;

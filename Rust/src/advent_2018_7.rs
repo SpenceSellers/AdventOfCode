@@ -62,6 +62,36 @@ fn p1(deps: &[(char, char)]) {
     println!("{}", answer);
 }
 
+fn get_time_to_complete(c: char, multiplier: u64) -> u64 {
+    0
+}
+
+fn p2(deps: &[(char, char)]) {
+    let mut deps: Vec<(char, char)> = deps.to_vec();
+    let final_steps = depends_on_nothing(&deps);
+    let mut answer = String::new();
+
+    loop {
+        let no_deps = have_no_dependencies(&deps);
+        let next = no_deps.iter().next();
+        match next {
+            Some(next) => {
+                // Do "next"
+                deps.drain_filter(|(step, requires)| requires == next);
+            }
+            None => {
+                break;
+            }
+        }
+    }
+
+    for final_step in final_steps {
+        // Do final steps
+    }
+
+    println!("{}", answer);
+}
+
 fn main() {
     let dependencies: Vec<(char, char)> = adventlib::read_input_lines("input.txt").iter()
         .map(|line| parse_dependency(line))

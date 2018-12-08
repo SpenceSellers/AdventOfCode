@@ -1,9 +1,9 @@
 use std::fs::File;
 use std::io::Read;
-use std::hash::Hash;
-use std::collections::HashMap;
 
 pub mod grid;
+pub mod count_map;
+pub use count_map::*;
 
 pub fn read_input_lines(filename: &str) -> Vec<String> {
     let mut file = File::open(filename).expect("Could not find input file");
@@ -15,42 +15,35 @@ pub fn read_input_lines(filename: &str) -> Vec<String> {
         .collect();
 }
 
-#[derive(Debug)]
-pub struct CountMap<T: Eq + Hash> {
-    pub counts: HashMap<T, usize>
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
+pub struct AsciiValue {
+    code: u8
 }
 
-impl<T: Eq + Hash> CountMap<T> {
-    pub fn new() -> Self {
-        CountMap {
-            counts: HashMap::new()
+impl AsciiValue {
+    pub fn from_code(code: u8) -> AsciiValue {
+        AsciiValue { code }
+    }
+
+    pub fn from_char(c: char) -> Option<AsciiValue> {
+        let mut buffer: [u8; 4] = [0;4];
+        {
+            let slice = c.encode_utf8(&mut buffer);
+            if slice.len() > 1 {
+                return None;
+            }
         }
+
+        return Some(AsciiValue::from_code(buffer[0]));
     }
 
-    pub fn add(&mut self, val: T, num: usize) {
-        self.counts.entry(val).and_modify(|existing| {
-            *existing += num
-        }).or_insert(num);
-    }
+    // pub fn to_char(self) -> char {
+    //     let mut buffer: [u8; 4] = [0;4];
+    //     buffer[0] = self.code;
 
-    pub fn increment(&mut self, val: T) {
-        self.add(val, 1);
-    }
+    //     let a = char.
 
-    pub fn greatest(&self) -> impl Iterator<Item=(&T, usize)> {
-        let max = self.counts.values().max().cloned();
-        return self.counts.iter()
-            .filter(move |(k, v)| Some(**v) == max)
-            .map(|(k, v)| (k, *v));
-    }
 
-    pub fn least(&self) -> impl Iterator<Item=(&T, usize)> {
-        let max = self.counts.values().min().cloned();
-        return self.counts.iter()
-            .filter(move |(k, v)| Some(**v) == max)
-            .map(|(k, v)| (k, *v));
-    }
+    // }
 }
 
-impl<T: Eq + Hash + PartialOrd> CountMap<T> {
-}
