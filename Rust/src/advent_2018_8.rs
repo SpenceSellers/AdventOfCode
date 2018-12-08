@@ -8,13 +8,6 @@ struct Tree {
 }
 
 impl Tree {
-    fn new_empty() -> Tree {
-        Tree {
-            children: Vec::new(),
-            metadata: Vec::new()
-        }
-    }
-
     fn sum_metadata(&self) -> u32 {
         self.metadata.iter().sum::<u32>()
             + self.children.iter().map(|child| child.sum_metadata()).sum::<u32>()
@@ -25,12 +18,12 @@ impl Tree {
             return self.metadata.iter().sum();
         }
 
-        let mut value = 0;
-        for metadata in self.metadata.iter() {
-            let child_index: usize = (*metadata - 1) as usize;
-            value += self.children.get(child_index).map_or(0, |child| child.sum_special());
-        }
-        return value;
+        return self.metadata.iter()
+            .map(|metadata| {
+                let child_index: usize = (*metadata - 1) as usize;
+                self.children.get(child_index).map_or(0, |child| child.sum_special())
+            })
+            .sum()
     }
 }
 
@@ -38,8 +31,11 @@ fn read_tree(data: &[u32]) -> Option<(Tree, usize)> {
     let child_quantity = data[0] as usize;
     let metadata_quantity = data[1] as usize;
 
-    let mut read = 2; // We've already read two numbers;
-    let mut tree = Tree::new_empty();
+    let mut read = 2; // We've already read two numbers
+    let mut tree = Tree {
+        children: Vec::with_capacity(child_quantity),
+        metadata: Vec::with_capacity(metadata_quantity)
+    };
 
     for _ in 0..child_quantity {
         let (child, child_size) = read_tree(&data[read..])?;
@@ -63,7 +59,8 @@ fn main() {
         .map(|s| s.parse().expect("Was not a number!"))
         .collect();
 
-    let (tree, _size) = read_tree(&datums).expect("Could not read tree");
+    let (tree, size) = read_tree(&datums).expect("Could not read tree");
+    assert_eq!(size, datums.len(), "Looks like we didn't read the whole input");
 
     println!("P1: {}", tree.sum_metadata());
     println!("P2: {}", tree.sum_special());
