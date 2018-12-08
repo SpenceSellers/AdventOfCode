@@ -37,6 +37,16 @@ impl AsciiValue {
         return Some(AsciiValue::from_code(buffer[0]));
     }
 
+    pub fn uppercase_index(&self) -> Option<usize> {
+        if self.code < 65 || self.code > 90 { None }
+            else { Some(self.code as usize - 65) }
+    }
+
+    pub fn lowercase_index(&self) -> Option<usize> {
+        if self.code < 97 || self.code > 122 { None }
+        else { Some(self.code as usize - 97) }
+    }
+
     // pub fn to_char(self) -> char {
     //     let mut buffer: [u8; 4] = [0;4];
     //     buffer[0] = self.code;
