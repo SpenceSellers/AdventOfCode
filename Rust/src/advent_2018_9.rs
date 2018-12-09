@@ -1,25 +1,22 @@
 #![feature(euclidean_division)]
 extern crate adventlib;
 
+use std::collections::VecDeque;
+
 #[derive(Debug)]
 struct MarbleCircle {
-    marbles: Vec<u64>,
+    marbles: VecDeque<u64>,
     current_marble_index: usize
 }
 
 impl MarbleCircle {
     fn initial_state() -> Self {
+        let mut vec = VecDeque::with_capacity(10_000_000);
+        vec.push_front(0);
         MarbleCircle {
-            marbles: vec![0],
+            marbles: vec,
             current_marble_index: 0
         }
-    }
-
-    fn current_marble_index(&self) -> usize {
-//        self.marbles.iter()
-//            .position(|marble| *marble == self.current_marble)
-//            .expect("Current marble is not in circle. This shouldn't happen.")
-        self.current_marble_index
     }
 
     fn reindex(&self, index: isize) -> usize {
@@ -27,7 +24,7 @@ impl MarbleCircle {
     }
 
     fn reindex_relative(&self, rel_index: isize) -> usize {
-        self.reindex(rel_index + (self.current_marble_index() as isize))
+        self.reindex(rel_index + (self.current_marble_index as isize))
     }
 
     fn insert_relative(&mut self, marble: u64, rel_index: isize) {
@@ -43,7 +40,7 @@ impl MarbleCircle {
         if index < self.current_marble_index {
             self.current_marble_index -= 1;
         }
-        return self.marbles.remove(index)
+        return self.marbles.remove(index).unwrap();
     }
 
     fn get_relative(&self, rel_index: isize) -> u64 {
@@ -54,11 +51,23 @@ impl MarbleCircle {
     fn shift_current(&mut self, rel_index: isize) {
         self.current_marble_index = self.reindex_relative(rel_index);
     }
+
+    /// This is the secret sauce of this solution.
+    /// Every once in a while, shift our current position so that the current marble is
+    /// close to one end of our double-ended vector. That way, inserts and removals only have to
+    /// move a few dozen elements instead of zillions.
+    fn re_rack(&mut self) {
+        for i in 0..self.current_marble_index {
+            let v = self.marbles.pop_front().expect("Empty on re-rack");
+            self.marbles.push_back(v);
+        }
+        self.current_marble_index = 0;
+    }
 }
 
 fn main() {
     const PLAYERS: usize = 413;
-    const LAST_POINTS: u64 = 71082;
+    const LAST_POINTS: u64 = 7108200;
 //    const PLAYERS: usize = 9;
 //    const LAST_POINTS: u64 = 25;
 
@@ -69,8 +78,8 @@ fn main() {
     let mut current_player = 0;
 
     while next_marble <= LAST_POINTS {
-        if next_marble % 100000 == 0 {
-            println!("At: {}", next_marble);
+        if next_marble % 50 == 0 {
+            circle.re_rack();
         }
         if next_marble % 23 == 0 {
             // Player gets the score of the marble
