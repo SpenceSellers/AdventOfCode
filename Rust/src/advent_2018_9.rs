@@ -4,21 +4,22 @@ extern crate adventlib;
 #[derive(Debug)]
 struct MarbleCircle {
     marbles: Vec<u64>,
-    current_marble: u64
+    current_marble_index: usize
 }
 
 impl MarbleCircle {
     fn initial_state() -> Self {
         MarbleCircle {
             marbles: vec![0],
-            current_marble: 0
+            current_marble_index: 0
         }
     }
 
     fn current_marble_index(&self) -> usize {
-        self.marbles.iter()
-            .position(|marble| *marble == self.current_marble)
-            .expect("Current marble is not in circle. This shouldn't happen.")
+//        self.marbles.iter()
+//            .position(|marble| *marble == self.current_marble)
+//            .expect("Current marble is not in circle. This shouldn't happen.")
+        self.current_marble_index
     }
 
     fn reindex(&self, index: isize) -> usize {
@@ -31,11 +32,17 @@ impl MarbleCircle {
 
     fn insert_relative(&mut self, marble: u64, rel_index: isize) {
         let index = self.reindex_relative(rel_index);
+        if index < self.current_marble_index {
+            self.current_marble_index += 1;
+        }
         self.marbles.insert(index, marble);
     }
 
     fn remove_relative(&mut self, rel_index: isize) -> u64 {
         let index = self.reindex_relative(rel_index);
+        if index < self.current_marble_index {
+            self.current_marble_index -= 1;
+        }
         return self.marbles.remove(index)
     }
 
@@ -43,11 +50,15 @@ impl MarbleCircle {
         let index = self.reindex_relative(rel_index);
         return self.marbles[index];
     }
+
+    fn shift_current(&mut self, rel_index: isize) {
+        self.current_marble_index = self.reindex_relative(rel_index);
+    }
 }
 
 fn main() {
     const PLAYERS: usize = 413;
-    const LAST_POINTS: u64 = 7108200;
+    const LAST_POINTS: u64 = 71082;
 //    const PLAYERS: usize = 9;
 //    const LAST_POINTS: u64 = 25;
 
@@ -66,13 +77,13 @@ fn main() {
             scores[current_player] += next_marble;
             let next_current = circle.get_relative(-6);
             let removed = circle.remove_relative(-7);
-            circle.current_marble = next_current;
+            circle.shift_current(-6);
             // And the score of the one removed.
             scores[current_player] += removed;
 
         } else {
             circle.insert_relative(next_marble, 2);
-            circle.current_marble = next_marble;
+            circle.shift_current(2);
         }
 
         next_marble += 1;

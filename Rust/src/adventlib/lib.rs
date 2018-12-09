@@ -5,6 +5,8 @@ pub mod grid;
 pub mod count_map;
 pub use count_map::*;
 
+pub mod zip_list;
+
 pub fn read_input_lines(filename: &str) -> Vec<String> {
     let mut file = File::open(filename).expect("Could not find input file");
     let mut string = String::new();
