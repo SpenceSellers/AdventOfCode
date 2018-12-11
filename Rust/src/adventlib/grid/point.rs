@@ -1,3 +1,4 @@
+use std::ops::Range;
 
 #[derive(PartialEq, Eq, Hash, Copy, Clone, Debug)]
 pub struct Point {
@@ -34,6 +35,12 @@ impl Point {
 
     pub fn manhattan_distance(self, other: Point) -> u64 {
        (self.x - other.x).abs() as u64 + (self.y - other.y).abs() as u64
+    }
+
+    pub fn in_square(xrange: Range<i64>, yrange: Range<i64>) -> impl Iterator<Item=Point> {
+        xrange.into_iter().flat_map(
+            move |x| yrange.clone().into_iter().map(move |y| Point::new(x, y))
+        )
     }
 }
 
