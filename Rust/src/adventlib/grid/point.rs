@@ -18,6 +18,13 @@ impl Point {
         }
     }
 
+    pub fn subtract_point(self, point: Point) -> Point {
+        return Point {
+            x: self.x - point.x,
+            y: self.y - point.y
+        }
+    }
+
     pub fn multiply(self, n: i64) -> Point {
         Point {x: self.x * n, y: self.y * n }
     }

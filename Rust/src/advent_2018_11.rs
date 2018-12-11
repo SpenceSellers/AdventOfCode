@@ -1,17 +1,25 @@
 extern crate adventlib;
 use adventlib::grid::*;
+use adventlib::grid::calculated_grid::*;
 
 struct FuelGrid {
     serial_number: i64
 }
 
 impl FuelGrid {
-    fn get_fuel(&self, point: Point) -> i64 {
-        let rack_id = point.x + 10;
-        let mut power_level = rack_id * point.y;
-        power_level += self.serial_number;
-        power_level *= rack_id;
-        return hundreds_digit(power_level) - 5;
+    // fn new(serial_number: i64) -> Self {
+    //     FuelGrid { serial_number }
+    // }
+
+    fn get_fuel(&self, p: Point) -> i64 {
+        let cg = CalculatedGrid::new(|point| {
+            let rack_id = point.x + 10;
+            let mut power_level = rack_id * point.y;
+            power_level += self.serial_number;
+            power_level *= rack_id;
+            return hundreds_digit(power_level) - 5;
+        });
+        cg.get_cell(p)
     }
 
     fn fuel_square(&self, corner: Point, size: u64) -> i64 {
