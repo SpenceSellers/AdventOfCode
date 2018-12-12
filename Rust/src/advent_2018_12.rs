@@ -1,4 +1,4 @@
-use std::collections::VecDeque;
+use std::collections::HashMap;
 extern crate adventlib;
 
 #[derive(Debug)]
@@ -22,22 +22,24 @@ fn parse_initial_state(s: &str) -> Vec<bool> {
     state_str.chars().map(|c| c == '#').collect()
 }
 
-fn tick(state: &[bool], rules: &[Rule<bool>]) -> Vec<bool> {
-    let mut next = Vec::new();
+fn tick(state: &HashMap<isize, bool>, rules: &[Rule<bool>]) -> HashMap<isize, bool> {
+    let mut next = HashMap::new();
 
-    for i in (-3 as isize)..(state.len() as isize + 3) {
-        next.push(apply_rule(i, state, rules));
+    let min = state.keys().min().unwrap();
+    let max = state.keys().max().unwrap();
+
+    for i in (min - 5)..(max + 5) {
+        let res = apply_rule(i, state, rules);
+        if res {
+            next.insert(i, true);
+        }
     }
     return next;
 }
 
-fn apply_rule(index: isize, state: &[bool], rules: &[Rule<bool>]) -> bool {
-    let get = |i| { 
-        if i >= 0 {
-            state.get(i as usize).cloned().unwrap_or(false)
-        } else {
-            false
-        }
+fn apply_rule(index: isize, state: &HashMap<isize, bool>, rules: &[Rule<bool>]) -> bool {
+    let get = |i: isize| { 
+        state.get(&i).cloned().unwrap_or(false)
     };
 
     for rule in rules {
@@ -60,13 +62,21 @@ fn main() {
     let input = adventlib::read_input_lines("input.txt");
     let initial = parse_initial_state(&input[0]);
     let rules: Vec<_> = input[2..].iter().map(|line| parse_rule(line)).collect();
+    let mut state: HashMap<isize, bool> = HashMap::new();
 
-    let mut state: Vec<bool> = initial.into_iter().collect();
-    for _ in 0..20 {
+    for (i, s) in initial.iter().enumerate() {
+        state.insert(i as isize, *s);
+    }
+
+    for gen in 0..500_000 {
+        if gen % 100_000 == 0 {
+            println!("Generation {}", gen);
+        }
         state = tick(&state, &rules);
     }
 
-    println!("{}", state.iter().cloned().filter(|c| *c).count());
+    let result: isize = state.iter().filter(|(_k, v)| **v).map(|(k, _v)| *k).sum();
+    println!("{}", result);
 
     println!("{:?}", state);
 }
