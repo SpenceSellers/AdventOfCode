@@ -1,19 +1,20 @@
 use super::*;
 
 pub struct GridWindow<G> {
-    grid: G,
-    region: RectangleBounds
+    pub grid: G,
+    pub region: RectangleBounds
 }
 
 impl<G: GridView> GridView for GridWindow<G> {
     type Item = G::Item;
     fn get_cell(&self, pos: Point) -> Self::Item {
-        let adjusted = pos.subtract(self.region.lesser());
-        self.grid.get_cell(pos)
+        // Todo block too large
+        let adjusted = pos.subtract_point(self.region.lesser());
+        self.grid.get_cell(adjusted)
     }
 }
 
-impl<G> DefinedSizeGrid for GridWindow<G> {
+impl<G: GridView> DefinedSizeGrid for GridWindow<G> {
     fn width(&self) -> usize { self.region.width() as usize }
     fn height(&self) -> usize { self.region.height() as usize }
 }

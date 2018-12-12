@@ -18,8 +18,9 @@ impl FuelGrid {
             power_level += self.serial_number;
             power_level *= rack_id;
             return hundreds_digit(power_level) - 5;
-        });
-        cg.get_cell(p)
+        }).windowed(RectangleBounds::new(Point::new(0, 0), Point::new(301, 301)).unwrap())
+            .to_solid();
+        (&cg).get_cell(p)
     }
 
     fn fuel_square(&self, corner: Point, size: u64) -> i64 {

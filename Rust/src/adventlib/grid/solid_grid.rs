@@ -63,7 +63,7 @@ impl<'a, T> GridView for &'a SolidGrid<T> {
     }
 }
 
-impl<T> DefinedSizeGrid for SolidGrid<T> {
+impl<'a, T> DefinedSizeGrid for &'a SolidGrid<T> {
     fn width(&self) -> usize { self.size_x }
     fn height(&self) -> usize { self.size_y }
 }

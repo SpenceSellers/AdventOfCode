@@ -8,14 +8,28 @@ pub use self::point::*;
 pub trait GridView {
     type Item;
     fn get_cell(&self, pos: Point) -> Self::Item;
+
+    fn windowed(self, bound: RectangleBounds) -> window::GridWindow<Self> where
+        Self: std::marker::Sized
+    {
+        window::GridWindow {
+            grid: self,
+            region: bound
+        }
+    }
 }
 
-pub trait DefinedSizeGrid {
+pub trait DefinedSizeGrid: GridView {
     fn width(&self) -> usize;
     fn height(&self) -> usize;
 
     fn bounds(&self) -> RectangleBounds {
         RectangleBounds::new(Point::new(0,0), Point::new(self.width() as i64, self.height() as i64)).unwrap()
+    }
+
+    fn to_solid(self) -> solid_grid::SolidGrid<<Self as GridView>::Item> where
+    Self: std::marker::Sized {
+        solid_grid::SolidGrid::new_from_fn(self.width(), self.height(), |x,y| self.get_cell(Point::new(x as i64,y as i64)))
     }
 }
 

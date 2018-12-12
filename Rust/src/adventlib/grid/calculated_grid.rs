@@ -17,6 +17,6 @@ impl<F, T> GridView for CalculatedGrid<F>
     type Item = T;
     
     fn get_cell(&self, pos: Point) -> T {
-        unimplemented!()
+        (self.func)(pos)
     }
 }
