@@ -20,7 +20,8 @@ impl FuelGrid {
             return hundreds_digit(power_level) - 5;
         }).windowed(RectangleBounds::new(Point::new(0, 0), Point::new(301, 301)).unwrap())
             .to_solid();
-        (&cg).get_cell(p)
+        // (&cg).get_cell(p)
+        unimplemented!();
     }
 
     fn fuel_square(&self, corner: Point, size: u64) -> i64 {
