@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::HashSet;
 extern crate adventlib;
 
 #[derive(Debug)]
@@ -22,33 +22,36 @@ fn parse_initial_state(s: &str) -> Vec<bool> {
     state_str.chars().map(|c| c == '#').collect()
 }
 
-fn tick(state: &HashMap<isize, bool>, rules: &[Rule<bool>]) -> HashMap<isize, bool> {
-    let mut next = HashMap::new();
+fn tick(state: &HashSet<isize>, buffer: &mut HashSet<isize>, rules: &[Rule<bool>]) {
+    buffer.clear();
+    let mut check_set: HashSet<isize> = HashSet::new();
 
-    let min = state.keys().min().unwrap();
-    let max = state.keys().max().unwrap();
-
-    for i in (min - 5)..(max + 5) {
-        let res = apply_rule(i, state, rules);
-        if res {
-            next.insert(i, true);
+    for i in state.iter() {
+        for di in (-4)..=(4) {
+            check_set.insert(di + *i);
         }
     }
-    return next;
+
+    for i in check_set {
+        let res = apply_rule(i, state, rules);
+        if res {
+            buffer.insert(i);
+        }
+    }
 }
 
-fn apply_rule(index: isize, state: &HashMap<isize, bool>, rules: &[Rule<bool>]) -> bool {
-    let get = |i: isize| { 
-        state.get(&i).cloned().unwrap_or(false)
+fn apply_rule(index: isize, state: &HashSet<isize>, rules: &[Rule<bool>]) -> bool {
+    fn get(i: isize, state: &HashSet<isize>) -> bool {
+        state.contains(&i)
     };
 
     for rule in rules {
         let aa = [
-            get(index - 2),
-            get(index - 1),
-            get(index + 0),
-            get(index + 1),
-            get(index + 2),
+            get(index - 2, state),
+            get(index - 1, state),
+            get(index + 0, state),
+            get(index + 1, state),
+            get(index + 2, state),
         ];
         if rule.cond == aa {
             return rule.becomes;
@@ -62,21 +65,28 @@ fn main() {
     let input = adventlib::read_input_lines("input.txt");
     let initial = parse_initial_state(&input[0]);
     let rules: Vec<_> = input[2..].iter().map(|line| parse_rule(line)).collect();
-    let mut state: HashMap<isize, bool> = HashMap::new();
+    let mut state: HashSet<isize> = HashSet::new();
+    let mut buffer: HashSet<isize> = HashSet::new();
 
     for (i, s) in initial.iter().enumerate() {
-        state.insert(i as isize, *s);
-    }
-
-    for gen in 0..500_000 {
-        if gen % 100_000 == 0 {
-            println!("Generation {}", gen);
+        if *s {
+            state.insert(i as isize);
         }
-        state = tick(&state, &rules);
     }
 
-    let result: isize = state.iter().filter(|(_k, v)| **v).map(|(k, _v)| *k).sum();
-    println!("{}", result);
+    for gen in 0..200_000 {
+        if gen % 50_000 == 0 {
+            println!("Generation {}", gen);
+            println!("cells: {}", state.len());
+            let result: isize = state.iter().map(|k| *k).sum();
+            println!("res: {}", result);
+        }
+        tick(&state, &mut buffer, &rules);
+        std::mem::swap(&mut state, &mut buffer);
+    }
 
-    println!("{:?}", state);
+    println!("And now use your human brain to deduce the answer");
+    // // P1
+    // let result: isize = state.iter().map(|k| *k).sum();
+    // println!("{}", result);
 }
