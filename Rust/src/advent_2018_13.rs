@@ -4,6 +4,7 @@ use adventlib::grid::point::*;
 
 #[derive(Debug)]
 struct TrackPoint {
+    kind: char,
     north: Option<Point>,
     south: Option<Point>,
     east: Option<Point>,
@@ -11,8 +12,9 @@ struct TrackPoint {
 }
 
 impl TrackPoint {
-    fn new() -> TrackPoint {
+    fn new(kind: char) -> TrackPoint {
         TrackPoint {
+            kind,
             north: None,
             south: None,
             east: None,
@@ -59,6 +61,13 @@ fn each_tracked_point(lines: &[String]) -> HashSet<(Point, char)> {
     return points;
 }
 
+fn can_connect_north_south(c: char) -> bool {
+    match c {
+        '|' | '+' |'^' | 'v' => true,
+        _ => false
+    }
+}
+
 fn build_track(lines: &[String]) -> (HashMap<Point, TrackPoint>, Vec<Cart>) {
     let mut track_map: HashMap<Point, TrackPoint> = HashMap::new();
     let mut carts = Vec::new();
@@ -66,7 +75,7 @@ fn build_track(lines: &[String]) -> (HashMap<Point, TrackPoint>, Vec<Cart>) {
 
     // Prepare track data
     for (point, c) in tracked_points.iter() {
-        track_map.insert(*point, TrackPoint::new());
+        track_map.insert(*point, TrackPoint::new(*c));
     }
 
     for (point, c) in tracked_points.iter().cloned() {
@@ -74,43 +83,70 @@ fn build_track(lines: &[String]) -> (HashMap<Point, TrackPoint>, Vec<Cart>) {
         let south = point.shift_direction(Direction::South, 1);
         let east = point.shift_direction(Direction::East, 1);
         let west = point.shift_direction(Direction::West, 1);
+        let north_could_connect = track_map.get(&north).map(|tp| can_connect_north_south(tp.kind)).unwrap_or(false);
+        let south_could_connect = track_map.get(&south).map(|tp| can_connect_north_south(tp.kind)).unwrap_or(false);
+        let track_point = track_map.get_mut(&point).unwrap();
         match c {
             '-' => {
-                track_map.get_mut(&east).expect("No track to east of -").west = Some(point);
-                track_map.get_mut(&west).expect("No track to west of -").east = Some(point);
+                track_point.east = Some(east);
+                track_point.west = Some(west);
             }
             '|' => {
-                track_map.get_mut(&north).expect("No track to north of |").south = Some(point);
-                track_map.get_mut(&south).expect("No track to south of |").north = Some(point);
+                track_point.north = Some(north);
+                track_point.south = Some(south);
             }
             '/' => {
-                match (track_map.contains_key(&north), track_map.contains_key(&south)) {
+                match (north_could_connect, south_could_connect) {
                     (true, false) => {
-                        track_map.get_mut(&north).expect("No track to north of /").south = Some(point);
-                        track_map.get_mut(&west).expect("No track to west of /").east = Some(point);
+                        track_point.north = Some(north);
+                        track_point.west = Some(west);
                     }
                     (false, true) => {
-                        track_map.get_mut(&south).expect("No track to south of /").north = Some(point);
-                        track_map.get_mut(&east).expect("No track to east of /").west = Some(point);
-
+                        track_point.south = Some(south);
+                        track_point.east = Some(east);
                     }
-                    _ => panic!("Ambiguous corner!"),
+                    _ => panic!("Ambiguous corner at {:?}!", point),
                 }
             }
             '\\' => {
-
+                match (north_could_connect, south_could_connect) {
+                    (true, false) => {
+                        track_point.north = Some(north);
+                        track_point.east = Some(east)
+                    }
+                    (false, true) => {
+                        track_point.south = Some(south);
+                        track_point.west = Some(west);
+                    }
+                    _ => panic!("Ambiguous corner at {:?}!", point),
+                }
             }
             '+' => {
-                track_map.get_mut(&north).expect("No track to north of +").south = Some(point);
-                track_map.get_mut(&south).expect("No track to south of +").north = Some(point);
-                track_map.get_mut(&east).expect("No track to east of +").west = Some(point);
-                track_map.get_mut(&west).expect("No track to west of +").east = Some(point);
+                track_point.north = Some(north);
+                track_point.south = Some(south);
+                track_point.east = Some(east);
+                track_point.west = Some(west);
             }
-            
-            'v' => carts.push(Cart {pos: point, turns: 0, direction: Direction::South} ),
-            '>' => carts.push(Cart {pos: point, turns: 0, direction: Direction::East} ),
-            '<' => carts.push(Cart {pos: point, turns: 0, direction: Direction::West} ),
-            '^' => carts.push(Cart {pos: point, turns: 0, direction: Direction::North} ),
+            'v' => {
+                carts.push(Cart {pos: point, turns: 0, direction: Direction::South} );
+                track_point.north = Some(north);
+                track_point.south = Some(south);
+            }
+            '>' => {
+                carts.push(Cart {pos: point, turns: 0, direction: Direction::East} );
+                track_point.east = Some(east);
+                track_point.west = Some(west);
+            }
+            '<' => {
+                carts.push(Cart {pos: point, turns: 0, direction: Direction::West} );
+                track_point.east = Some(east);
+                track_point.west = Some(west);
+            }
+            '^' => {
+                carts.push(Cart {pos: point, turns: 0, direction: Direction::North} );
+                track_point.north = Some(north);
+                track_point.south = Some(south);
+            }
             _ => panic!("Unknown map symbol: {}", c)
         }
     }
@@ -151,12 +187,20 @@ fn tick_cart(cart: &mut Cart, track: &HashMap<Point, TrackPoint>) {
 }
 
 fn main() {
-    let input = adventlib::read_input_lines("fake_input.txt");
+    let input = adventlib::read_input_lines("input.txt");
 
     let (track, mut carts) = build_track(&input);
     loop {
         for cart in carts.iter_mut() {
             tick_cart(cart, &track);
+        }
+        let mut cart_positions: HashSet<Point> = HashSet::new();
+        for cart in carts.iter() {
+            if cart_positions.contains(&cart.pos) {
+                println!("CRASH! Part 1: {:?}", cart.pos);
+                return;
+            }
+            cart_positions.insert(cart.pos);
         }
         println!("{:?}", carts);
     }
