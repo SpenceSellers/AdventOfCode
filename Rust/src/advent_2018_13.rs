@@ -89,72 +89,62 @@ fn build_track(lines: &[String]) -> (HashMap<Point, TrackPoint>, Vec<Cart>) {
         let north_could_connect = track_map.get(&north).map(|tp| can_connect_north_south(tp.kind)).unwrap_or(false);
         let south_could_connect = track_map.get(&south).map(|tp| can_connect_north_south(tp.kind)).unwrap_or(false);
         let track_point = track_map.get_mut(&point).unwrap();
-        match c {
-            '-' => {
-                track_point.east = Some(east);
-                track_point.west = Some(west);
-            }
-            '|' => {
-                track_point.north = Some(north);
-                track_point.south = Some(south);
-            }
+
+        let (n, s, e, w) = match c {
+            '-' => (false, false, true, true),
+            '|' => (true, true, false, false),
             '/' => {
                 match (north_could_connect, south_could_connect) {
-                    (true, false) => {
-                        track_point.north = Some(north);
-                        track_point.west = Some(west);
-                    }
-                    (false, true) => {
-                        track_point.south = Some(south);
-                        track_point.east = Some(east);
-                    }
+                    (true, false) => (true, false, false, true),
+                    (false, true) => (false, true, true, false),
                     _ => panic!("Ambiguous corner at {:?}!", point),
                 }
             }
             '\\' => {
                 match (north_could_connect, south_could_connect) {
-                    (true, false) => {
-                        track_point.north = Some(north);
-                        track_point.east = Some(east)
-                    }
-                    (false, true) => {
-                        track_point.south = Some(south);
-                        track_point.west = Some(west);
-                    }
+                    (true, false) => (true, false, true, false), 
+                    (false, true) => (false, true, false, true), 
                     _ => panic!("Ambiguous corner at {:?}!", point),
                 }
             }
-            '+' => {
-                track_point.north = Some(north);
-                track_point.south = Some(south);
-                track_point.east = Some(east);
-                track_point.west = Some(west);
-            }
+            '+' => (true, true, true, true),
             'v' => {
                 carts.push(Cart {pos: point, id: cart_id, turns: 0, direction: Direction::South} );
-                track_point.north = Some(north);
-                track_point.south = Some(south);
                 cart_id += 1;
+                (true, true, false, false)
             }
             '>' => {
                 carts.push(Cart {pos: point, id: cart_id, turns: 0, direction: Direction::East} );
-                track_point.east = Some(east);
-                track_point.west = Some(west);
                 cart_id += 1;
+                (false, false, true, true)
             }
             '<' => {
                 carts.push(Cart {pos: point, id: cart_id, turns: 0, direction: Direction::West} );
-                track_point.east = Some(east);
-                track_point.west = Some(west);
                 cart_id += 1;
+                (false, false, true, true)
             }
             '^' => {
                 carts.push(Cart {pos: point, id: cart_id, turns: 0, direction: Direction::North} );
-                track_point.north = Some(north);
-                track_point.south = Some(south);
                 cart_id += 1;
+                (true, true, false, false)
             }
             _ => panic!("Unknown map symbol: {}", c)
+        };
+
+        if n {
+            track_point.north = Some(north);
+        }
+
+        if s {
+            track_point.south = Some(south);
+        }
+
+        if e {
+            track_point.east = Some(east);
+        }
+    
+        if w {
+            track_point.west = Some(west);
         }
     }
 
@@ -193,13 +183,12 @@ fn tick_cart(cart: &mut Cart, track: &HashMap<Point, TrackPoint>) {
     cart.direction = next_direction;
 }
 
-// let (other_cart_i, _) = carts.iter().enumerate().filter(|(ci, c)| c.pos == cart.pos).next().unwrap();
 fn main() {
     let input = adventlib::read_input_lines("input.txt");
 
     let (track, mut carts) = build_track(&input);
     loop {
-        println!("full tick");
+        // Sort the carts so collisions happen in the correct order
         carts.sort_unstable_by(|a, b| {
             a.pos.y.cmp(&b.pos.y).then(a.pos.x.cmp(&b.pos.x))
         });
@@ -207,24 +196,21 @@ fn main() {
         let cart_ids: Vec<u64> = carts.iter().map(|cart| cart.id).collect();
 
         for id in cart_ids {
-            println!("ticking cart {}", id);
             if let Some(mut cart) = carts.iter_mut().find(|cart| cart.id == id) {
                 tick_cart(&mut cart, &track);
-            } else {
-                println!("Cart is already gone");
             }
             let mut to_remove = HashSet::new();
             for cart_a in carts.iter() {
                 for cart_b in carts.iter() {
                     if cart_a.id == cart_b.id { continue; }
                     if cart_a.pos == cart_b.pos {
-                        println!("CRASH between carts {} and {}", cart_a.id, cart_b.id);
+                        println!("CRASH! between carts {} and {}", cart_a.id, cart_b.id);
                         to_remove.insert(cart_a.id);
                         to_remove.insert(cart_b.id);
                     }
                 }
             }
-
+            // Remove crashed carts
             carts.retain(|cart| !to_remove.contains(&cart.id));
         }
 
@@ -233,5 +219,4 @@ fn main() {
             break;
         }
     }
-    // println!("{:#?}", track);
 }
