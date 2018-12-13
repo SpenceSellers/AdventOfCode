@@ -1,3 +1,4 @@
+#![feature(drain_filter)]
 use std::collections::{HashSet, HashMap};
 extern crate adventlib;
 use adventlib::grid::point::*;
@@ -42,6 +43,7 @@ impl TrackPoint {
 
 #[derive(Debug, Copy, Clone)]
 struct Cart {
+    id: u64,
     pos: Point,
     direction: Direction,
     turns: u64
@@ -71,6 +73,7 @@ fn can_connect_north_south(c: char) -> bool {
 fn build_track(lines: &[String]) -> (HashMap<Point, TrackPoint>, Vec<Cart>) {
     let mut track_map: HashMap<Point, TrackPoint> = HashMap::new();
     let mut carts = Vec::new();
+    let mut cart_id = 0;
     let tracked_points = each_tracked_point(lines);
 
     // Prepare track data
@@ -128,24 +131,28 @@ fn build_track(lines: &[String]) -> (HashMap<Point, TrackPoint>, Vec<Cart>) {
                 track_point.west = Some(west);
             }
             'v' => {
-                carts.push(Cart {pos: point, turns: 0, direction: Direction::South} );
+                carts.push(Cart {pos: point, id: cart_id, turns: 0, direction: Direction::South} );
                 track_point.north = Some(north);
                 track_point.south = Some(south);
+                cart_id += 1;
             }
             '>' => {
-                carts.push(Cart {pos: point, turns: 0, direction: Direction::East} );
+                carts.push(Cart {pos: point, id: cart_id, turns: 0, direction: Direction::East} );
                 track_point.east = Some(east);
                 track_point.west = Some(west);
+                cart_id += 1;
             }
             '<' => {
-                carts.push(Cart {pos: point, turns: 0, direction: Direction::West} );
+                carts.push(Cart {pos: point, id: cart_id, turns: 0, direction: Direction::West} );
                 track_point.east = Some(east);
                 track_point.west = Some(west);
+                cart_id += 1;
             }
             '^' => {
-                carts.push(Cart {pos: point, turns: 0, direction: Direction::North} );
+                carts.push(Cart {pos: point, id: cart_id, turns: 0, direction: Direction::North} );
                 track_point.north = Some(north);
                 track_point.south = Some(south);
+                cart_id += 1;
             }
             _ => panic!("Unknown map symbol: {}", c)
         }
@@ -186,23 +193,45 @@ fn tick_cart(cart: &mut Cart, track: &HashMap<Point, TrackPoint>) {
     cart.direction = next_direction;
 }
 
+// let (other_cart_i, _) = carts.iter().enumerate().filter(|(ci, c)| c.pos == cart.pos).next().unwrap();
 fn main() {
     let input = adventlib::read_input_lines("input.txt");
 
     let (track, mut carts) = build_track(&input);
     loop {
-        for cart in carts.iter_mut() {
-            tick_cart(cart, &track);
-        }
-        let mut cart_positions: HashSet<Point> = HashSet::new();
-        for cart in carts.iter() {
-            if cart_positions.contains(&cart.pos) {
-                println!("CRASH! Part 1: {:?}", cart.pos);
-                return;
+        println!("full tick");
+        carts.sort_unstable_by(|a, b| {
+            a.pos.y.cmp(&b.pos.y).then(a.pos.x.cmp(&b.pos.x))
+        });
+
+        let cart_ids: Vec<u64> = carts.iter().map(|cart| cart.id).collect();
+
+        for id in cart_ids {
+            println!("ticking cart {}", id);
+            if let Some(mut cart) = carts.iter_mut().find(|cart| cart.id == id) {
+                tick_cart(&mut cart, &track);
+            } else {
+                println!("Cart is already gone");
             }
-            cart_positions.insert(cart.pos);
+            let mut to_remove = HashSet::new();
+            for cart_a in carts.iter() {
+                for cart_b in carts.iter() {
+                    if cart_a.id == cart_b.id { continue; }
+                    if cart_a.pos == cart_b.pos {
+                        println!("CRASH between carts {} and {}", cart_a.id, cart_b.id);
+                        to_remove.insert(cart_a.id);
+                        to_remove.insert(cart_b.id);
+                    }
+                }
+            }
+
+            carts.retain(|cart| !to_remove.contains(&cart.id));
         }
-        println!("{:?}", carts);
+
+        if carts.len() <= 1 {
+            println!("Carts are gone: {:?}", carts);
+            break;
+        }
     }
-    println!("{:#?}", track);
+    // println!("{:#?}", track);
 }
