@@ -84,8 +84,6 @@ fn build_track(lines: &[String]) -> (HashMap<Point, TrackPoint>, Vec<Cart>) {
     for (point, c) in tracked_points.iter().cloned() {
         let north = point.shift_direction(Direction::North, 1);
         let south = point.shift_direction(Direction::South, 1);
-        let east = point.shift_direction(Direction::East, 1);
-        let west = point.shift_direction(Direction::West, 1);
         let north_could_connect = track_map.get(&north).map(|tp| can_connect_north_south(tp.kind)).unwrap_or(false);
         let south_could_connect = track_map.get(&south).map(|tp| can_connect_north_south(tp.kind)).unwrap_or(false);
         let track_point = track_map.get_mut(&point).unwrap();
@@ -93,44 +91,33 @@ fn build_track(lines: &[String]) -> (HashMap<Point, TrackPoint>, Vec<Cart>) {
         let (n, s, e, w) = match c {
             '-' => (false, false, true, true),
             '|' => (true, true, false, false),
-            '/' => {
-                match (north_could_connect, south_could_connect) {
-                    (true, false) => (true, false, false, true),
-                    (false, true) => (false, true, true, false),
-                    _ => panic!("Ambiguous corner at {:?}!", point),
-                }
-            }
-            '\\' => {
-                match (north_could_connect, south_could_connect) {
-                    (true, false) => (true, false, true, false), 
-                    (false, true) => (false, true, false, true), 
-                    _ => panic!("Ambiguous corner at {:?}!", point),
-                }
-            }
+            '/' => match (north_could_connect, south_could_connect) {
+                (true, false) => (true, false, false, true),
+                (false, true) => (false, true, true, false),
+                _ => panic!("Ambiguous corner at {:?}!", point),
+            },
+            '\\' => match (north_could_connect, south_could_connect) {
+                (true, false) => (true, false, true, false), 
+                (false, true) => (false, true, false, true), 
+                _ => panic!("Ambiguous corner at {:?}!", point),
+            },
             '+' => (true, true, true, true),
-            'v' => {
-                carts.push(Cart {pos: point, id: cart_id, turns: 0, direction: Direction::South} );
+            _ => {
                 cart_id += 1;
-                (true, true, false, false)
+                let (dir, connects) = match c {
+                    'v' => (Direction::South, (true, true, false, false)),
+                    '>' => (Direction::East, (false, false, true, true)),
+                    '<' => (Direction::West, (false, false, true, true)),
+                    '^' => (Direction::North, (true, true, false, false)),
+                    _ => panic!("Unknown map symbol: {}", c)
+                };
+                carts.push(Cart {pos: point, id: cart_id, turns: 0, direction: dir} );
+                connects
             }
-            '>' => {
-                carts.push(Cart {pos: point, id: cart_id, turns: 0, direction: Direction::East} );
-                cart_id += 1;
-                (false, false, true, true)
-            }
-            '<' => {
-                carts.push(Cart {pos: point, id: cart_id, turns: 0, direction: Direction::West} );
-                cart_id += 1;
-                (false, false, true, true)
-            }
-            '^' => {
-                carts.push(Cart {pos: point, id: cart_id, turns: 0, direction: Direction::North} );
-                cart_id += 1;
-                (true, true, false, false)
-            }
-            _ => panic!("Unknown map symbol: {}", c)
         };
 
+        let east = point.shift_direction(Direction::East, 1);
+        let west = point.shift_direction(Direction::West, 1);
         if n {
             track_point.north = Some(north);
         }
