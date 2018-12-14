@@ -1,4 +1,3 @@
-#![feature(drain_filter)]
 use std::collections::{HashSet, HashMap};
 extern crate adventlib;
 use adventlib::grid::point::*;
@@ -6,37 +5,31 @@ use adventlib::grid::point::*;
 #[derive(Debug)]
 struct TrackPoint {
     kind: char,
-    north: Option<Point>,
-    south: Option<Point>,
-    east: Option<Point>,
-    west: Option<Point>,
+    point: Point,
+    north: bool,
+    south: bool,
+    east: bool,
+    west: bool,
 }
 
 impl TrackPoint {
-    fn new(kind: char) -> TrackPoint {
+    fn new(kind: char, point: Point) -> TrackPoint {
         TrackPoint {
             kind,
-            north: None,
-            south: None,
-            east: None,
-            west: None
+            point,
+            north: false,
+            south: false,
+            east: false,
+            west: false
         }
     }
 
-    fn directions(&self) -> Vec<(Direction, Point)> {
+    fn directions(&self) -> Vec<Direction> {
         let mut dirs = Vec::new();
-        if let Some(p) = self.north {
-            dirs.push((Direction::North, p));
-        }
-        if let Some(p) = self.south {
-            dirs.push((Direction::South, p));
-        }
-        if let Some(p) = self.east {
-            dirs.push((Direction::East, p));
-        }
-        if let Some(p) = self.west {
-            dirs.push((Direction::West, p));
-        }
+        if self.north { dirs.push(Direction::North); }
+        if self.south { dirs.push(Direction::South); }
+        if self.east { dirs.push(Direction::East); }
+        if self.west { dirs.push(Direction::West); }
         return dirs;
     }
 }
@@ -49,7 +42,8 @@ struct Cart {
     turns: u64
 }
 
-fn each_tracked_point(lines: &[String]) -> HashSet<(Point, char)> {
+/// Every point that seems worth considering as a piece of track.
+fn every_tracked_point(lines: &[String]) -> HashSet<(Point, char)> {
     let mut points = HashSet::new();
     for (y, line) in lines.iter().enumerate()  {
         for (x, c) in line.chars().enumerate() {
@@ -74,21 +68,20 @@ fn build_track(lines: &[String]) -> (HashMap<Point, TrackPoint>, Vec<Cart>) {
     let mut track_map: HashMap<Point, TrackPoint> = HashMap::new();
     let mut carts = Vec::new();
     let mut cart_id = 0;
-    let tracked_points = each_tracked_point(lines);
+    let tracked_points = every_tracked_point(lines);
 
     // Prepare track data
     for (point, c) in tracked_points.iter() {
-        track_map.insert(*point, TrackPoint::new(*c));
+        track_map.insert(*point, TrackPoint::new(*c, *point));
     }
 
     for (point, c) in tracked_points.iter().cloned() {
-        let north = point.shift_direction(Direction::North, 1);
-        let south = point.shift_direction(Direction::South, 1);
-        let north_could_connect = track_map.get(&north).map(|tp| can_connect_north_south(tp.kind)).unwrap_or(false);
-        let south_could_connect = track_map.get(&south).map(|tp| can_connect_north_south(tp.kind)).unwrap_or(false);
-        let track_point = track_map.get_mut(&point).unwrap();
+        let north_point = point.shift_direction(Direction::North, 1);
+        let south_point = point.shift_direction(Direction::South, 1);
+        let north_could_connect = track_map.get(&north_point).map(|tp| can_connect_north_south(tp.kind)).unwrap_or(false);
+        let south_could_connect = track_map.get(&south_point).map(|tp| can_connect_north_south(tp.kind)).unwrap_or(false);
 
-        let (n, s, e, w) = match c {
+        let (north, south, east, west) = match c {
             '-' => (false, false, true, true),
             '|' => (true, true, false, false),
             '/' => match (north_could_connect, south_could_connect) {
@@ -116,23 +109,11 @@ fn build_track(lines: &[String]) -> (HashMap<Point, TrackPoint>, Vec<Cart>) {
             }
         };
 
-        let east = point.shift_direction(Direction::East, 1);
-        let west = point.shift_direction(Direction::West, 1);
-        if n {
-            track_point.north = Some(north);
-        }
-
-        if s {
-            track_point.south = Some(south);
-        }
-
-        if e {
-            track_point.east = Some(east);
-        }
-    
-        if w {
-            track_point.west = Some(west);
-        }
+        let track_point = track_map.get_mut(&point).unwrap();
+        track_point.north = north;
+        track_point.south = south;
+        track_point.east = east;
+        track_point.west = west;
     }
 
     return (track_map, carts);
@@ -145,7 +126,11 @@ fn tick_cart(cart: &mut Cart, track: &HashMap<Point, TrackPoint>) {
     let next_available_directions = next_track.directions();
     let next_direction = match next_available_directions.len() {
         // Straight track
-        2 => next_available_directions.iter().filter(|(_, p)| *p != cart.pos).next().unwrap().0,
+        2 => next_available_directions.iter()
+            .cloned()
+            .filter(|dir| next_track.point.shift_direction(*dir, 1) != cart.pos)
+            .next()
+            .unwrap(),
         // Intersection
         4 => {
             let next_dir = match cart.turns % 3 {
@@ -170,11 +155,25 @@ fn tick_cart(cart: &mut Cart, track: &HashMap<Point, TrackPoint>) {
     cart.direction = next_direction;
 }
 
+fn collisions(carts: &[Cart]) -> HashSet<u64> {
+    let mut collided = HashSet::new();
+    for cart_a in carts.iter() {
+        for cart_b in carts.iter() {
+            if cart_a.id == cart_b.id { continue; }
+            if cart_a.pos == cart_b.pos {
+                collided.insert(cart_a.id);
+                collided.insert(cart_b.id);
+            }
+        }
+    }
+    return collided;
+}
+
 fn main() {
     let input = adventlib::read_input_lines("input.txt");
 
     let (track, mut carts) = build_track(&input);
-    loop {
+    while carts.len() > 1 {
         // Sort the carts so collisions happen in the correct order
         carts.sort_unstable_by(|a, b| {
             a.pos.y.cmp(&b.pos.y).then(a.pos.x.cmp(&b.pos.x))
@@ -183,27 +182,15 @@ fn main() {
         let cart_ids: Vec<u64> = carts.iter().map(|cart| cart.id).collect();
 
         for id in cart_ids {
+            // Only tick carts that still exist. Since carts can disappear in the middle of the tick,
+            // it's possible that they _don't_ still exist.
             if let Some(mut cart) = carts.iter_mut().find(|cart| cart.id == id) {
                 tick_cart(&mut cart, &track);
             }
-            let mut to_remove = HashSet::new();
-            for cart_a in carts.iter() {
-                for cart_b in carts.iter() {
-                    if cart_a.id == cart_b.id { continue; }
-                    if cart_a.pos == cart_b.pos {
-                        println!("CRASH! between carts {} and {}", cart_a.id, cart_b.id);
-                        to_remove.insert(cart_a.id);
-                        to_remove.insert(cart_b.id);
-                    }
-                }
-            }
             // Remove crashed carts
+            let to_remove = collisions(&carts);
             carts.retain(|cart| !to_remove.contains(&cart.id));
         }
-
-        if carts.len() <= 1 {
-            println!("Carts are gone: {:?}", carts);
-            break;
-        }
     }
+    println!("Carts are gone: {:?}", carts);
 }
