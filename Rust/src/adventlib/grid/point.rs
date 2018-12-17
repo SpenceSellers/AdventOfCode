@@ -79,6 +79,39 @@ impl Direction {
     }
 }
 
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Default)]
+pub struct DirectionSet {
+    pub north: bool,
+    pub south: bool,
+    pub east: bool,
+    pub west: bool,
+}
+
+impl DirectionSet {
+    pub fn directions(&self) -> Vec<Direction> {
+        let mut dirs = Vec::new();
+        if self.north { dirs.push(Direction::North); }
+        if self.south { dirs.push(Direction::South); }
+        if self.east { dirs.push(Direction::East); }
+        if self.west { dirs.push(Direction::West); }
+        return dirs;
+    }
+
+    pub fn from_str(s: &str) -> Option<DirectionSet> {
+        let mut dset: DirectionSet = Default::default();
+        for c in s.chars() {
+            match c {
+                'n' => { dset.north = true; }
+                's' => { dset.south = true; }
+                'e' => { dset.east = true; }
+                'w' => { dset.west = true; }
+                _ => { return None; }
+            }
+        }
+        return Some(dset);
+    }
+}
+
 mod test {
     use super::*;
     #[test]
