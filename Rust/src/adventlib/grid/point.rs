@@ -49,6 +49,18 @@ impl Point {
             move |x| yrange.clone().into_iter().map(move |y| Point::new(x, y))
         )
     }
+
+    /// Points in a horizontal line, end-exclusive.
+    pub fn in_x_line(y: i64, x_start: i64, x_end: i64) -> impl Iterator<Item=Point> {
+        assert!(x_start <= x_end);
+        (x_start..x_end).into_iter().map(move |x| Point::new(x, y))
+    }
+
+    /// Points in a vertical line, end-exclusive.
+    pub fn in_y_line(x: i64, y_start: i64, y_end: i64) -> impl Iterator<Item=Point> {
+        assert!(y_start <= y_end);
+        (y_start..y_end).into_iter().map(move |y| Point::new(x, y))
+    }
 }
 
 #[derive(PartialEq, Eq, Hash, Copy, Clone, Debug)]

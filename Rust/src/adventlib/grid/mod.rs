@@ -3,11 +3,12 @@ pub mod point;
 pub mod solid_grid;
 pub mod calculated_grid;
 pub mod window;
+pub mod hash_grid;
 pub use self::point::*;
 
 pub trait GridView {
     type Item;
-    fn get_cell(&self, pos: Point) -> Self::Item;
+    fn get_cell(self, pos: Point) -> Self::Item;
 
     fn windowed(self, bound: RectangleBounds) -> window::GridWindow<Self> where
         Self: std::marker::Sized
@@ -19,6 +20,14 @@ pub trait GridView {
     }
 }
 
+impl<'a, T> GridView for &'a T 
+where T: GridView + 'a {
+    type Item = T::Item;
+    fn get_cell(self, pos: Point) -> Self::Item {
+        (*self).get_cell(pos)
+    }
+}
+
 pub trait DefinedSizeGrid: GridView {
     fn width(&self) -> usize;
     fn height(&self) -> usize;
@@ -27,10 +36,13 @@ pub trait DefinedSizeGrid: GridView {
         RectangleBounds::new(Point::new(0,0), Point::new(self.width() as i64, self.height() as i64)).unwrap()
     }
 
-    fn to_solid(self) -> solid_grid::SolidGrid<<Self as GridView>::Item> where
-    Self: std::marker::Sized {
-        solid_grid::SolidGrid::new_from_fn(self.width(), self.height(), |x,y| self.get_cell(Point::new(x as i64,y as i64)))
-    }
+    // fn to_solid(self) -> solid_grid::SolidGrid<<Self as GridView>::Item> 
+    // where Self: std::marker::Sized,
+    // <Self as GridView>::Item: Clone {
+    //     let s = &self;
+    //     let f = |x,y| s.get_cell(Point::new(x as i64,y as i64).clone());
+    //     solid_grid::SolidGrid::new_from_fn(self.width(), self.height(), &f)
+    // }
 }
 
 #[derive(PartialEq, Eq, Copy, Clone, Debug)]
@@ -57,13 +69,3 @@ impl RectangleBounds {
         point.x >= self.lesser().x && point.x < self.greater().x && point.y >= self.lesser().y && point.y < self.greater().y
     }
 }
-
-// struct OpenGrid<T> {
-//     cells: HashMap<Point, T>
-// }
-
-// impl<T> Grid<Option<&T>> for OpenGrid<T> {
-//     fn get(&self, pos: Point) -> Option<T> {
-//         self.cells.get(&pos)
-//     }
-// }

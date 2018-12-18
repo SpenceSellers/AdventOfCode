@@ -12,11 +12,11 @@ impl<F, T> CalculatedGrid<F>
     }
 }
 
-impl<F, T> GridView for CalculatedGrid<F>
+impl<F, T> GridView for &CalculatedGrid<F>
     where F: Fn(Point) -> T {
     type Item = T;
     
-    fn get_cell(&self, pos: Point) -> T {
+    fn get_cell(self, pos: Point) -> T {
         (self.func)(pos)
     }
 }
