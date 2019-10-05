@@ -31,8 +31,8 @@ impl Point {
 
     pub fn shift_direction(self, dir: Direction, n: i64) -> Point {
         let dp = match dir {
-            Direction::North => Point {x: 0, y: n},
-            Direction::South => Point {x: 0, y: -n},
+            Direction::North => Point {x: 0, y: -n},
+            Direction::South => Point {x: 0, y: n},
             Direction::East => Point {x: n, y: 0},
             Direction::West => Point {x: -n, y: 0}
         };
