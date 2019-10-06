@@ -37,7 +37,7 @@
      ai)))
 
 (define (problem2 input)
-  (define (differs-by-one? a b) (equal? (string-length (commonality a b)) (- (string-length a) 1)))
+  (define (differs-by-one? a b) (equal? (string-length (commonality a b)) (sub1 (string-length a))))
   (for*/first ([a input]
                [b input]
                #:when (differs-by-one? a b))
