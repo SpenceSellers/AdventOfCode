@@ -39,8 +39,25 @@
     (let ([p (point x y)]) (hash-set! grid p (proc p))))
   grid)
 
-;(define (grid-set grid point value)
-  
+; Returns `(min-inclusive max-exclusive)
+(define (grid-bounding-box grid)
+  (define points (hash-keys grid))
+  (define xs (map point-x points))
+  (define ys (map point-y points))
+  (list (point (apply min xs) (apply min ys)) (point (add1 (apply max xs)) (add1 (apply max ys)))))
 
+(define (points-in-bounding-box min max)
+  (for*/list ([x (in-range (point-x min) (point-x max))]
+         [y (in-range (point-y min) (point-y max))])
+    (point x y)))
+
+(define (show-grid grid [disp identity])
+  (match-define (list (point minx miny) (point maxx maxy)) (grid-bounding-box grid))
+  (define (row y) (string-join (for/list ([x (in-range minx maxx)]) (disp (hash-ref grid (point x y) #f))) ""))
+  (string-join (for/list ([y (in-range miny maxy)]) (row y)) "\n"))
+
+(define m (grid-build 10 10 (const "e")))
+
+(display (show-grid m))
 
 
