@@ -51,13 +51,17 @@
          [y (in-range (point-y min) (point-y max))])
     (point x y)))
 
-(define (show-grid grid [disp identity])
+(define (show-grid-default item)
+  (cond
+    [(symbol? item) (symbol->string item)]
+    [(string? item) item]
+    [(eq? #f item) "."]
+    [else "?"]))
+  
+
+(define (show-grid grid [disp show-grid-default] [empty-value #f])
   (match-define (list (point minx miny) (point maxx maxy)) (grid-bounding-box grid))
-  (define (row y) (string-join (for/list ([x (in-range minx maxx)]) (disp (hash-ref grid (point x y) #f))) ""))
+  (define (row y) (string-join (for/list ([x (in-range minx maxx)]) (disp (hash-ref grid (point x y) empty-value))) ""))
   (string-join (for/list ([y (in-range miny maxy)]) (row y)) "\n"))
-
-(define m (grid-build 10 10 (const "e")))
-
-(display (show-grid m))
 
 
