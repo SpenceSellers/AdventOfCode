@@ -5,6 +5,9 @@
 (define (puzzle-input puzzle-num-str)
   (file->lines (string-append "inputs/" puzzle-num-str ".txt")))
 
+(define-syntax-rule (values->list expr)
+  (call-with-values (λ () expr) list))
+
 ;; HASH count functions
 
 (define (hash-add-count hash k)
