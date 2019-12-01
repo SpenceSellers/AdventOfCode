@@ -11,7 +11,6 @@ massFuel mass
 
 main :: IO ()
 main = do
-    modules <- (fmap . fmap) read inputLines
-
-    firstStar $ sum $ moduleMass <$> modules
-    secondStar $ sum $ (massFuel . moduleMass) <$> modules
+    firstStar . sum . fmap moduleMass =<< modules
+    secondStar . sum . fmap (massFuel . moduleMass) =<< modules
+    where modules = (fmap . fmap) read inputLines
