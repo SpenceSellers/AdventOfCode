@@ -18,6 +18,12 @@ inputFile = readFile =<< fromMaybe "input.txt" <$> firstArg
 inputLines :: IO [String]
 inputLines = lines <$> inputFile
 
+firstStar :: Show a => a -> IO ()
+firstStar result = putStrLn $ "First Star: " ++ (show result)
+
+secondStar :: Show a => a -> IO ()
+secondStar result = putStrLn $ "Second Star: " ++ (show result)
+
 -- The set of COMPLETE windows across a list
 windows :: Int -> [a] -> [[a]]
 windows n l@(_:rest)
