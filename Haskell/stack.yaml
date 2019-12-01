@@ -39,7 +39,7 @@ packages:
 - .
 # Dependency packages to be pulled from upstream that are not in the resolver
 # (e.g., acme-missiles-0.3)
-extra-deps: [containers-0.5.10.2]
+extra-deps: [containers-0.5.10.2, 'binary-0.8.7.0@sha256:ae3e6cca723ac55c54bbb3fa771bcf18142bc727afd57818e66d6ee6c8044f12,7705']
 
 # Override default flag values for local packages and extra-deps
 flags: {}
