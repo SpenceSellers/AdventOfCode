@@ -4,7 +4,8 @@
 ; Part 1
 (define (module->mass module) (- (quotient module 3) 2))
 
-(apply + (map (compose module->mass string->number) (puzzle-input "19-01")))
+(define module-masses (map (compose module->mass string->number) (puzzle-input "19-01")))
+(apply + module-masses)
 
 ; Part 2
 (define (mass->fuel mass)
@@ -13,4 +14,4 @@
     [(<= additional-fuel 0) mass]
     [else (+ mass (mass->fuel additional-fuel))]))
 
-(apply + (map (compose mass->fuel module->mass string->number) (puzzle-input "19-01")))
+(apply + (map mass->fuel module-masses))

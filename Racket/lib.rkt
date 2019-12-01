@@ -60,7 +60,6 @@
     [(string? item) item]
     [(eq? #f item) "."]
     [else "?"]))
-  
 
 (define (show-grid grid [disp show-grid-default] [empty-value #f])
   (match-define (list (point minx miny) (point maxx maxy)) (grid-bounding-box grid))
