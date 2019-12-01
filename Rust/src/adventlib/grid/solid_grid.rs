@@ -7,7 +7,7 @@ pub struct SolidGrid<T> {
 }
 
 impl<T> SolidGrid<T> {
-    pub fn new_from_fn(size_x: usize, size_y: usize, builder: impl Fn(usize, usize) -> T) -> Self {
+    pub fn new_from_fn(size_x: usize, size_y: usize, builder: &impl Fn(usize, usize) -> T) -> Self {
         let mut rows = Vec::new();
         for y in 0..size_y {
             let mut row = Vec::new();
@@ -33,7 +33,7 @@ impl<T> SolidGrid<T> {
 
 impl<T: Clone> SolidGrid<T> {
     pub fn new_cloned(size_x: usize, size_y: usize, template: &T) -> Self {
-        SolidGrid::new_from_fn(size_x, size_y, |_, _| template.clone())
+        SolidGrid::new_from_fn(size_x, size_y, &|_, _| template.clone())
     }
 }
 
@@ -54,7 +54,7 @@ impl<T: Clone> SolidGrid<T> {
 
 impl<'a, T> GridView for &'a SolidGrid<T> {
     type Item = Option<&'a T>;
-    fn get_cell(&self, pos: Point) -> Self::Item {
+    fn get_cell(self, pos: Point) -> Self::Item {
         if self.bounds().contains(pos) {
             Some(self.get(pos))
         } else {

@@ -49,6 +49,18 @@ impl Point {
             move |x| yrange.clone().into_iter().map(move |y| Point::new(x, y))
         )
     }
+
+    /// Points in a horizontal line, end-exclusive.
+    pub fn in_x_line(y: i64, x_start: i64, x_end: i64) -> impl Iterator<Item=Point> {
+        assert!(x_start <= x_end);
+        (x_start..x_end).into_iter().map(move |x| Point::new(x, y))
+    }
+
+    /// Points in a vertical line, end-exclusive.
+    pub fn in_y_line(x: i64, y_start: i64, y_end: i64) -> impl Iterator<Item=Point> {
+        assert!(y_start <= y_end);
+        (y_start..y_end).into_iter().map(move |y| Point::new(x, y))
+    }
 }
 
 #[derive(PartialEq, Eq, Hash, Copy, Clone, Debug)]
@@ -76,6 +88,39 @@ impl Direction {
             Direction::South => Direction::East,
             Direction::West => Direction::South,
         }
+    }
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Default)]
+pub struct DirectionSet {
+    pub north: bool,
+    pub south: bool,
+    pub east: bool,
+    pub west: bool,
+}
+
+impl DirectionSet {
+    pub fn directions(&self) -> Vec<Direction> {
+        let mut dirs = Vec::new();
+        if self.north { dirs.push(Direction::North); }
+        if self.south { dirs.push(Direction::South); }
+        if self.east { dirs.push(Direction::East); }
+        if self.west { dirs.push(Direction::West); }
+        return dirs;
+    }
+
+    pub fn from_str(s: &str) -> Option<DirectionSet> {
+        let mut dset: DirectionSet = Default::default();
+        for c in s.chars() {
+            match c {
+                'n' => { dset.north = true; }
+                's' => { dset.south = true; }
+                'e' => { dset.east = true; }
+                'w' => { dset.west = true; }
+                _ => { return None; }
+            }
+        }
+        return Some(dset);
     }
 }
 

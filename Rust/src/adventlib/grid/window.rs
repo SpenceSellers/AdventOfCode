@@ -7,7 +7,7 @@ pub struct GridWindow<G> {
 
 impl<G: GridView> GridView for GridWindow<G> {
     type Item = G::Item;
-    fn get_cell(&self, pos: Point) -> Self::Item {
+    fn get_cell(self, pos: Point) -> Self::Item {
         // Todo block too large
         let adjusted = pos.subtract_point(self.region.lesser());
         self.grid.get_cell(adjusted)

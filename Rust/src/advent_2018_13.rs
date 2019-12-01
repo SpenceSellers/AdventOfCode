@@ -6,10 +6,7 @@ use adventlib::grid::point::*;
 struct TrackPoint {
     kind: char,
     point: Point,
-    north: bool,
-    south: bool,
-    east: bool,
-    west: bool,
+    connected: DirectionSet
 }
 
 impl TrackPoint {
@@ -17,21 +14,10 @@ impl TrackPoint {
         TrackPoint {
             kind,
             point,
-            north: false,
-            south: false,
-            east: false,
-            west: false
+            connected: Default::default()
         }
     }
 
-    fn directions(&self) -> Vec<Direction> {
-        let mut dirs = Vec::new();
-        if self.north { dirs.push(Direction::North); }
-        if self.south { dirs.push(Direction::South); }
-        if self.east { dirs.push(Direction::East); }
-        if self.west { dirs.push(Direction::West); }
-        return dirs;
-    }
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -81,27 +67,27 @@ fn build_track(lines: &[String]) -> (HashMap<Point, TrackPoint>, Vec<Cart>) {
         let north_could_connect = track_map.get(&north_point).map(|tp| can_connect_north_south(tp.kind)).unwrap_or(false);
         let south_could_connect = track_map.get(&south_point).map(|tp| can_connect_north_south(tp.kind)).unwrap_or(false);
 
-        let (north, south, east, west) = match c {
-            '-' => (false, false, true, true),
-            '|' => (true, true, false, false),
+        let dir_str = match c {
+            '-' => "ew",
+            '|' => "ns",
             '/' => match (north_could_connect, south_could_connect) {
-                (true, false) => (true, false, false, true),
-                (false, true) => (false, true, true, false),
+                (true, false) => "nw",
+                (false, true) => "se",
                 _ => panic!("Ambiguous corner at {:?}!", point),
             },
             '\\' => match (north_could_connect, south_could_connect) {
-                (true, false) => (true, false, true, false), 
-                (false, true) => (false, true, false, true), 
+                (true, false) => "ne", 
+                (false, true) => "sw", 
                 _ => panic!("Ambiguous corner at {:?}!", point),
             },
-            '+' => (true, true, true, true),
+            '+' => "nsew",
             _ => {
                 cart_id += 1;
                 let (dir, connects) = match c {
-                    'v' => (Direction::South, (true, true, false, false)),
-                    '>' => (Direction::East, (false, false, true, true)),
-                    '<' => (Direction::West, (false, false, true, true)),
-                    '^' => (Direction::North, (true, true, false, false)),
+                    'v' => (Direction::South, "ns"),
+                    '>' => (Direction::East, "ew"),
+                    '<' => (Direction::West, "ew"),
+                    '^' => (Direction::North, "ns"),
                     _ => panic!("Unknown map symbol: {}", c)
                 };
                 carts.push(Cart {pos: point, id: cart_id, turns: 0, direction: dir} );
@@ -110,10 +96,7 @@ fn build_track(lines: &[String]) -> (HashMap<Point, TrackPoint>, Vec<Cart>) {
         };
 
         let track_point = track_map.get_mut(&point).unwrap();
-        track_point.north = north;
-        track_point.south = south;
-        track_point.east = east;
-        track_point.west = west;
+        track_point.connected = DirectionSet::from_str(dir_str).unwrap();
     }
 
     return (track_map, carts);
@@ -123,7 +106,7 @@ fn tick_cart(cart: &mut Cart, track: &HashMap<Point, TrackPoint>) {
     let next_point = cart.pos.shift_direction(cart.direction, 1);
     let next_track = track.get(&next_point).unwrap();
 
-    let next_available_directions = next_track.directions();
+    let next_available_directions = next_track.connected.directions();
     let next_direction = match next_available_directions.len() {
         // Straight track
         2 => next_available_directions.iter()
