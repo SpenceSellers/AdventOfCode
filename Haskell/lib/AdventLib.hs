@@ -77,3 +77,7 @@ iterateMaybe :: (a -> Maybe a) -> a -> [a]
 iterateMaybe f initial = initial : case f initial of
     Just n -> iterateMaybe f n
     Nothing -> []
+
+(<$$>) :: (Functor f, Functor g) => (a -> b) -> f (g a) -> f (g b)
+(<$$>) = fmap . fmap
+infixr 8 <$$>
