@@ -24,6 +24,9 @@ letterNumber = do
 bracketed :: String -> Parser a -> Parser a
 bracketed (start:stop:_) p = Text.Parsec.between (string [start]) (string [stop]) p
 
+commaSeparated :: Parser a -> Parser [a]
+commaSeparated p = sepBy p (sym ",")
+
 charGrid :: Parser [[Char]]
 charGrid = many1 $ (many1 $ noneOf ['\n']) <* endOfLine
 
