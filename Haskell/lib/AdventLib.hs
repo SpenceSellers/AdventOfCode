@@ -81,3 +81,7 @@ iterateMaybe f initial = initial : case f initial of
 (<$$>) :: (Functor f, Functor g) => (a -> b) -> f (g a) -> f (g b)
 (<$$>) = fmap . fmap
 infixr 8 <$$>
+
+digits :: String -> [Int]
+digits s = read <$> digitStrings
+    where digitStrings = (\x -> [x]) <$> s
