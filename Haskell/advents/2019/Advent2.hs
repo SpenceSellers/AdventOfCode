@@ -12,7 +12,7 @@ executeStep state pos = case output of
     Just output -> Just $ state & ix outputIndex .~ output
     Nothing -> Nothing
     where [op, inputIndex1, inputIndex2, outputIndex] = traceShowId $ take 4 $ drop pos state
-          Just op = state ^? ix pos
+        --   Just op = state ^? ix pos
           Just input1 = state ^? ix inputIndex1
           Just input2 = state ^? ix inputIndex2
           output = applyOp op input1 input2
