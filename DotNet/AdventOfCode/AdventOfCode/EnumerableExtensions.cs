@@ -34,10 +34,12 @@ namespace AdventOfCode
         public static IEnumerable<T> Rotate<T>(this IList<T> items, int n)
         {
             n *= -1; // Rotate's contract is the opposite of the below code.
+            n %= items.Count; // Allow wrap-around.
             if (n < 0)
             {
                 n = items.Count + n;
             }
+
             var head = items.Take(n);
             return items.Skip(n).Concat(head);
         }

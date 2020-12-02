@@ -13,8 +13,8 @@ namespace AdventTests
             var l = new[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
             var result = l.Chunks(3).ToList();
             result.Should().HaveCount(4);
-            result[0].Should().BeEquivalentTo(new[] {1, 2, 3});
-            result[3].Should().BeEquivalentTo(new[] {10});
+            result[0].Should().Equal(1, 2, 3);
+            result[3].Should().Equal(10);
         }
 
         [Test]
@@ -23,17 +23,23 @@ namespace AdventTests
             var l = new[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
             var result = l.CompleteChunks(3).ToList();
             result.Should().HaveCount(3);
-            result[0].Should().BeEquivalentTo(new[] {1, 2, 3});
-            result[2].Should().BeEquivalentTo(new[] {7, 8, 9});
+            result[0].Should().Equal(1, 2, 3);
+            result[2].Should().Equal(7, 8, 9);
         }
 
         [Test]
-        public void CanRotateForwards()
+        public void CanRotate()
         {
             var l = new[] {1, 2, 3, 4, 5, 6};
             l.Rotate(-2).Should().Equal(3, 4, 5, 6, 1, 2);
             l.Rotate(2).Should().Equal(5, 6, 1, 2, 3, 4);
-            l.Rotate(0).Should().BeEquivalentTo(l);
+            l.Rotate(0).Should().Equal(l);
+            l.Rotate(6).Should().Equal(l);
+            l.Rotate(-6).Should().Equal(l);
+            l.Rotate(12).Should().Equal(l);
+            l.Rotate(-12).Should().Equal(l);
+            l.Rotate(14).Should().Equal(5, 6, 1, 2, 3, 4);
+            l.Rotate(10).Should().Equal(3, 4, 5, 6, 1, 2);
         }
 
         [Test]
