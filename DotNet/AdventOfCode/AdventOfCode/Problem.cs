@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Net;
 
 namespace AdventOfCode
 {
@@ -13,7 +12,6 @@ namespace AdventOfCode
         {
             Year = year;
             Day = day;
-
         }
         
         public abstract string PartOne(string[] input);
@@ -21,14 +19,14 @@ namespace AdventOfCode
 
         public void Run()
         {
-            var inputDir = Environment.GetEnvironmentVariable("INPUT_DIR");
+            var inputDir = Environment.GetEnvironmentVariable("INPUT_DIR") ?? Environment.CurrentDirectory;
             var path = $"{inputDir}/input-{Year}-{Day}.txt";
             var lines = File.ReadAllLines(path);
 
             try
             {
                 var result = PartOne(lines);
-                Console.WriteLine($"⭐ {result}");
+                Console.WriteLine($"⭐\n{result}");
             }
             catch (NotImplementedException e)
             {
@@ -38,7 +36,7 @@ namespace AdventOfCode
             try
             {
                 var result = PartTwo(lines);
-                Console.WriteLine($"⭐⭐ {result}");
+                Console.WriteLine($"⭐⭐\n{result}");
             }
             catch (NotImplementedException e)
             {
