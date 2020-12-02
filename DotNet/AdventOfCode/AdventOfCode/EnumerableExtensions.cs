@@ -25,6 +25,23 @@ namespace AdventOfCode
 
             yield return chunk;
         }
+
+        public static IEnumerable<IList<T>> CompleteChunks<T>(this IEnumerable<T> items, int n)
+        {
+            return Chunks(items, n).Where(chunk => chunk.Count == n);
+        }
+
+        public static IEnumerable<T> Rotate<T>(this IList<T> items, int n)
+        {
+            n *= -1; // Rotate's contract is the opposite of the below code.
+            if (n < 0)
+            {
+                n = items.Count + n;
+            }
+            var head = items.Take(n);
+            return items.Skip(n).Concat(head);
+        }
+        
         
         /// <summary>
         /// Returns all possible k-pairings, but not all possible _orderings_, of a sequence.

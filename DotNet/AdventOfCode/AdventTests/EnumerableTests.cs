@@ -18,6 +18,25 @@ namespace AdventTests
         }
 
         [Test]
+        public void CompleteChunksShouldDiscardEnd()
+        {
+            var l = new[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+            var result = l.CompleteChunks(3).ToList();
+            result.Should().HaveCount(3);
+            result[0].Should().BeEquivalentTo(new[] {1, 2, 3});
+            result[2].Should().BeEquivalentTo(new[] {7, 8, 9});
+        }
+
+        [Test]
+        public void CanRotateForwards()
+        {
+            var l = new[] {1, 2, 3, 4, 5, 6};
+            l.Rotate(-2).Should().Equal(3, 4, 5, 6, 1, 2);
+            l.Rotate(2).Should().Equal(5, 6, 1, 2, 3, 4);
+            l.Rotate(0).Should().BeEquivalentTo(l);
+        }
+
+        [Test]
         public void CombinationsShouldWork()
         {
             var l = new[] {1, 2, 3, 4};
