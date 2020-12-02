@@ -23,7 +23,7 @@ namespace AdventTests
             var l = new[] {1, 2, 3, 4};
             var result = l.Combinations(2).ToList();
 
-            int[][] answers = new[]
+            var answers = new[]
             {
                 new [] {1, 2},
                 new [] {1, 3},

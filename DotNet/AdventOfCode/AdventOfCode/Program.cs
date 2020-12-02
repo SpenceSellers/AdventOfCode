@@ -1,5 +1,4 @@
-﻿using System;
-using AdventOfCode.Days;
+﻿using AdventOfCode.Days;
 
 namespace AdventOfCode
 {
