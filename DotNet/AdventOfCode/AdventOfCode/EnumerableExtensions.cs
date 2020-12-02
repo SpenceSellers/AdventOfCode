@@ -1,4 +1,6 @@
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AdventOfCode
 {
@@ -19,6 +21,17 @@ namespace AdventOfCode
             }
 
             yield return chunk;
+        }
+        
+        public static IEnumerable<IEnumerable<T>> Combinations<T>(this IEnumerable<T> elements, int k)
+        {
+            if (k == 0)
+            {
+                return Enumerable.Repeat(Enumerable.Empty<T>(), 1);
+            }
+
+            var enumerable = elements.ToList();
+            return enumerable.SelectMany((e, i) => enumerable.Skip(i + 1).Combinations(k - 1).Select(c => Enumerable.Repeat(e, 1).Concat(c)));
         }
     }
 }
