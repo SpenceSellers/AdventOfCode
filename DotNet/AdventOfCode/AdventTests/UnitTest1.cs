@@ -35,5 +35,13 @@ namespace AdventTests
 
             result.Should().BeEquivalentTo(answers);
         }
+
+        [Test]
+        public void ProductShouldMultiplyCorrectly()
+        {
+            new[] {1, 2, 3}.Product().Should().Be(6);
+            new int[] { }.Product().Should().Be(1);
+            new[] {1, 2, 0, 5, 100, 200}.Product().Should().Be(0);
+        }
     }
 }
