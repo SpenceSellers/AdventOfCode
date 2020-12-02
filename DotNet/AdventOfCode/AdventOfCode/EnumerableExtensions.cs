@@ -33,5 +33,10 @@ namespace AdventOfCode
             var enumerable = elements.ToList();
             return enumerable.SelectMany((e, i) => enumerable.Skip(i + 1).Combinations(k - 1).Select(c => Enumerable.Repeat(e, 1).Concat(c)));
         }
+
+        public static int Product(this IEnumerable<int> items)
+        {
+            return items.Aggregate(1, (current, i) => current * i);
+        }
     }
 }
