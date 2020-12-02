@@ -1,6 +1,6 @@
 namespace AdventOfCode.AdventLib.Grid
 {
-    public interface IMutableGrid<in T>
+    public interface IMutableGrid<T>: IGrid<T>
     {
         public void Set(GridPoint point, T value);
     }
