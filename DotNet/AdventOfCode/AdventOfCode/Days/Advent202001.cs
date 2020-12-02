@@ -19,14 +19,12 @@ namespace AdventOfCode.Days
             return SolveFor(input, 3);
         }
         
-        private static string SolveFor(IEnumerable<string> input, int n)
-        {
-            return input
+        private static string SolveFor(IEnumerable<string> input, int n) =>
+            input
                 .Select(int.Parse)
                 .Combinations(n)
                 .First(pairs => pairs.Sum() == 2020)
                 .Product()
                 .ToString();
-        }
     }
 }
