@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 
 namespace AdventOfCode.Days
@@ -12,13 +11,13 @@ namespace AdventOfCode.Days
         public override string PartOne(string[] input) =>
             input
                 .Select(ParseLine)
-                .Count(p => p.IsValidOne())
+                .Count(p => p.IsValidByCount())
                 .ToString();
 
         public override string PartTwo(string[] input) =>
             input
                 .Select(ParseLine)
-                .Count(p => p.IsValidTwo())
+                .Count(p => p.IsValidByPosition())
                 .ToString();
 
         private class PasswordLine
@@ -28,13 +27,13 @@ namespace AdventOfCode.Days
             public char Char;
             public string Password;
 
-            public bool IsValidOne()
+            public bool IsValidByCount()
             {
                 var count = Password.ToCharArray().Count(c => c == Char);
                 return count <= Max && count >= Min;
             }
 
-            public bool IsValidTwo()
+            public bool IsValidByPosition()
             {
                 var first = Password[Min - 1] == Char;
                 var second = Password[Max - 1] == Char;
