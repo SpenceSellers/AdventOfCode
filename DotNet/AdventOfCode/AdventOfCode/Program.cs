@@ -6,7 +6,7 @@ namespace AdventOfCode
     {
         static void Main(string[] args)
         {
-            new Advent202001().Run();
+            new Advent202002().Run();
             
         }
     }
