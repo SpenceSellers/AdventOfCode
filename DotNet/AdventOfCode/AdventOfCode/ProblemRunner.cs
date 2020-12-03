@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace AdventOfCode
@@ -33,20 +34,21 @@ namespace AdventOfCode
             var path = $"{inputDir}/{_inputPrefix}-{problem.Year}-{problem.Day}.txt";
             var lines = File.ReadAllLines(path);
 
+            if (_runPartOne) RunProblem("⭐", () => problem.PartOne(lines));
+            if (_runPartTwo) RunProblem("⭐⭐", () => problem.PartTwo(lines));
+        }
+
+        private void RunProblem(string title, Func<string> func)
+        {
             try
             {
-                var result = problem.PartOne(lines);
-                Console.WriteLine($"⭐\n{result}");
-            }
-            catch (NotImplementedException e)
-            {
-                
-            }
-            
-            try
-            {
-                var result = problem.PartTwo(lines);
-                Console.WriteLine($"⭐⭐\n{result}");
+                var stopwatch = new Stopwatch();
+                stopwatch.Start();
+                var result = func();
+                stopwatch.Stop();
+                Console.WriteLine($"== {title} ==");
+                Console.WriteLine($"Complete in {stopwatch.ElapsedMilliseconds} ms");
+                Console.WriteLine(result);
             }
             catch (NotImplementedException e)
             {
