@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AdventOfCode.Days
@@ -8,17 +9,17 @@ namespace AdventOfCode.Days
         {
         }
 
-        public override string PartOne(string[] input)
-        {
-            var passwords = input.Select(ParseLine);
-            return passwords.Count(p => p.IsValidOne()).ToString();
-        }
-        
-        public override string PartTwo(string[] input)
-        {
-            var passwords = input.Select(ParseLine);
-            return passwords.Count(p => p.IsValidTwo()).ToString();
-        }
+        public override string PartOne(string[] input) =>
+            input
+                .Select(ParseLine)
+                .Count(p => p.IsValidOne())
+                .ToString();
+
+        public override string PartTwo(string[] input) =>
+            input
+                .Select(ParseLine)
+                .Count(p => p.IsValidTwo())
+                .ToString();
 
         private class PasswordLine
         {
