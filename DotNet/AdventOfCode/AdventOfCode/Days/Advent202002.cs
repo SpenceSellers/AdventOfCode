@@ -35,9 +35,9 @@ namespace AdventOfCode.Days
 
             public bool IsValidTwo()
             {
-                var first = Password[Min - 1] == Char ? 1 : 0;
-                var second = Password[Max - 1] == Char ? 1 : 0;
-                return first + second == 1;
+                var first = Password[Min - 1] == Char;
+                var second = Password[Max - 1] == Char;
+                return first ^ second;
             }
         }
 
