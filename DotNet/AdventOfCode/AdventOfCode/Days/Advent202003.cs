@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -27,28 +28,24 @@ namespace AdventOfCode.Days
                 new GridPoint(1, 2)
             };
 
-            return slopes.Select(s => new BigInteger(TreesForSlope(input, s))).Product().ToString();
+            return slopes
+                .Select(s => new BigInteger(TreesForSlope(input, s)))
+                .Product()
+                .ToString();
         }
 
         private static int TreesForSlope(string[] input, GridPoint slope)
         {
-            var grid = SolidGrid<char>.Extract(input)
+            var patternWillRepeatTimes = (input.Length - 1) / slope.Y;
+            var treeGrid = SolidGrid<char>.Extract(input)
                 .Map(x => x == '#')
-                .Wrapping();
-            var pos = GridPoint.Origin;
-            var treeCount = 0;
-            while (pos.Y < input.Length)
-            {
-                var tree = grid.Get(pos);
-                if (tree)
-                {
-                    treeCount++;
-                }
-
-                pos += slope;
-            }
-
-            return treeCount;
+                .Wrapping()
+                .Warp(p => new GridPoint(p.X * slope.X, p.Y * slope.Y)) // Squish the world to just trees aligned to our slope.
+                .Warp(p => new GridPoint(p.X + p.Y, p.Y)) // Turn diagonals into vertical
+                .Windowed(new GridRegion(GridPoint.Origin, 1, patternWillRepeatTimes + 1)) // Focus on the now-vertical path we walked down
+                .AllCells()
+                .Count(x => x);
+            return treeGrid;
         }
     }
 }
