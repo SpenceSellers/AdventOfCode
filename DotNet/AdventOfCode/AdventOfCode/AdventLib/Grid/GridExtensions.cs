@@ -8,5 +8,10 @@ namespace AdventOfCode.AdventLib.Grid
         {
             return new MappedGrid<TOld,TNew>(grid, func);
         }
+
+        public static WrappingGrid<T> Wrapping<T>(this IDefinedSizeGrid<T> grid)
+        {
+            return new WrappingGrid<T>(grid);
+        }
     }
 }

@@ -30,15 +30,16 @@ namespace AdventOfCode.Days
             return slopes.Select(s => new BigInteger(TreesForSlope(input, s))).Product().ToString();
         }
 
-        private static int TreesForSlope(IEnumerable<string> input, GridPoint slope)
+        private static int TreesForSlope(string[] input, GridPoint slope)
         {
-            var cells = input.Select(line => line.ToCharArray().Select(x => x == '#').ToArray()).ToArray();
-            var width = cells[0].Length;
+            var grid = SolidGrid<char>.Extract(input)
+                .Wrapping()
+                .Map(x => x == '#');
             var pos = new GridPoint(0, 0);
             var treeCount = 0;
-            while (pos.Y < cells.Length)
+            while (pos.Y < input.Length)
             {
-                var tree = cells[pos.Y][pos.X % width];
+                var tree = grid.Get(pos);
                 if (tree)
                 {
                     treeCount++;

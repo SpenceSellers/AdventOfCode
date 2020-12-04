@@ -1,12 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 
 namespace AdventOfCode.AdventLib.Grid
 {
-    public class SolidGrid<T> : IGrid<T>, IMutableGrid<T>
+    public class SolidGrid<T> : IMutableGrid<T>, IDefinedSizeGrid<T>
     {
         public int Width { get; }
         public int Height { get; }
