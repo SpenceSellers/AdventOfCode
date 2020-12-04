@@ -41,7 +41,7 @@ namespace AdventOfCode.Days
                 .Map(x => x == '#')
                 .Wrapping()
                 .Warp(p => new GridPoint(p.X * slope.X, p.Y * slope.Y)) // Squish the world to just trees aligned to our slope.
-                .Warp(p => new GridPoint(p.X + p.Y, p.Y)) // Turn diagonals into vertical
+                .Warp(p => new GridPoint(p.X + p.Y, p.Y)) // Turn diagonals into verticals
                 .Windowed(new GridRegion(GridPoint.Origin, 1, patternWillRepeatTimes + 1)) // Focus on the now-vertical path we walked down
                 .AllCells()
                 .Count(x => x);
