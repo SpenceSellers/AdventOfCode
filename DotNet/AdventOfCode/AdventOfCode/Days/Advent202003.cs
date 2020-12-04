@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using AdventOfCode.AdventLib.Grid;
@@ -29,26 +30,21 @@ namespace AdventOfCode.Days
             return slopes.Select(s => new BigInteger(TreesForSlope(input, s))).Product().ToString();
         }
 
-        private int TreesForSlope(string[] input, GridPoint slope)
+        private static int TreesForSlope(IEnumerable<string> input, GridPoint slope)
         {
             var cells = input.Select(line => line.ToCharArray().Select(x => x == '#').ToArray()).ToArray();
             var width = cells[0].Length;
             var pos = new GridPoint(0, 0);
             var treeCount = 0;
-            while (true)
+            while (pos.Y < cells.Length)
             {
-                if (pos.Y >= cells.Length)
-                {
-                    break;
-                }
-
                 var tree = cells[pos.Y][pos.X % width];
                 if (tree)
                 {
                     treeCount++;
                 }
 
-                pos = pos + slope;
+                pos += slope;
             }
 
             return treeCount;
