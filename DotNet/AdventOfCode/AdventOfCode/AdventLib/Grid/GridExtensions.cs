@@ -24,6 +24,12 @@ namespace AdventOfCode.AdventLib.Grid
             return new SolidGrid<T>(grid);
         }
 
+        public static WindowGrid<T> Windowed<T>(this IGrid<T> grid, GridRegion window)
+        {
+            return new WindowGrid<T>(grid, window);
+        }
+
+        // AKA "zip"
         public static IGrid<TNew> Overlay<TOld1, TOld2, TNew>(
             IGrid<TOld1> a,
             IGrid<TOld2> b,
