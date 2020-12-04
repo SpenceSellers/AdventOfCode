@@ -37,15 +37,14 @@ namespace AdventOfCode.Days
         private static int TreesForSlope(string[] input, GridPoint slope)
         {
             var patternWillRepeatTimes = (input.Length - 1) / slope.Y;
-            var treeGrid = SolidGrid<char>.Extract(input)
+            return SolidGrid<char>.Extract(input)
                 .Map(c => c == '#')
                 .Wrapping()
                 .Warp(p => new GridPoint(p.X * slope.X, p.Y * slope.Y)) // Squish the world to just trees aligned to our slope.
                 .Warp(p => new GridPoint(p.X + p.Y, p.Y)) // Turn diagonals into verticals
                 .Windowed(new GridRegion(GridPoint.Origin, 1, patternWillRepeatTimes + 1)) // Focus on the now-vertical path we walked down
                 .AllCells()
-                .Count(t => t); // Count the trees (true's) on our straight walk.
-            return treeGrid;
+                .Count(t => t);
         }
     }
 }
