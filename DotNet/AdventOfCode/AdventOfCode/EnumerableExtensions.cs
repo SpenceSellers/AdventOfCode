@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 
 namespace AdventOfCode
 {
@@ -65,6 +66,11 @@ namespace AdventOfCode
         public static int Product(this IEnumerable<int> items)
         {
             return items.Aggregate(1, (current, i) => current * i);
+        }
+        
+        public static BigInteger Product(this IEnumerable<BigInteger> items)
+        {
+            return items.Aggregate(BigInteger.One, (current, i) => current * i);
         }
     }
 }
