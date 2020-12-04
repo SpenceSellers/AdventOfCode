@@ -38,13 +38,13 @@ namespace AdventOfCode.Days
         {
             var patternWillRepeatTimes = (input.Length - 1) / slope.Y;
             var treeGrid = SolidGrid<char>.Extract(input)
-                .Map(x => x == '#')
+                .Map(c => c == '#')
                 .Wrapping()
                 .Warp(p => new GridPoint(p.X * slope.X, p.Y * slope.Y)) // Squish the world to just trees aligned to our slope.
                 .Warp(p => new GridPoint(p.X + p.Y, p.Y)) // Turn diagonals into verticals
                 .Windowed(new GridRegion(GridPoint.Origin, 1, patternWillRepeatTimes + 1)) // Focus on the now-vertical path we walked down
                 .AllCells()
-                .Count(x => x);
+                .Count(t => t); // Count the trees (true's) on our straight walk.
             return treeGrid;
         }
     }
