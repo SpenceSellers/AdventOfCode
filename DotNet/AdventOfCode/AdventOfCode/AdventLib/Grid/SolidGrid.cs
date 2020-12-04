@@ -46,6 +46,8 @@ namespace AdventOfCode.AdventLib.Grid
                     var pos = new GridPoint(x, y);
                     row[x] = grid.Get(pos);
                 }
+
+                _grid[y] = row;
             }
         }
 

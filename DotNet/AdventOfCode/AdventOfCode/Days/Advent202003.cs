@@ -35,7 +35,7 @@ namespace AdventOfCode.Days
             var grid = SolidGrid<char>.Extract(input)
                 .Map(x => x == '#')
                 .Wrapping();
-            var pos = new GridPoint(0, 0);
+            var pos = GridPoint.Origin;
             var treeCount = 0;
             while (pos.Y < input.Length)
             {

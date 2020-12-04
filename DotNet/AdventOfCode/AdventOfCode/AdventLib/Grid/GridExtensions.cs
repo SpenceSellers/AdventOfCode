@@ -23,5 +23,19 @@ namespace AdventOfCode.AdventLib.Grid
         {
             return new SolidGrid<T>(grid);
         }
+
+        public static IGrid<TNew> Overlay<TOld1, TOld2, TNew>(
+            IGrid<TOld1> a,
+            IGrid<TOld2> b,
+            Func<TOld1, TOld2, TNew> func)
+        {
+            // Maybe I'll want to implement this as an actual class eventually?
+            return CommonGrids.CoordinateGrid.Map(point =>
+            {
+                var resultA = a.Get(point);
+                var resultB = b.Get(point);
+                return func(resultA, resultB);
+            });
+        }
     }
 }
