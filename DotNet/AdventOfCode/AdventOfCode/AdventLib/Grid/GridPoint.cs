@@ -11,6 +11,7 @@ namespace AdventOfCode.AdventLib.Grid
             Y = y;
         }
         
+        public static GridPoint Origin => new GridPoint(0, 0);
         public GridPoint Add(GridPoint other) => new GridPoint(X + other.X, Y + other.Y);
         public static GridPoint operator +(GridPoint a, GridPoint b) => a.Add(b);
 

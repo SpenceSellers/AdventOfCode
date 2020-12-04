@@ -4,5 +4,7 @@ namespace AdventOfCode.AdventLib.Grid
     {
         public int Width { get; }
         public int Height { get; }
+        
+        public GridRegion ZeroOriginRegion => new GridRegion(GridPoint.Origin, Width, Height);
     }
 }

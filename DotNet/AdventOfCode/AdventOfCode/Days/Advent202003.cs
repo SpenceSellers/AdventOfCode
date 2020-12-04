@@ -33,8 +33,8 @@ namespace AdventOfCode.Days
         private static int TreesForSlope(string[] input, GridPoint slope)
         {
             var grid = SolidGrid<char>.Extract(input)
-                .Wrapping()
-                .Map(x => x == '#');
+                .Map(x => x == '#')
+                .Wrapping();
             var pos = new GridPoint(0, 0);
             var treeCount = 0;
             while (pos.Y < input.Length)

@@ -33,6 +33,22 @@ namespace AdventOfCode.AdventLib.Grid
             }
         }
 
+        public SolidGrid(IDefinedSizeGrid<T> grid)
+        {
+            Width = grid.Width;
+            Height = grid.Height;
+            _grid = new T[grid.Height][];
+            for (var y = 0; y < grid.Height; y++)
+            {
+                var row = new T[grid.Width];
+                for (var x = 0; x < grid.Width; x++)
+                {
+                    var pos = new GridPoint(x, y);
+                    row[x] = grid.Get(pos);
+                }
+            }
+        }
+
         public static SolidGrid<char> Extract(IEnumerable<string> lines)
         {
             return new SolidGrid<char>(lines.Select(l => l.ToCharArray()));
