@@ -65,29 +65,16 @@ namespace AdventOfCode.Days
                 "pid"
             };
 
-
             var validators = new Dictionary<string, Func<string, bool>>
             {
                 {
-                    "byr", s =>
-                    {
-                        var num = int.Parse(s);
-                        return num <= 2002 && num >= 1920;
-                    }
+                    "byr", RangeValidator(1920, 2002)
                 },
                 {
-                    "iyr", s =>
-                    {
-                        var num = int.Parse(s);
-                        return num <= 2020 && num >= 2010;
-                    }
+                    "iyr", RangeValidator(2010, 2020)
                 },
                 {
-                    "eyr", s =>
-                    {
-                        var num = int.Parse(s);
-                        return num <= 2030 && num >= 2020;
-                    }
+                    "eyr", RangeValidator(2020, 2030)
                 },
                 {
                     "hgt", s =>
@@ -99,7 +86,8 @@ namespace AdventOfCode.Days
                         return unit switch
                         {
                             "in" => value >= 59 && value <= 76,
-                            "cm" => value >= 150 && value <= 193
+                            "cm" => value >= 150 && value <= 193,
+                            _ => false // Invalid unit
                         };
                     }
                 },
@@ -113,11 +101,21 @@ namespace AdventOfCode.Days
                     "pid", s => Regex.IsMatch(s, @"^\d{9}$")
                 },
                 {
+                    // Valid but ignored
                     "cid", s => true
                 }
             };
             return passports.Count(passport =>
                 required.All(passport.ContainsKey) && passport.All(kv => validators[kv.Key](kv.Value))).ToString();
+        }
+
+        private static Func<string, bool> RangeValidator(int min, int max)
+        {
+            return s =>
+            {
+                var num = int.Parse(s);
+                return num >= min && num <= max;
+            };
         }
     }
 }
