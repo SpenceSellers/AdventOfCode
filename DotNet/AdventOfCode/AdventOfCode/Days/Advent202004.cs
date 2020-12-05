@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace AdventOfCode.Days
@@ -14,56 +13,14 @@ namespace AdventOfCode.Days
 
         public override string PartOne(string[] input)
         {
-            var passports = ParsePassports(input).ToList();
-            var required = new HashSet<string>
-            {
-                "byr",
-                "iyr",
-                "eyr",
-                "hgt",
-                "hcl",
-                "ecl",
-                "pid"
-            };
-
-            return passports.Count(passport => required.All(passport.ContainsKey)).ToString();
-        }
-
-        private static IEnumerable<Dictionary<string, string>> ParsePassports(IEnumerable<string> lines)
-        {
-            var currentFields = new Dictionary<string, string>();
-            foreach (var line in lines)
-            {
-                if (line == "")
-                {
-                    yield return currentFields;
-                    currentFields = new Dictionary<string, string>();
-                }
-                else
-                {
-                    foreach (var kvp in line.Split(" ").Select(kvp => kvp.Split(":")))
-                    {
-                        currentFields.Add(kvp[0], kvp[1]);
-                    }
-                }
-            }
-
-            yield return currentFields;
+            return ParsePassports(input)
+                .Count(HasRequiredFields)
+                .ToString();
         }
 
         public override string PartTwo(string[] input)
         {
             var passports = ParsePassports(input).ToList();
-            var required = new HashSet<string>
-            {
-                "byr",
-                "iyr",
-                "eyr",
-                "hgt",
-                "hcl",
-                "ecl",
-                "pid"
-            };
 
             var validators = new Dictionary<string, Func<string, bool>>
             {
@@ -106,7 +63,51 @@ namespace AdventOfCode.Days
                 }
             };
             return passports.Count(passport =>
-                required.All(passport.ContainsKey) && passport.All(kv => validators[kv.Key](kv.Value))).ToString();
+                HasRequiredFields(passport) && passport.All(kv => validators[kv.Key](kv.Value))).ToString();
+        }
+        
+        private static IEnumerable<Dictionary<string, string>> ParsePassports(IEnumerable<string> lines)
+        {
+            var currentFields = new Dictionary<string, string>();
+            foreach (var line in lines)
+            {
+                if (line == "")
+                {
+                    // We're at the end of a passport
+                    yield return currentFields;
+                    currentFields = new Dictionary<string, string>();
+                }
+                else
+                {
+                    foreach (var kvp in line.Split(" ").Select(kvp => kvp.Split(":")))
+                    {
+                        currentFields.Add(kvp[0], kvp[1]);
+                    }
+                }
+            }
+
+            // Spit out the last passport even if there was no blank line
+            if (currentFields.Any())
+            {
+                yield return currentFields;
+            }
+        }
+
+
+        private static bool HasRequiredFields(IDictionary<string, string> passport)
+        {
+            var required = new HashSet<string>
+            {
+                "byr",
+                "iyr",
+                "eyr",
+                "hgt",
+                "hcl",
+                "ecl",
+                "pid"
+            };
+
+            return required.All(passport.ContainsKey);
         }
 
         private static Func<string, bool> RangeValidator(int min, int max)
