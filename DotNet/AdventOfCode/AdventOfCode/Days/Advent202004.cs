@@ -49,7 +49,7 @@ namespace AdventOfCode.Days
                     }
                 },
                 {
-                    "hcl", s => Regex.IsMatch(s, @"^#[0123456789abcdef]+$")
+                    "hcl", s => Regex.IsMatch(s, @"^#[0-9a-f]+$")
                 },
                 {
                     "ecl", s => new[] {"amb", "blu", "brn",  "gry", "grn", "hzl", "oth"}.Contains(s)
