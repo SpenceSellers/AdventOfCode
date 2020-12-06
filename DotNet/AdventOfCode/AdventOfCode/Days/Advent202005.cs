@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace AdventOfCode.Days
@@ -11,36 +13,30 @@ namespace AdventOfCode.Days
 
         public override string PartOne(string[] input)
         {
-            // TODO, I just looked at the input and solved part one by eye.
-            return 861.ToString();
+            return SeatIds(input).Max.ToString();
+        }
+        
+        public override string PartTwo(string[] input)
+        {
+            var seatIds = SeatIds(input);
+            var ourSeatId = seatIds.First(id => !seatIds.Contains(id + 1)) + 1;
+            return ourSeatId.ToString();
         }
 
-        private int ParseRow(string s)
+        private ImmutableSortedSet<int> SeatIds(IEnumerable<string> input) => input.Select(SeatId).ToImmutableSortedSet();
+        private int SeatId(string s) => ParseRow(s) * 8 + ParseSeat(s);
+
+        
+        private static int ParseRow(string s)
         {
             var binary = s.Substring(0, 7).Replace('F', '0').Replace('B', '1');
             return Convert.ToInt32(binary, 2);
         }
 
-        private int ParseSeat(string s)
+        private static int ParseSeat(string s)
         {
             var binary = s.Substring(7, 3).Replace('R', '1').Replace('L', '0');
             return Convert.ToInt32(binary, 2);
-        }
-
-        private int SeatId(string s) => ParseRow(s) * 8 + ParseSeat(s);
-
-        public override string PartTwo(string[] input)
-        {
-            var seatIds = input.Select(SeatId).OrderBy(x => x).ToList();
-            foreach (var id in seatIds)
-            {
-                if (!seatIds.Contains(id + 1))
-                {
-                    return (id + 1).ToString();
-                }
-            }
-
-            return null;
         }
     }
 }
