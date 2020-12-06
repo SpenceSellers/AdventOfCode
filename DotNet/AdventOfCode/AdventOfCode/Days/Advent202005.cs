@@ -24,6 +24,7 @@ namespace AdventOfCode.Days
         }
 
         private ImmutableSortedSet<int> SeatIds(IEnumerable<string> input) => input.Select(SeatId).ToImmutableSortedSet();
+        
         private int SeatId(string s) => ParseRow(s) * 8 + ParseSeat(s);
 
         
