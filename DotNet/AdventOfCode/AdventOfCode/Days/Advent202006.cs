@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using AdventOfCode.Parsing;
 
 namespace AdventOfCode.Days
 {
@@ -16,7 +17,7 @@ namespace AdventOfCode.Days
 
         public override string PartTwo(string[] input)
         {
-            return ParseQuestions2(input).Select(group =>
+            return ParseQuestions3(input).Select(group =>
             {
                 var intersected = group.First();
                 foreach (var person in group.Skip(1))
@@ -48,35 +49,19 @@ namespace AdventOfCode.Days
                 }
             }
 
-            // Spit out the last passport even if there was no blank line
+            // Spit out the last group even if there was no blank line
             if (answers.Any())
             {
                 yield return answers;
             }
         }
         
-        private static IEnumerable<IList<ISet<char>>> ParseQuestions2(IEnumerable<string> lines)
+        private static IEnumerable<IEnumerable<ISet<char>>> ParseQuestions3(IEnumerable<string> lines)
         {
-            var group = new List<ISet<char>>();
-            foreach (var line in lines)
-            {
-                if (line == "")
-                {
-                    // We're at the end of a group
-                    yield return group;
-                    group = new List<ISet<char>>();
-                }
-                else
-                {
-                    group.Add(line.ToHashSet());
-                }
-            }
-
-            // Spit out the last passport even if there was no blank line
-            if (group.Any())
-            {
-                yield return group;
-            }
+            return new SeparatedGroupParser()
+                .Parse(lines)
+                .Select(group => group
+                    .Select(person => person.ToHashSet()));
         }
 
         private static void IncrementDict<T>(IDictionary<T, int> dict, T key, int count = 1)
