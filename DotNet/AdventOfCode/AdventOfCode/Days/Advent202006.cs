@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AdventOfCode.Parsing;
@@ -12,46 +13,33 @@ namespace AdventOfCode.Days
 
         public override string PartOne(string[] input)
         {
-            return ParseQuestions(input).Select(group => group.Aggregate((a, b) =>
+            return GroupCount(input, (a, b) =>
             {
                 a.UnionWith(b);
                 return a;
-            }))
-                .Select(group => group.Count)
-                .Sum()
-                .ToString();
+            }).ToString();
         }
 
         public override string PartTwo(string[] input)
         {
-            return ParseQuestions(input).Select(group => group.Aggregate((a, b) =>
+            return GroupCount(input, (a, b) =>
             {
                 a.IntersectWith(b);
                 return a;
-            }))
-                .Select(group => group.Count)
-                .Sum()
-                .ToString();
+            }).ToString();
         }
-        
+
+        private static int GroupCount(IEnumerable<string> input, Func<ISet<char>, ISet<char>, ISet<char>> aggregator) =>
+            ParseQuestions(input)
+                .Select(group => group.Aggregate(aggregator).Count)
+                .Sum();
+
         private static IEnumerable<IEnumerable<ISet<char>>> ParseQuestions(IEnumerable<string> lines)
         {
             return new SeparatedGroupParser()
                 .Parse(lines)
                 .Select(group => group
                     .Select(person => person.ToHashSet()));
-        }
-
-        private static void IncrementDict<T>(IDictionary<T, int> dict, T key, int count = 1)
-        {
-            if (dict.ContainsKey(key))
-            {
-                dict[key] += count;
-            }
-            else
-            {
-                dict[key] = count;
-            }
         }
     }
 }
