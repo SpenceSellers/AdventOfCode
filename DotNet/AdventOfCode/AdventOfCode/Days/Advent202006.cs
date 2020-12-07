@@ -12,51 +12,29 @@ namespace AdventOfCode.Days
 
         public override string PartOne(string[] input)
         {
-            return ParseQuestions(input).Select(answers => answers.Keys.Count).Sum().ToString();
+            return ParseQuestions(input).Select(group => group.Aggregate((a, b) =>
+            {
+                a.UnionWith(b);
+                return a;
+            }))
+                .Select(group => group.Count)
+                .Sum()
+                .ToString();
         }
 
         public override string PartTwo(string[] input)
         {
-            return ParseQuestions3(input).Select(group =>
+            return ParseQuestions(input).Select(group => group.Aggregate((a, b) =>
             {
-                var intersected = group.First();
-                foreach (var person in group.Skip(1))
-                {
-                    intersected.IntersectWith(person);
-                }
-
-                return intersected;
-            }).Select(group => group.Count).Sum().ToString();
+                a.IntersectWith(b);
+                return a;
+            }))
+                .Select(group => group.Count)
+                .Sum()
+                .ToString();
         }
         
-        private static IEnumerable<Dictionary<char, int>> ParseQuestions(IEnumerable<string> lines)
-        {
-            var answers = new Dictionary<char, int>();
-            foreach (var line in lines)
-            {
-                if (line == "")
-                {
-                    // We're at the end of a group
-                    yield return answers;
-                    answers = new Dictionary<char, int>();
-                }
-                else
-                {
-                    foreach (var c in line)
-                    {
-                        IncrementDict(answers, c);
-                    }
-                }
-            }
-
-            // Spit out the last group even if there was no blank line
-            if (answers.Any())
-            {
-                yield return answers;
-            }
-        }
-        
-        private static IEnumerable<IEnumerable<ISet<char>>> ParseQuestions3(IEnumerable<string> lines)
+        private static IEnumerable<IEnumerable<ISet<char>>> ParseQuestions(IEnumerable<string> lines)
         {
             return new SeparatedGroupParser()
                 .Parse(lines)
