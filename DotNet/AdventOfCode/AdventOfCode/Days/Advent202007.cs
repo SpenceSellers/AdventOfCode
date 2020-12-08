@@ -17,7 +17,6 @@ namespace AdventOfCode.Days
         {
             var rules = input.Select(ParseRule).ToList();
 
-
             var sum = rules
                 .Select(rule => RecursiveBagsWhichCanContain(rules, rule.ParentName, "shiny gold"))
                 .Count(c => c > 0); // We honestly don't care how many times we can contain a gold bag, we just care if we can at all.
@@ -35,13 +34,7 @@ namespace AdventOfCode.Days
         public override string PartTwo(string[] input)
         {
             var rules = input.Select(ParseRule).ToList();
-            return RecursiveBagCount(rules, "shiny gold").ToString();
-        }
-
-        private static int RecursiveBagCount(IList<Rule> rules, string parentName)
-        {
-            var bags = rules.First(x => x.ParentName == parentName).ContainsBags;
-            return bags.Select(bag => bag.Count + bag.Count * RecursiveBagCount(rules, bag.Name)).Sum();
+            return new BagsRules(rules).BagsInside("shiny gold").ToString();
         }
 
         private static Rule ParseRule(string rule)
@@ -77,12 +70,6 @@ namespace AdventOfCode.Days
             };
         }
 
-        private static IEnumerable<string> BagsWhichCanContain(IList<Rule> rules, string child)
-        {
-            return rules.Where(rule => rule.ContainsBags.Any(containment => containment.Name == child))
-                .Select(rule => rule.ParentName);
-        }
-        
         private class Rule
         {
             public string ParentName;
@@ -93,6 +80,24 @@ namespace AdventOfCode.Days
         {
             public int Count;
             public string Name;
+        }
+
+        private class BagsRules
+        {
+            private readonly List<Rule> _rules;
+
+            public BagsRules(List<Rule> rules)
+            {
+                _rules = rules;
+            }
+
+            private Rule RuleForBag(string name) => _rules.First(r => r.ParentName == name);
+
+            public int BagsInside(string name)
+            {
+                var bags = RuleForBag(name).ContainsBags;
+                return bags.Select(bag => bag.Count + bag.Count * BagsInside(bag.Name)).Sum();
+            }
         }
     }
     
