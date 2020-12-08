@@ -16,20 +16,13 @@ namespace AdventOfCode.Days
         public override string PartOne(string[] input)
         {
             var rules = input.Select(ParseRule).ToList();
+            var bagRules = new BagsRules(rules);
 
-            var sum = rules
-                .Select(rule => RecursiveBagsWhichCanContain(rules, rule.ParentName, "shiny gold"))
-                .Count(c => c > 0); // We honestly don't care how many times we can contain a gold bag, we just care if we can at all.
-            return sum.ToString();
+            return rules
+                .Count(rule => bagRules.BagCanContain(rule.ParentName, "shiny gold"))
+                .ToString();
         }
 
-        private static int RecursiveBagsWhichCanContain(IList<Rule> rules, string parentName, string searchName)
-        {
-            var children = rules.First(x => x.ParentName == parentName).ContainsBags;
-            var directCount = children.Count(child => child.Name == searchName);
-
-            return directCount + children.Select(c => RecursiveBagsWhichCanContain(rules, c.Name, searchName)).Sum();
-        }
 
         public override string PartTwo(string[] input)
         {
@@ -98,7 +91,13 @@ namespace AdventOfCode.Days
                 var bags = RuleForBag(name).ContainsBags;
                 return bags.Select(bag => bag.Count + bag.Count * BagsInside(bag.Name)).Sum();
             }
+            
+            public bool BagCanContain(string parentName, string searchName)
+            {
+                var children = RuleForBag(parentName).ContainsBags;
+                // If we directly contain it or any of our children contain it
+                return children.Any(child => child.Name == searchName) || children.Any(c => BagCanContain(c.Name, searchName));
+            }
         }
     }
-    
 }
