@@ -8,7 +8,7 @@ namespace AdventOfCode
         {
             new ProblemRunner()
                 // .UseSampleInput()
-                .Run(new Advent202007());
+                .Run(new Advent202008());
         }
     }
 }
