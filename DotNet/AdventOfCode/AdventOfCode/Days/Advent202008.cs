@@ -30,8 +30,15 @@ namespace AdventOfCode.Days
                 machine.Step();
             }
         }
+        
+        public override string PartTwo(string[] input) =>
+            MutatedPrograms(ParseInstructions(input).ToList())
+                .Select(program => new HandheldGameMachine {Program = program})
+                .Select(RunUntilTermination)
+                .FirstOrDefault(result => result != null)
+                .ToString();
 
-        public int? RunUntilTermination(HandheldGameMachine machine)
+        private static int? RunUntilTermination(HandheldGameMachine machine)
         {
             var executedInstructions = new HashSet<int>();
             while (true)
@@ -65,18 +72,6 @@ namespace AdventOfCode.Days
                 };
             });
         }
-
-        public override string PartTwo(string[] input)
-        {
-            var instructions = ParseInstructions(input);
-            var machines = MutatedPrograms(instructions.ToList())
-                .Select(program => new HandheldGameMachine {Program = program});
-
-            return (machines.Select(RunUntilTermination)
-                .Where(result => result != null)
-                .Select(result => result.ToString())).FirstOrDefault();
-        }
-
 
         private IEnumerable<RawInstruction[]> MutatedPrograms(IList<RawInstruction> baseProgram)
         {
