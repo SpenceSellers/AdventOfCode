@@ -31,6 +31,28 @@ namespace AdventOfCode.Days
             }
         }
 
+        public int? RunUntilTermination(HandheldGameMachine machine)
+        {
+            var executedInstructions = new HashSet<int>();
+            while (true)
+            {
+                if (machine.ProgramCounter == machine.Program.Length)
+                {
+                    // This program has completed
+                    return machine.Accumulator;
+                }
+                
+                if (executedInstructions.Contains(machine.ProgramCounter))
+                {
+                    // Nah we're in an infinite loop.
+                    return null;
+                }
+
+                executedInstructions.Add(machine.ProgramCounter);
+                machine.Step();
+            }
+        }
+
         private static IEnumerable<RawInstruction> ParseInstructions(string[] input)
         {
             return input.Select(s =>
@@ -46,10 +68,37 @@ namespace AdventOfCode.Days
 
         public override string PartTwo(string[] input)
         {
-            throw new System.NotImplementedException();
+            var instructions = ParseInstructions(input);
+            var machines = MutatedPrograms(instructions.ToList())
+                .Select(program => new HandheldGameMachine {Program = program});
+
+            return (machines.Select(RunUntilTermination)
+                .Where(result => result != null)
+                .Select(result => result.ToString())).FirstOrDefault();
         }
 
+
+        private IEnumerable<RawInstruction[]> MutatedPrograms(IList<RawInstruction> baseProgram)
+        {
+            for (var i = 0; i < baseProgram.Count; i++)
+            {
+                var instruction = baseProgram[i];
+                var newInstruction = instruction.Opcode switch
+                {
+                    "nop" => new RawInstruction {Opcode = "jmp", Argument = instruction.Argument},
+                    "jmp" => new RawInstruction {Opcode = "nop", Argument = instruction.Argument},
+                    _ => null
+                };
+
+                if (newInstruction == null) continue;
+                
+                var newProgram = baseProgram.ToArray();
+                newProgram[i] = newInstruction;
+                yield return newProgram;
+            }
+        }
     }
+    
     
     public class RawInstruction
     {
