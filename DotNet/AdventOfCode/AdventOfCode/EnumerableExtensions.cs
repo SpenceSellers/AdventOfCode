@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,6 +59,25 @@ namespace AdventOfCode
 
             var enumerable = elements.ToList();
             return enumerable.SelectMany((e, i) => enumerable.Skip(i + 1).Combinations(k - 1).Select(c => Enumerable.Repeat(e, 1).Concat(c)));
+        }
+
+        public static IEnumerable<IList<T>> SequencesOfSize<T>(this IEnumerable<T> elements, int size)
+        {
+            var list = elements.ToList();
+            if (size < 0)
+            {
+                throw new ArgumentException("Size cannot be smaller than zero", nameof(size));
+            }
+
+            if (size > list.Count)
+            {
+                throw new ArgumentException("Cannot get sequences larger than list", nameof(size));
+            }
+
+            for (var start = 0; start + size - 1 < list.Count; start++)
+            {
+                yield return list.GetRange(start, size);
+            }
         }
 
         /// <summary>

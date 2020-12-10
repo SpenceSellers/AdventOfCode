@@ -68,5 +68,16 @@ namespace AdventTests
             new int[] { }.Product().Should().Be(1);
             new[] {1, 2, 0, 5, 100, 200}.Product().Should().Be(0);
         }
+
+        [Test]
+        public void GetSequencesShouldWorkCorrectly()
+        {
+            var list = new[] {1, 2, 3, 4, 5, 6};
+            var sequences = list.SequencesOfSize(4).ToList();
+            sequences.Should().HaveCount(3);
+            sequences.Last().Should().Contain(6);
+            sequences.First().Should().NotContain(6);
+            sequences.ForEach(seq => seq.Should().HaveCount(4));
+        }
     }
 }
