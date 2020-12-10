@@ -61,12 +61,15 @@ namespace AdventOfCode
             return enumerable.SelectMany((e, i) => enumerable.Skip(i + 1).Combinations(k - 1).Select(c => Enumerable.Repeat(e, 1).Concat(c)));
         }
 
+        /// <summary>
+        /// Returns all contiguous sub-sequences of a given size
+        /// </summary>
         public static IEnumerable<IList<T>> SequencesOfSize<T>(this IEnumerable<T> elements, int size)
         {
             var list = elements.ToList();
-            if (size < 0)
+            if (size <= 0)
             {
-                throw new ArgumentException("Size cannot be smaller than zero", nameof(size));
+                throw new ArgumentException("Sequence size cannot be zero or smaller", nameof(size));
             }
 
             if (size > list.Count)
