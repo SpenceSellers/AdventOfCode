@@ -60,21 +60,20 @@ namespace AdventOfCode.Days
                 return 1;
             }
 
-            var memoizedKey = $"{sourceJoltage};{string.Join(',', adapters.OrderBy(a => a))}";
-            Console.Out.WriteLine($"Trying {memoizedKey}");
+            var memoizedKey = sourceJoltage.ToString();
             if (_memoized.ContainsKey(memoizedKey))
             {
                 Console.Out.WriteLine("HIT memoization");
                 return _memoized[memoizedKey];
             }
 
-            var answer =  adapters.Where(ad => AdapterCanFit(ad, sourceJoltage)).Select(adapter =>
+            var answer = adapters.Where(ad => AdapterCanFit(ad, sourceJoltage)).Select(adapter =>
                 {
                     var removed = adapters.Where(a => a != adapter).ToHashSet();
                     return ValidArrangements(targetJoltage, adapter, removed);
                 })
                 .Sum();
-            
+
             _memoized.Add(memoizedKey, answer);
             return answer;
         }
