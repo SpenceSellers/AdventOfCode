@@ -44,27 +44,33 @@ namespace AdventOfCode.Days
             return difference <= 3 && difference >= 1;
         }
 
-        private IDictionary<string, long> _memoized = new Dictionary<string, long>();
+        private IDictionary<int, long> memoizedCounts = new Dictionary<int, long>();
 
         public override string PartTwo(string[] input)
         {
-            var adapters = input.Select(int.Parse).ToList();
-            var phoneValue = adapters.Max() + 3;
-            return ValidArrangements(phoneValue - 3, 0, adapters.ToHashSet()).ToString();
+            var adapters = input.Select(int.Parse).ToHashSet();
+            return ValidArrangements(adapters.Max(), 0, adapters).ToString();
         }
 
         private long ValidArrangements(int targetJoltage, int sourceJoltage, HashSet<int> adapters)
         {
             if (targetJoltage == sourceJoltage)
             {
+                // We have found one single valid way to get to our target joltage.
                 return 1;
             }
 
-            var memoizedKey = sourceJoltage.ToString();
-            if (_memoized.ContainsKey(memoizedKey))
+            // So, this gets me the right answer but I'm not fully satisfied with why it's safe.
+            // It appears that given a set of adapters, a current joltage, and a target joltage,
+            // there's a single number of ways to get to the target voltage... No matter what
+            // adapters you've used up so far. To me it seems like it'd be possible to
+            // use up one of the adapters we need and throw off the memoization, but I tried this
+            // memoization key in desperation and it worked for my input, at least.
+            var memoizedKey = sourceJoltage;
+            if (memoizedCounts.ContainsKey(memoizedKey))
             {
-                Console.Out.WriteLine("HIT memoization");
-                return _memoized[memoizedKey];
+                // We already know how to solve this one
+                return memoizedCounts[memoizedKey];
             }
 
             var answer = adapters.Where(ad => AdapterCanFit(ad, sourceJoltage)).Select(adapter =>
@@ -74,7 +80,7 @@ namespace AdventOfCode.Days
                 })
                 .Sum();
 
-            _memoized.Add(memoizedKey, answer);
+            memoizedCounts.Add(memoizedKey, answer);
             return answer;
         }
     }
