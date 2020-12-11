@@ -7,7 +7,7 @@ namespace AdventOfCode
         static void Main(string[] args)
         {
             new ProblemRunner()
-                // .UseSampleInput()
+                .UseSampleInput()
                 .Run(new Advent202010());
         }
     }

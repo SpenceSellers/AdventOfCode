@@ -44,9 +44,39 @@ namespace AdventOfCode.Days
             return difference <= 3 && difference >= 1;
         }
 
+        private IDictionary<string, long> _memoized = new Dictionary<string, long>();
+
         public override string PartTwo(string[] input)
         {
-            throw new System.NotImplementedException();
+            var adapters = input.Select(int.Parse).ToList();
+            var phoneValue = adapters.Max() + 3;
+            return ValidArrangements(phoneValue - 3, 0, adapters.ToHashSet()).ToString();
+        }
+
+        private long ValidArrangements(int targetJoltage, int sourceJoltage, HashSet<int> adapters)
+        {
+            if (targetJoltage == sourceJoltage)
+            {
+                return 1;
+            }
+
+            var memoizedKey = $"{sourceJoltage};{string.Join(',', adapters.OrderBy(a => a))}";
+            Console.Out.WriteLine($"Trying {memoizedKey}");
+            if (_memoized.ContainsKey(memoizedKey))
+            {
+                Console.Out.WriteLine("HIT memoization");
+                return _memoized[memoizedKey];
+            }
+
+            var answer =  adapters.Where(ad => AdapterCanFit(ad, sourceJoltage)).Select(adapter =>
+                {
+                    var removed = adapters.Where(a => a != adapter).ToHashSet();
+                    return ValidArrangements(targetJoltage, adapter, removed);
+                })
+                .Sum();
+            
+            _memoized.Add(memoizedKey, answer);
+            return answer;
         }
     }
 }
