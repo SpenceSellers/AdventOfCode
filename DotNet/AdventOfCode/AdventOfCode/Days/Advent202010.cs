@@ -15,6 +15,13 @@ namespace AdventOfCode.Days
             var adapters = input.Select(int.Parse);
             var remainingAdapters = adapters.ToList();
             var adapterStack = new List<int>();
+            
+            
+            // This is seriously equivalent to sorting the list. Except I read
+            // the whole description and implemented the whole thing, and THEN
+            // I realized that it's freaking list.Sort().
+            //
+            // It stays here as a testament to my ignorance and hard work.
             while (remainingAdapters.Any())
             {
                 var candidates = remainingAdapters
