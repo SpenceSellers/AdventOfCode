@@ -73,21 +73,16 @@ namespace AdventOfCode.Days
 
         private static IEnumerable<char> SurroundingEight(IDefinedSizeGrid<char> grid, GridPoint p, char backup)
         {
-            for (var x = -1; x <= 1; x++)
+            foreach (var offset in EightSlopes())
             {
-                for (var y = -1; y <= 1; y++)
+                var pos = p + offset;
+                if (grid.Region().ContainsPoint(pos))
                 {
-                    if (x == 0 && y == 0) continue;
-                    var offset = new GridPoint(x, y);
-                    var pos = p + offset;
-                    if (grid.Region().ContainsPoint(pos))
-                    {
-                        yield return grid.Get(pos);
-                    }
-                    else
-                    {
-                        yield return backup;
-                    }
+                    yield return grid.Get(pos);
+                }
+                else
+                {
+                    yield return backup;
                 }
             }
         }
