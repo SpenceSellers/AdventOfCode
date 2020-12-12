@@ -14,41 +14,24 @@ namespace AdventOfCode.Days
 
         public override string PartOne(string[] input)
         {
-            var initial = SolidGrid<char>.Extract(input);
-            var states = new List<IDefinedSizeGrid<char>> {initial};
-            
-            while (true)
-            {
-                Console.Out.WriteLine("step");
-                var prevState = states.Last();
-                var newState = Step(prevState).Solidify();
-                states.Add(newState);
-
-                if (prevState.Overlay(newState, (c1, c2) => c1 == c2)
-                    .Windowed(initial.Region())
-                    .AllCells()
-                    .All(b => b))
-                {
-                    break;
-                };
-            }
-
-            return states.Last().AllCells().Count(c => c == '#').ToString();
+            return SolvePart(input, StepPart1);
         }
 
         public override string PartTwo(string[] input)
         {
+            return SolvePart(input, StepPart2);
+        }
+
+        private static string SolvePart(IEnumerable<string> input, Func<IDefinedSizeGrid<char>, IDefinedSizeGrid<char>> stepFunc)
+        {
             var initial = SolidGrid<char>.Extract(input);
             var states = new List<IDefinedSizeGrid<char>> {initial};
             
             while (true)
             {
-                // Thread.Sleep(1000);
-                Console.Out.WriteLine("step");
                 var prevState = states.Last();
-                var newState = Step2(prevState).Solidify();
+                var newState = stepFunc(prevState).Solidify();
                 states.Add(newState);
-                newState.Trace();
 
                 if (prevState.Overlay(newState, (c1, c2) => c1 == c2)
                     .Windowed(initial.Region())
@@ -62,43 +45,33 @@ namespace AdventOfCode.Days
             return states.Last().AllCells().Count(c => c == '#').ToString();
         }
 
-        public static IDefinedSizeGrid<char> Step(IDefinedSizeGrid<char> chars)
+        private static IDefinedSizeGrid<char> StepPart1(IDefinedSizeGrid<char> chars)
         {
             return CommonGrids.CoordinateGrid
                 .Map(coord => (chars.Get(coord), SurroundingEight(chars, coord, '.')))
-                .Map(x => StepFunction(x.Item2, x.Item1))
-                .Windowed(chars.Region());
-        }
-        
-        public static IDefinedSizeGrid<char> Step2(IDefinedSizeGrid<char> chars)
-        {
-            return CommonGrids.CoordinateGrid
-                .Map(coord => (chars.Get(coord), SurroundingEightSightlines(chars, coord)))
-                .Map(x => StepFunction2(x.Item2, x.Item1))
+                .Map(x => StepFunction(x.Item2, x.Item1, 4))
                 .Windowed(chars.Region());
         }
 
-        public static char StepFunction(IEnumerable<char> surround, char self)
+        private static IDefinedSizeGrid<char> StepPart2(IDefinedSizeGrid<char> chars)
+        {
+            return CommonGrids.CoordinateGrid
+                .Map(coord => (chars.Get(coord), SurroundingEightSightlines(chars, coord)))
+                .Map(x => StepFunction(x.Item2, x.Item1, 5))
+                .Windowed(chars.Region());
+        }
+
+        private static char StepFunction(IEnumerable<char> surround, char self, int threshold)
         {
             return self switch
             {
                 '.' => '.',
-                '#' => surround.Count(c => c == '#') >= 4 ? 'L' : '#',
+                '#' => surround.Count(c => c == '#') >= threshold ? 'L' : '#',
                 'L' => surround.Any(c => c == '#') ? 'L' : '#'
             };
         }
-        
-        public static char StepFunction2(IEnumerable<char> surround, char self)
-        {
-            return self switch
-            {
-                '.' => '.',
-                '#' => surround.Count(c => c == '#') >= 5 ? 'L' : '#',
-                'L' => surround.Any(c => c == '#') ? 'L' : '#'
-            };
-        }
-        
-        public static IEnumerable<char> SurroundingEight(IDefinedSizeGrid<char> grid, GridPoint p, char backup)
+
+        private static IEnumerable<char> SurroundingEight(IDefinedSizeGrid<char> grid, GridPoint p, char backup)
         {
             for (var x = -1; x <= 1; x++)
             {
@@ -118,8 +91,8 @@ namespace AdventOfCode.Days
                 }
             }
         }
-        
-        public static IEnumerable<GridPoint> EightSlopes()
+
+        private static IEnumerable<GridPoint> EightSlopes()
         {
             for (var x = -1; x <= 1; x++)
             {
@@ -130,8 +103,8 @@ namespace AdventOfCode.Days
                 }
             }
         }
-        
-        public static IEnumerable<char> SurroundingEightSightlines(IDefinedSizeGrid<char> grid, GridPoint center)
+
+        private static IEnumerable<char> SurroundingEightSightlines(IDefinedSizeGrid<char> grid, GridPoint center)
         {
             foreach (var slope in EightSlopes())
             {
