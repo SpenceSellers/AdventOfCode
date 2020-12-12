@@ -103,5 +103,6 @@ namespace AdventOfCode.AdventLib.Grid
             Console.Out.WriteLine(grid.Export());
             return grid;
         }
+        
     }
 }
