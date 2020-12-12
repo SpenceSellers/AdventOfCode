@@ -18,5 +18,10 @@ namespace AdventOfCode.AdventLib.Grid
         public GridPoint Scale(int scale) => new GridPoint(X * scale, Y * scale);
 
         public static GridPoint operator -(GridPoint a, GridPoint b) => a.Add(b.Scale(-1));
+
+        public override string ToString()
+        {
+            return $"({X},{Y})";
+        }
     }
 }
