@@ -16,7 +16,6 @@ namespace AdventOfCode.Days
             var remainingAdapters = adapters.ToList();
             var adapterStack = new List<int>();
             
-            
             // This is seriously equivalent to sorting the list. Except I read
             // the whole description and implemented the whole thing, and THEN
             // I realized that it's freaking list.Sort().
