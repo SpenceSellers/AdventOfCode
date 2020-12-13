@@ -1,3 +1,5 @@
+using System;
+
 namespace AdventOfCode.AdventLib.Grid
 {
     public class GridPoint
@@ -22,6 +24,11 @@ namespace AdventOfCode.AdventLib.Grid
         public override string ToString()
         {
             return $"({X},{Y})";
+        }
+
+        public int ManhattanDistanceFromOrigin()
+        {
+            return Math.Abs(X) + Math.Abs(Y);
         }
     }
 }
