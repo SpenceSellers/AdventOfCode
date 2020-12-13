@@ -37,21 +37,30 @@ namespace AdventOfCode.AdventLib.Grid
             return item switch
             {
                 char c => c,
+                // Fun, halfway useful character mappings for debugging.
+                string s when s.Length == 1 => s[0],
                 bool i => i ? 'X' : '.',
+                int i when i >= 0 && i <= 9 => i.ToString()[0],
+                int i when i > 9 => '>',
+                int i when i < 0 => '-',
                 null => ' ',
                 _ => '?'
             };
+        }
+        
+        public static IDefinedSizeGrid<T> Trace<T>(this IDefinedSizeGrid<T> grid, string label = null)
+        {
+            if (label != null)
+            {
+                Console.Out.WriteLine($"Trace {label}");
+            }
+            Console.Out.WriteLine(grid.Export());
+            return grid;
         }
 
         public static IEnumerable<T> AllCells<T>(this IDefinedSizeGrid<T> grid)
         {
             return grid.Region().AllPoints().Select(grid.Get);
-        }
-
-        public static IDefinedSizeGrid<T> Trace<T>(this IDefinedSizeGrid<T> grid)
-        {
-            Console.Out.WriteLine(grid.Export());
-            return grid;
         }
     }
 }

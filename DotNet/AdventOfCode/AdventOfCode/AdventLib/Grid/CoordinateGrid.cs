@@ -1,3 +1,0 @@
-namespace AdventOfCode.AdventLib.Grid
-{
-}

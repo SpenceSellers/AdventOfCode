@@ -36,6 +36,16 @@ namespace AdventOfCode.AdventLib.Grid
             return false;
         }
 
+        protected bool Equals(GridPoint other)
+        {
+            return X == other.X && Y == other.Y;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(X, Y);
+        }
+
         public int ManhattanDistanceFromOrigin()
         {
             return Math.Abs(X) + Math.Abs(Y);
