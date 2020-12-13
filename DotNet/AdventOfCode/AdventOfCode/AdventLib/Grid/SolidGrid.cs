@@ -55,9 +55,19 @@ namespace AdventOfCode.AdventLib.Grid
         {
             return new SolidGrid<char>(lines.Select(l => l.ToCharArray()));
         }
+
+        // We could do this though this.Region().ContainsPoint(), but this way benchmarks as quite a bit faster,
+        // by about 400ms on 2020 day 11.
+        private bool ContainsPoint(GridPoint p) => p.X >= 0 && p.X < Width && p.Y >= 0 && p.Y < Height;
         
         public T Get(GridPoint point)
         {
+
+            if (!ContainsPoint(point))
+            {
+                throw new NonexistentCellException();
+            }
+            
             return _grid[point.Y][point.X];
         }
 
