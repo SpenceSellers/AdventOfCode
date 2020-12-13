@@ -39,8 +39,8 @@ namespace AdventOfCode.Days
             public GridPoint Position = new GridPoint(0, 0);
             public abstract void Apply(char instruction, int argument);
         }
-        
-        private class Part1ShipState: ShipState
+
+        private class Part1ShipState : ShipState
         {
             private int _facing;
 
@@ -61,10 +61,10 @@ namespace AdventOfCode.Days
                     270 => 'N',
                     _ => throw new Exception($"Invalid current facing: {_facing}")
                 };
-                
+
                 Apply(direction, distance);
             }
-            
+
             public override void Apply(char instruction, int argument)
             {
                 switch (instruction)
@@ -98,7 +98,7 @@ namespace AdventOfCode.Days
         {
             public GridPoint WaypointPosition = new GridPoint(10, 1);
             // public int Facing;
-            
+
             private void ApplyRotation(int degrees)
             {
                 WaypointPosition = WaypointPosition.RotateAroundOrigin(degrees / 90);
@@ -108,7 +108,7 @@ namespace AdventOfCode.Days
             {
                 Position += WaypointPosition.Scale(distance);
             }
-            
+
             public override void Apply(char instruction, int argument)
             {
                 switch (instruction)
