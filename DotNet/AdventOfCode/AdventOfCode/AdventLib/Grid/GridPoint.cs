@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 
 namespace AdventOfCode.AdventLib.Grid
 {
@@ -26,9 +27,38 @@ namespace AdventOfCode.AdventLib.Grid
             return $"({X},{Y})";
         }
 
+        public override bool Equals(object? obj)
+        {
+            if (obj is GridPoint p)
+            {
+                return p.X == X && p.Y == Y;
+            }
+            return false;
+        }
+
         public int ManhattanDistanceFromOrigin()
         {
             return Math.Abs(X) + Math.Abs(Y);
+        }
+
+        public GridPoint RotateAroundOrigin(int times)
+        {
+            switch (times)
+            {
+                case 0:
+                    return this;
+                case 1:
+                    return new GridPoint(Y, -X);
+                case -1:
+                    return new GridPoint(-Y, X);
+            }
+
+            if (times > 0)
+            {
+                return RotateAroundOrigin(1).RotateAroundOrigin(times - 1);
+            }
+
+            return RotateAroundOrigin(-1).RotateAroundOrigin(times + 1);
         }
     }
 }
