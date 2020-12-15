@@ -43,7 +43,7 @@ namespace AdventOfCode.Days
             sb.AppendLine("So what you're going to do is go to this website:");
             sb.AppendLine("https://www.dcode.fr/chinese-remainder");
             sb.AppendLine("It's a pretty cute site. You'll then plug in these numbers:");
-            sb.AppendJoin('\n', busses.Select(x => $"[{x.Item1 - (x.i % x.Item1)}, {x.Item1}]"));
+            sb.AppendJoin('\n', busses.Select(x => $"{x.Item1 - (x.i % x.Item1)}\t{x.Item1}"));
             sb.AppendLine();
             sb.AppendLine("That'll give you the answer.");
 
