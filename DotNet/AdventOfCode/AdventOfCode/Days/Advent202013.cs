@@ -33,9 +33,10 @@ namespace AdventOfCode.Days
         {
             var busses = input[1]
                 .Split(",")
-                .Select((b, i) => (b, i))
-                .Where(x => x.b != "x")
-                .Select(x => (int.Parse(x.b), x.i))
+                // Remember the indexes before we nuke the broken busses.
+                .Select((bus, index) => (bus, index))
+                .Where(x => x.bus != "x")
+                .Select(x => (Bus: int.Parse(x.bus!), Index: x.index))
                 .ToList();
 
             // Are ya winning, son?
@@ -43,7 +44,7 @@ namespace AdventOfCode.Days
             sb.AppendLine("So what you're going to do is go to this website:");
             sb.AppendLine("https://www.dcode.fr/chinese-remainder");
             sb.AppendLine("It's a pretty cute site. You'll then plug in these numbers:");
-            sb.AppendJoin('\n', busses.Select(x => $"{x.Item1 - (x.i % x.Item1)}\t{x.Item1}"));
+            sb.AppendJoin('\n', busses.Select(x => $"{x.Bus - (x.Index % x.Bus)}\t{x.Bus}"));
             sb.AppendLine();
             sb.AppendLine("That'll give you the answer.");
 
