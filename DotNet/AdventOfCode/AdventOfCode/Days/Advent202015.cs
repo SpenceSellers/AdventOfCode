@@ -51,22 +51,27 @@ namespace AdventOfCode.Days
             var numbers = input[0].Split(',').Select(int.Parse).ToList();
             var spoken = numbers.Take(numbers.Count - 1).ToList();
             var lastSpoken = numbers.Last();
-            var spokenBefore = new HashSet<int>(spoken);
+            var spokenBefore = new Dictionary<int, int>();
+            // Pre-seed beginning
+            foreach (var (num, index) in spoken.Select((s, i) => (s, i)))
+            {
+                spokenBefore[num] = index + 1;
+            }
             while (true)
             {
                 var turnNumber = spoken.Count + 2;
-                if (!spokenBefore.Contains(lastSpoken))
+                if (!spokenBefore.ContainsKey(lastSpoken))
                 {
-                    spokenBefore.Add(lastSpoken);
+                    spokenBefore[lastSpoken] = turnNumber - 1;
                     spoken.Add(lastSpoken);
                     lastSpoken = 0;
                 }
                 else
                 {
-                    spokenBefore.Add(lastSpoken);
-                    var lastSpokenIndex = spoken.LastIndexOf(lastSpoken);
+                    var lastTimeSpoken = spokenBefore[lastSpoken];
+                    spokenBefore[lastSpoken] = turnNumber - 1;
                     var lastSpokenTurn = spoken.Count + 1;
-                    var prevSpokenTurn = lastSpokenIndex + 1;
+                    var prevSpokenTurn = lastTimeSpoken;
                     spoken.Add(lastSpoken);
                     lastSpoken = (lastSpokenTurn - prevSpokenTurn);
                 }
