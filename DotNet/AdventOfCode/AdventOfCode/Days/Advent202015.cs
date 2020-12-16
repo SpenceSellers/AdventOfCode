@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AdventOfCode.Days
@@ -47,7 +48,42 @@ namespace AdventOfCode.Days
 
         public override string PartTwo(string[] input)
         {
-            throw new System.NotImplementedException();
+            var numbers = input[0].Split(',').Select(int.Parse).ToList();
+            var spoken = numbers.Take(numbers.Count - 1).ToList();
+            var lastSpoken = numbers.Last();
+            var spokenBefore = new HashSet<int>(spoken);
+            while (true)
+            {
+                var turnNumber = spoken.Count + 2;
+                if (!spokenBefore.Contains(lastSpoken))
+                {
+                    spokenBefore.Add(lastSpoken);
+                    spoken.Add(lastSpoken);
+                    lastSpoken = 0;
+                }
+                else
+                {
+                    spokenBefore.Add(lastSpoken);
+                    var lastSpokenIndex = spoken.LastIndexOf(lastSpoken);
+                    var lastSpokenTurn = spoken.Count + 1;
+                    var prevSpokenTurn = lastSpokenIndex + 1;
+                    spoken.Add(lastSpoken);
+                    lastSpoken = (lastSpokenTurn - prevSpokenTurn);
+                }
+                
+                // Console.Out.WriteLine($"{turnNumber}: {lastSpoken}");
+                if (turnNumber % 100_000 == 0)
+                {
+                    Console.Out.WriteLine($"{turnNumber}");
+                }
+
+                if (turnNumber == 30_000_000)
+                // if (turnNumber == 2020)
+                {
+                    return lastSpoken.ToString();
+                }
+
+            }
         }
 
         // private class ElfGame
