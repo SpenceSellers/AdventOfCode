@@ -14,41 +14,17 @@ namespace AdventOfCode.Days
         {
             var numbers = input[0].Split(',').Select(int.Parse).ToList();
             var spoken = numbers.Take(numbers.Count - 1).ToList();
-            var lastSpoken = numbers.Last();
-            while (true)
-            {
-                var turnNumber = spoken.Count + 2;
-                var lastSpokenIndex = spoken.LastIndexOf(lastSpoken);
-                if (lastSpokenIndex == -1)
-                {
-                    spoken.Add(lastSpoken);
-                    lastSpoken = 0;
-                }
-                else
-                {
-                    var lastSpokenTurn = spoken.Count + 1;
-                    var prevSpokenTurn = lastSpokenIndex + 1;
-                    spoken.Add(lastSpoken);
-                    lastSpoken = (lastSpokenTurn - prevSpokenTurn);
-                }
-                
-                // Console.Out.WriteLine($"{turnNumber}: {lastSpoken}");
-                if (turnNumber % 100_000 == 0)
-                {
-                    Console.Out.WriteLine($"{turnNumber}");
-                }
-
-                // if (turnNumber == 30_000_000)
-                if (turnNumber == 2020)
-                {
-                    return lastSpoken.ToString();
-                }
-            }
+            return SolveTo(numbers, 2020);
         }
 
         public override string PartTwo(string[] input)
         {
             var numbers = input[0].Split(',').Select(int.Parse).ToList();
+            return SolveTo(numbers, 30_000_000);
+        }
+
+        private static string SolveTo(IReadOnlyCollection<int> numbers, int targetNumber)
+        {
             var spoken = numbers.Take(numbers.Count - 1).ToList();
             var lastSpoken = numbers.Last();
             var spokenBefore = new Dictionary<int, int>();
@@ -57,6 +33,7 @@ namespace AdventOfCode.Days
             {
                 spokenBefore[num] = index + 1;
             }
+
             var turnNumber = spoken.Count + 2;
             while (true)
             {
@@ -70,23 +47,21 @@ namespace AdventOfCode.Days
                     var lastTimeSpoken = spokenBefore[lastSpoken];
                     spokenBefore[lastSpoken] = turnNumber - 1;
                     var lastSpokenTurn = turnNumber - 1;
-                    var prevSpokenTurn = lastTimeSpoken;
-                    lastSpoken = (lastSpokenTurn - prevSpokenTurn);
-                }
-                
-                if (turnNumber % 1_000_000 == 0)
-                {
-                    Console.Out.WriteLine($"{turnNumber}");
+                    lastSpoken = lastSpokenTurn - lastTimeSpoken;
                 }
 
-                if (turnNumber == 30_000_000)
-                // if (turnNumber == 2020)
+                if (turnNumber % 1_000_000 == 0)
+                {
+                    // Progress indication
+                    Console.Out.WriteLine($"... {turnNumber}");
+                }
+
+                if (turnNumber == targetNumber)
                 {
                     return lastSpoken.ToString();
                 }
 
                 turnNumber++;
-
             }
         }
     }
