@@ -57,27 +57,24 @@ namespace AdventOfCode.Days
             {
                 spokenBefore[num] = index + 1;
             }
+            var turnNumber = spoken.Count + 2;
             while (true)
             {
-                var turnNumber = spoken.Count + 2;
                 if (!spokenBefore.ContainsKey(lastSpoken))
                 {
                     spokenBefore[lastSpoken] = turnNumber - 1;
-                    spoken.Add(lastSpoken);
                     lastSpoken = 0;
                 }
                 else
                 {
                     var lastTimeSpoken = spokenBefore[lastSpoken];
                     spokenBefore[lastSpoken] = turnNumber - 1;
-                    var lastSpokenTurn = spoken.Count + 1;
+                    var lastSpokenTurn = turnNumber - 1;
                     var prevSpokenTurn = lastTimeSpoken;
-                    spoken.Add(lastSpoken);
                     lastSpoken = (lastSpokenTurn - prevSpokenTurn);
                 }
                 
-                // Console.Out.WriteLine($"{turnNumber}: {lastSpoken}");
-                if (turnNumber % 100_000 == 0)
+                if (turnNumber % 1_000_000 == 0)
                 {
                     Console.Out.WriteLine($"{turnNumber}");
                 }
@@ -88,12 +85,9 @@ namespace AdventOfCode.Days
                     return lastSpoken.ToString();
                 }
 
+                turnNumber++;
+
             }
         }
-
-        // private class ElfGame
-        // {
-        //     
-        // }
     }
 }
