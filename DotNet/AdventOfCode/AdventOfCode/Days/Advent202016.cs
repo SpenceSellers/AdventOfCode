@@ -13,7 +13,7 @@ namespace AdventOfCode.Days
         public override string PartOne(string[] input)
         {
             var tickets = Parse(input);
-            return null;
+            return tickets.AllInvalidValues().Sum().ToString();
         }
 
         public override string PartTwo(string[] input)
@@ -60,6 +60,22 @@ namespace AdventOfCode.Days
                 Rules = rules;
                 MyTicket = myTicket;
                 NearbyTickets = nearbyTickets;
+            }
+
+            public IEnumerable<int> AllInvalidValues()
+            {
+                return NearbyTickets.SelectMany(x => x).Where(n => !AllRanges().Any(r => ValidForRange(n, r)));
+            }
+
+            private IEnumerable<(int, int)> AllRanges()
+            {
+                return Rules.Values.SelectMany(r => r);
+            }
+
+            private bool ValidForRange(int n, (int, int) range)
+            {
+                var (min, max) = range;
+                return n >= min && n <= max;
             }
         }
     }
