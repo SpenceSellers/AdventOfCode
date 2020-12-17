@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Numerics;
 using System.Text.RegularExpressions;
 
 namespace AdventOfCode.Days
@@ -18,7 +21,17 @@ namespace AdventOfCode.Days
 
         public override string PartTwo(string[] input)
         {
-            throw new System.NotImplementedException();
+            var tickets = Parse(input);
+            var fields = tickets.LearnFields();
+            var fieldsWeCareAbout = fields.Where(kv => kv.Key.StartsWith("departure")).Select(kv => kv.Value).ToList();
+
+            var product = new BigInteger(1);
+            foreach (var num in fieldsWeCareAbout.Select(i => tickets.MyTicket[i]))
+            {
+                product *= num;
+            }
+
+            return product.ToString();
         }
 
         private TicketSet Parse(string[] input)
@@ -67,6 +80,67 @@ namespace AdventOfCode.Days
                 return NearbyTickets.SelectMany(x => x).Where(n => !AllRanges().Any(r => ValidForRange(n, r)));
             }
 
+            public IEnumerable<int[]> ValidTickets()
+            {
+                // Where ALL fields on the ticket match ANY range
+                return NearbyTickets.Where(t => t.All(n => AllRanges().Any(r => ValidForRange(n, r))));
+            }
+
+            public IDictionary<string, int> LearnFields()
+            {
+                var columns = FieldColumns().ToList();
+
+                var possibilities = new Dictionary<int, HashSet<string>>();
+
+                for (int i = 0; i < columns.Count; i++)
+                {
+                    var column = columns[i];
+                    var matchingRules = Rules
+                        .Where(kv => column.All(n => kv.Value.Any(r => ValidForRange(n, r))))
+                        .Select(kv => kv.Key)
+                        .ToList();
+                    
+                    possibilities.Add(i, matchingRules.ToHashSet());
+                }
+                
+                // Begin reduction
+                var solidified = new HashSet<int>();
+                while (true)
+                {
+                    // What have we not simplified?
+                    var simplificationOptions = possibilities.Where(kv => kv.Value.Count == 1 && !solidified.Contains(kv.Key)).ToList();
+                    if (!simplificationOptions.Any())
+                    {
+                        // There's nothing left to simplify
+                        break;
+                    }
+
+                    var (singleKey, singleRuleName) = simplificationOptions.First();
+                    
+                    foreach (var (_, v) in possibilities.Where(kv => kv.Key != singleKey))
+                    {
+                        v.Remove(singleRuleName.First());
+                    }
+
+                    solidified.Add(singleKey);
+                }
+                
+                // Build answer
+                return possibilities.ToDictionary(x => x.Value.First(), x => x.Key);
+            }
+
+            private IEnumerable<IList<int>> FieldColumns()
+            {
+                var length = NearbyTickets[0].Length;
+                var validTickets = ValidTickets().ToList();
+                Debug.Assert(validTickets[0].Length == length);
+                for (var i = 0; i < length; i++)
+                {
+                    var locali = i;
+                    yield return validTickets.Select(ticket => ticket[locali]).ToList();
+                }
+            }
+
             private IEnumerable<(int, int)> AllRanges()
             {
                 return Rules.Values.SelectMany(r => r);
@@ -75,6 +149,7 @@ namespace AdventOfCode.Days
             private bool ValidForRange(int n, (int, int) range)
             {
                 var (min, max) = range;
+                Debug.Assert(min < max);
                 return n >= min && n <= max;
             }
         }
