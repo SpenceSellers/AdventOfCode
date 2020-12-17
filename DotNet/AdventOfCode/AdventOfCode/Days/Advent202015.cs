@@ -13,7 +13,6 @@ namespace AdventOfCode.Days
         public override string PartOne(string[] input)
         {
             var numbers = input[0].Split(',').Select(int.Parse).ToList();
-            var spoken = numbers.Take(numbers.Count - 1).ToList();
             return SolveTo(numbers, 2020);
         }
 
