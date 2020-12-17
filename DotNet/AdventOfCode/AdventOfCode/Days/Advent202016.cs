@@ -80,7 +80,7 @@ namespace AdventOfCode.Days
                 return NearbyTickets.SelectMany(x => x).Where(n => !AllRanges().Any(r => ValidForRange(n, r)));
             }
 
-            public IEnumerable<int[]> ValidTickets()
+            private IEnumerable<int[]> ValidTickets()
             {
                 // Where ALL fields on the ticket match ANY range
                 return NearbyTickets.Where(t => t.All(n => AllRanges().Any(r => ValidForRange(n, r))));
@@ -91,14 +91,14 @@ namespace AdventOfCode.Days
                 var columns = FieldColumns().ToList();
 
                 var possibilities = new Dictionary<int, HashSet<string>>();
-
-                for (int i = 0; i < columns.Count; i++)
+                
+                // Figure out which rules can apply to each column, right out of the gate.
+                for (var i = 0; i < columns.Count; i++)
                 {
                     var column = columns[i];
                     var matchingRules = Rules
                         .Where(kv => column.All(n => kv.Value.Any(r => ValidForRange(n, r))))
-                        .Select(kv => kv.Key)
-                        .ToList();
+                        .Select(kv => kv.Key);
                     
                     possibilities.Add(i, matchingRules.ToHashSet());
                 }
@@ -117,6 +117,7 @@ namespace AdventOfCode.Days
 
                     var (singleKey, singleRuleName) = simplificationOptions.First();
                     
+                    // Since we know for sure which column this rule belongs to, remove it from all the other columns.
                     foreach (var (_, v) in possibilities.Where(kv => kv.Key != singleKey))
                     {
                         v.Remove(singleRuleName.First());
@@ -136,8 +137,7 @@ namespace AdventOfCode.Days
                 Debug.Assert(validTickets[0].Length == length);
                 for (var i = 0; i < length; i++)
                 {
-                    var locali = i;
-                    yield return validTickets.Select(ticket => ticket[locali]).ToList();
+                    yield return validTickets.Select(ticket => ticket[i]).ToList();
                 }
             }
 
