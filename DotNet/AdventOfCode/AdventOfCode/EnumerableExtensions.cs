@@ -95,5 +95,24 @@ namespace AdventOfCode
         {
             return items.Aggregate(BigInteger.One, (current, i) => current * i);
         }
+
+        public static IEnumerable<IList<T>> SplitList<T>(this IEnumerable<T> items, Func<T, bool> splitter)
+        {
+            var group = new List<T>();
+            foreach (var item in items)
+            {
+                if (splitter(item))
+                {
+                    yield return group;
+                    group = new List<T>();
+                }
+                else
+                {
+                    group.Add(item);
+                }
+            }
+
+            yield return group;
+        }
     }
 }

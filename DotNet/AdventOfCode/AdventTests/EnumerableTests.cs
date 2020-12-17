@@ -79,5 +79,27 @@ namespace AdventTests
             sequences.First().Should().NotContain(6);
             sequences.ForEach(seq => seq.Should().HaveCount(4));
         }
+
+        [Test]
+        public void ShouldSplitListsCorrectly()
+        {
+            var list = new[] {1, 2, 3, 4, 5, 6, 7};
+
+            var splitted = list.SplitList(x => x == 4 || x == 6).ToList();
+            splitted.Should().HaveCount(3);
+            splitted[0].Should().Equal(1, 2, 3);
+            splitted[1].Should().Equal(5);
+            splitted[2].Should().Equal(7);
+        }
+
+        [Test]
+        public void ShouldSplitListsWithSeparatorAtEnd()
+        {
+            var list = new[] {1, 2, 3, 4, 5, 6, 7};
+            var splitted = list.SplitList(x => x == 7).ToList();
+            splitted.Should().HaveCount(2);
+            splitted[0].Should().HaveCount(6);
+            splitted[1].Should().HaveCount(0);
+        }
     }
 }
