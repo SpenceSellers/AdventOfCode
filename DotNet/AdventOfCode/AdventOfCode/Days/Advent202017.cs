@@ -13,20 +13,14 @@ namespace AdventOfCode.Days
 
         public override string PartOne(string[] input)
         {
-            var baseGrid = SolidGrid<char>.Extract(input).Map(x => x == '#').Solidify();
-
-            var initialState = BuildInitialState(baseGrid);
-
-            var state = initialState;
-
-            for (var i = 0; i < 6; i++)
-            {
-                state = NextStep(state);
-            }
-
-            return state.Count.ToString();
+            return new GridProblem3D().Solve(input);
         }
 
+        public override string PartTwo(string[] input)
+        {
+            return new GridProblem4D().Solve(input);
+        }
+        
         private static HashSet<Point3D> BuildInitialState(SolidGrid<bool> baseGrid)
         {
             var initialState = new HashSet<Point3D>();
@@ -42,129 +36,103 @@ namespace AdventOfCode.Days
             return initialState;
         }
 
-        private static HashSet<Point3D> PointsToConsider(HashSet<Point3D> grid)
+        private abstract class GridProblem
         {
-            var points = new HashSet<Point3D>();
-            foreach (var activePoint in grid)
+            protected abstract IEnumerable<Point3D> AdjacentPoints(Point3D activePoint);
+
+            public string Solve(string[] input)
             {
-                points.Add(activePoint);
-                foreach (var adjacentPoint in AdjacentPoints(activePoint))
+                var baseGrid = SolidGrid<char>.Extract(input).Map(x => x == '#').Solidify();
+
+                var initialState = BuildInitialState(baseGrid);
+
+                var state = initialState;
+
+                for (var i = 0; i < 6; i++)
                 {
-                    points.Add(adjacentPoint);
+                    state = NextStep(state);
                 }
+
+                return state.Count.ToString();
             }
-
-            return points;
-        }
-        
-        private static HashSet<Point3D> PointsToConsider4D(HashSet<Point3D> grid)
-        {
-            var points = new HashSet<Point3D>();
-            foreach (var activePoint in grid)
+            
+            private HashSet<Point3D> PointsToConsider(HashSet<Point3D> grid)
             {
-                points.Add(activePoint);
-                foreach (var adjacentPoint in AdjacentPoints4D(activePoint))
+                var points = new HashSet<Point3D>();
+                foreach (var activePoint in grid)
                 {
-                    points.Add(adjacentPoint);
-                }
-            }
-
-            return points;
-        }
-
-        private static IEnumerable<Point3D> AdjacentPoints(Point3D point)
-        {
-            for (var dx = -1; dx <= 1; dx++)
-            {
-                for (var dy = -1; dy <= 1; dy++)
-                {
-                    for (var dz = -1; dz <= 1; dz++)
+                    points.Add(activePoint);
+                    foreach (var adjacentPoint in AdjacentPoints(activePoint))
                     {
-                        if (dx == 0 && dy == 0 && dz == 0) continue;
-                        yield return new Point3D(point.X + dx, point.Y + dy, point.Z + dz);
+                        points.Add(adjacentPoint);
                     }
                 }
+
+                return points;
+            }
+
+            private HashSet<Point3D> NextStep(HashSet<Point3D> grid)
+            {
+                var pointsToConsider = PointsToConsider(grid);
+                var nextState = new HashSet<Point3D>();
+                foreach (var point in pointsToConsider)
+                {
+                    var currentlyActive = grid.Contains(point);
+                    var adjacentPoints = AdjacentPoints(point).Count(grid.Contains);
+                    var nowActive = currentlyActive switch
+                    {
+                        true => adjacentPoints == 2 || adjacentPoints == 3,
+                        false => adjacentPoints == 3
+                    };
+                    if (nowActive)
+                    {
+                        nextState.Add(point);
+                    }
+                }
+
+                return nextState;
             }
         }
-        
-        private static IEnumerable<Point3D> AdjacentPoints4D(Point3D point)
+
+        private class GridProblem3D : GridProblem
         {
-            for (var dx = -1; dx <= 1; dx++)
+            protected override IEnumerable<Point3D> AdjacentPoints(Point3D point)
             {
-                for (var dy = -1; dy <= 1; dy++)
+                for (var dx = -1; dx <= 1; dx++)
                 {
-                    for (var dz = -1; dz <= 1; dz++)
+                    for (var dy = -1; dy <= 1; dy++)
                     {
-                        for (var dw = -1; dw <= 1; dw++)
+                        for (var dz = -1; dz <= 1; dz++)
                         {
-                            if (dx == 0 && dy == 0 && dz == 0 && dw == 0) continue;
-                            yield return new Point3D(point.X + dx, point.Y + dy, point.Z + dz, point.W + dw);
+                            if (dx == 0 && dy == 0 && dz == 0) continue;
+                            yield return new Point3D(point.X + dx, point.Y + dy, point.Z + dz);
                         }
                     }
                 }
             }
         }
 
-        public override string PartTwo(string[] input)
+        private class GridProblem4D : GridProblem
         {
-            var baseGrid = SolidGrid<char>.Extract(input).Map(x => x == '#').Solidify();
-
-            var initialState = BuildInitialState(baseGrid);
-
-            var state = initialState;
-
-            for (var i = 0; i < 6; i++)
+            protected override IEnumerable<Point3D> AdjacentPoints(Point3D point)
             {
-                state = NextStep4D(state);
-            }
-
-            return state.Count.ToString();
-        }
-
-        private HashSet<Point3D> NextStep(HashSet<Point3D> grid)
-        {
-            var pointsToConsider = PointsToConsider(grid);
-            var nextState = new HashSet<Point3D>();
-            foreach (var point in pointsToConsider)
-            {
-                var currentlyActive = grid.Contains(point);
-                var adjacentPoints = AdjacentPoints(point).Count(grid.Contains);
-                var nowActive = currentlyActive switch
+                for (var dx = -1; dx <= 1; dx++)
                 {
-                    true => adjacentPoints == 2 || adjacentPoints == 3,
-                    false => adjacentPoints == 3
-                };
-                if (nowActive)
-                {
-                    nextState.Add(point);
+                    for (var dy = -1; dy <= 1; dy++)
+                    {
+                        for (var dz = -1; dz <= 1; dz++)
+                        {
+                            for (var dw = -1; dw <= 1; dw++)
+                            {
+                                if (dx == 0 && dy == 0 && dz == 0 && dw == 0) continue;
+                                yield return new Point3D(point.X + dx, point.Y + dy, point.Z + dz, point.W + dw);
+                            }
+                        }
+                    }
                 }
             }
-
-            return nextState;
         }
         
-        private HashSet<Point3D> NextStep4D(HashSet<Point3D> grid)
-        {
-            var pointsToConsider = PointsToConsider4D(grid);
-            var nextState = new HashSet<Point3D>();
-            foreach (var point in pointsToConsider)
-            {
-                var currentlyActive = grid.Contains(point);
-                var adjacentPoints = AdjacentPoints4D(point).Count(grid.Contains);
-                var nowActive = currentlyActive switch
-                {
-                    true => adjacentPoints == 2 || adjacentPoints == 3,
-                    false => adjacentPoints == 3
-                };
-                if (nowActive)
-                {
-                    nextState.Add(point);
-                }
-            }
-
-            return nextState;
-        }
-
         private class Point3D
         {
             public readonly int X;
