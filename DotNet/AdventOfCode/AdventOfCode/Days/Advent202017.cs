@@ -56,6 +56,21 @@ namespace AdventOfCode.Days
 
             return points;
         }
+        
+        private static HashSet<Point3D> PointsToConsider4D(HashSet<Point3D> grid)
+        {
+            var points = new HashSet<Point3D>();
+            foreach (var activePoint in grid)
+            {
+                points.Add(activePoint);
+                foreach (var adjacentPoint in AdjacentPoints4D(activePoint))
+                {
+                    points.Add(adjacentPoint);
+                }
+            }
+
+            return points;
+        }
 
         private static IEnumerable<Point3D> AdjacentPoints(Point3D point)
         {
@@ -71,10 +86,39 @@ namespace AdventOfCode.Days
                 }
             }
         }
+        
+        private static IEnumerable<Point3D> AdjacentPoints4D(Point3D point)
+        {
+            for (var dx = -1; dx <= 1; dx++)
+            {
+                for (var dy = -1; dy <= 1; dy++)
+                {
+                    for (var dz = -1; dz <= 1; dz++)
+                    {
+                        for (var dw = -1; dw <= 1; dw++)
+                        {
+                            if (dx == 0 && dy == 0 && dz == 0 && dw == 0) continue;
+                            yield return new Point3D(point.X + dx, point.Y + dy, point.Z + dz, point.W + dw);
+                        }
+                    }
+                }
+            }
+        }
 
         public override string PartTwo(string[] input)
         {
-            throw new System.NotImplementedException();
+            var baseGrid = SolidGrid<char>.Extract(input).Map(x => x == '#').Solidify();
+
+            var initialState = BuildInitialState(baseGrid);
+
+            var state = initialState;
+
+            for (var i = 0; i < 6; i++)
+            {
+                state = NextStep4D(state);
+            }
+
+            return state.Count.ToString();
         }
 
         private HashSet<Point3D> NextStep(HashSet<Point3D> grid)
@@ -98,23 +142,47 @@ namespace AdventOfCode.Days
 
             return nextState;
         }
+        
+        private HashSet<Point3D> NextStep4D(HashSet<Point3D> grid)
+        {
+            var pointsToConsider = PointsToConsider4D(grid);
+            var nextState = new HashSet<Point3D>();
+            foreach (var point in pointsToConsider)
+            {
+                var currentlyActive = grid.Contains(point);
+                var adjacentPoints = AdjacentPoints4D(point).Count(grid.Contains);
+                var nowActive = currentlyActive switch
+                {
+                    true => adjacentPoints == 2 || adjacentPoints == 3,
+                    false => adjacentPoints == 3
+                };
+                if (nowActive)
+                {
+                    nextState.Add(point);
+                }
+            }
+
+            return nextState;
+        }
 
         private class Point3D
         {
             public readonly int X;
             public readonly int Y;
             public readonly int Z;
+            public readonly int W;
 
-            public Point3D(int x, int y, int z)
+            public Point3D(int x, int y, int z, int w=0)
             {
                 X = x;
                 Y = y;
                 Z = z;
+                W = w;
             }
 
             protected bool Equals(Point3D other)
             {
-                return X == other.X && Y == other.Y && Z == other.Z;
+                return X == other.X && Y == other.Y && Z == other.Z && W == other.W;
             }
 
             public override bool Equals(object obj)
@@ -127,7 +195,7 @@ namespace AdventOfCode.Days
 
             public override int GetHashCode()
             {
-                return HashCode.Combine(X, Y, Z);
+                return HashCode.Combine(X, Y, Z, W);
             }
         }
     }
