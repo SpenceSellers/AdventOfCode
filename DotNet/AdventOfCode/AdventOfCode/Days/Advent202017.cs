@@ -99,15 +99,11 @@ namespace AdventOfCode.Days
             protected override IEnumerable<Point3D> AdjacentPoints(Point3D point)
             {
                 for (var dx = -1; dx <= 1; dx++)
+                for (var dy = -1; dy <= 1; dy++)
+                for (var dz = -1; dz <= 1; dz++)
                 {
-                    for (var dy = -1; dy <= 1; dy++)
-                    {
-                        for (var dz = -1; dz <= 1; dz++)
-                        {
-                            if (dx == 0 && dy == 0 && dz == 0) continue;
-                            yield return new Point3D(point.X + dx, point.Y + dy, point.Z + dz);
-                        }
-                    }
+                    if (dx == 0 && dy == 0 && dz == 0) continue;
+                    yield return new Point3D(point.X + dx, point.Y + dy, point.Z + dz);
                 }
             }
         }
@@ -117,18 +113,12 @@ namespace AdventOfCode.Days
             protected override IEnumerable<Point3D> AdjacentPoints(Point3D point)
             {
                 for (var dx = -1; dx <= 1; dx++)
+                for (var dy = -1; dy <= 1; dy++)
+                for (var dz = -1; dz <= 1; dz++)
+                for (var dw = -1; dw <= 1; dw++)
                 {
-                    for (var dy = -1; dy <= 1; dy++)
-                    {
-                        for (var dz = -1; dz <= 1; dz++)
-                        {
-                            for (var dw = -1; dw <= 1; dw++)
-                            {
-                                if (dx == 0 && dy == 0 && dz == 0 && dw == 0) continue;
-                                yield return new Point3D(point.X + dx, point.Y + dy, point.Z + dz, point.W + dw);
-                            }
-                        }
-                    }
+                    if (dx == 0 && dy == 0 && dz == 0 && dw == 0) continue;
+                    yield return new Point3D(point.X + dx, point.Y + dy, point.Z + dz, point.W + dw);
                 }
             }
         }
