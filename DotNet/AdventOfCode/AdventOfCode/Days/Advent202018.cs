@@ -19,6 +19,17 @@ namespace AdventOfCode.Days
             var accumulate = 0L;
             var nextOperation = '?';
             var i = 0;
+
+            void EncounterNumber(long value)
+            {
+                accumulate = nextOperation switch
+                {
+                    '?' => value,
+                    '+' => accumulate + value,
+                    '*' => accumulate * value
+                };
+            }
+            
             while (i < expr.Length)
             {
                 var c = expr[i];
@@ -26,12 +37,7 @@ namespace AdventOfCode.Days
                 if (char.IsDigit(c))
                 {
                     var value = int.Parse(c.ToString());
-                    accumulate = nextOperation switch
-                    {
-                        '?' => value,
-                        '+' => accumulate + value,
-                        '*' => accumulate * value
-                    };
+                    EncounterNumber(value);
                 }
 
                 if (c == '*' || c == '+')
@@ -43,13 +49,7 @@ namespace AdventOfCode.Days
                 {
                     var matchingIndex = FindMatch(expr, i);
                     var subExpr = expr.Substring(i+1, matchingIndex - i - 1);
-                    var value = SolveLine(subExpr);
-                    accumulate = nextOperation switch
-                    {
-                        '?' => value,
-                        '+' => accumulate + value,
-                        '*' => accumulate * value
-                    };
+                    EncounterNumber(SolveLine(subExpr));
 
                     // Jump to char after the closing paren
                     i = matchingIndex + 1;
