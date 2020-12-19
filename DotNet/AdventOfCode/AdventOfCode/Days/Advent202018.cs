@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace AdventOfCode.Days
 {
@@ -13,8 +15,13 @@ namespace AdventOfCode.Days
         {
             return input.Select(i => SolveLine(i)).Sum().ToString();
         }
+        
+        public override string PartTwo(string[] input)
+        {
+            return input.Select(i => SolveLine2(i)).ToList().Sum().ToString();
+        }
 
-        public long SolveLine(string expr)
+        private long SolveLine(string expr)
         {
             var accumulate = 0L;
             var nextOperation = '?';
@@ -84,9 +91,40 @@ namespace AdventOfCode.Days
             }
         }
 
-        public override string PartTwo(string[] input)
+        private long SolveLine2(string expr)
         {
-            throw new System.NotImplementedException();
+            var flat = KillParens(expr, s => SolveLine2(s).ToString());
+            var additionExprs = flat.Split('*');
+
+            var pieceParts = additionExprs
+                .Select(additionOnly => additionOnly
+                    .Split('+')
+                    .Select(s => s.Trim())
+                    .Select(long.Parse)
+                    .Sum());
+            return pieceParts.Aggregate(1L, (a, b) => a * b);
         }
+
+        private string KillParens(string s, Func<string, string> parenSquisher)
+        {
+            var stringBuilder = new StringBuilder();
+            for (var i = 0; i < s.Length; i++)
+            {
+                if (s[i] == '(')
+                {
+                    var matchingIndex = FindMatch(s, i);
+                    var subExpr = s.Substring(i+1, matchingIndex - i - 1);
+                    stringBuilder.Append(parenSquisher(subExpr));
+                    i = matchingIndex;
+                }
+                else
+                {
+                    stringBuilder.Append(s[i]);
+                }
+            }
+
+            return stringBuilder.ToString();
+        }
+
     }
 }
