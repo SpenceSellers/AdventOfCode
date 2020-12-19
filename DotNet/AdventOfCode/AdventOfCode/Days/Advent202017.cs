@@ -7,10 +7,6 @@ namespace AdventOfCode.Days
 {
     public class Advent202017 : Problem
     {
-        public Advent202017() : base(2020, 17)
-        {
-        }
-
         public override string PartOne(string[] input)
         {
             return new GridProblem3D().Solve(input);

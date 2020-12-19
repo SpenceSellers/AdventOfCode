@@ -7,10 +7,6 @@ namespace AdventOfCode.Days
 {
     public class Advent202018 : Problem
     {
-        public Advent202018() : base(2020, 18)
-        {
-        }
-
         public override string PartOne(string[] input)
         {
             return input.Select(i => SolveLine(i)).Sum().ToString();
