@@ -95,10 +95,10 @@ namespace AdventOfCode.Days
     }
     
     
-    public class RawInstruction
+    public record RawInstruction
     {
-        public string Opcode;
-        public int Argument;
+        public string Opcode { get; init; }
+        public int Argument { get; init; }
     }
 
     public class HandheldGameMachine
