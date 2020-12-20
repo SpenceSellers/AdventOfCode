@@ -152,8 +152,7 @@ namespace AdventOfCode.Days
             
         public override int Accepts(string s)
         {
-            // Console.Out.WriteLine(string.Join(',', _parsers.Select(p => p.Accepts(s)).ToList()));
-            // return _parsers.Select(p => p.Accepts(s)).Max();
+            return _parsers.Select(p => p.Accepts(s)).Max();
             foreach (var parser in _parsers)
             {
                 var accepted = parser.Accepts(s);

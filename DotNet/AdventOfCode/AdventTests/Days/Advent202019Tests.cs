@@ -75,6 +75,35 @@ namespace AdventTests.Days
 
             Accepts(dict[0], s).Should().Be(expectation);
         }
+        
+        [TestCase("x", true)]
+        [TestCase("oxo", true)]
+        [TestCase("ooxoo", true)]
+        [TestCase("oooxooo", true)]
+        [TestCase("ooooxoooo", true)]
+        
+        [TestCase("o", false)]
+        [TestCase("ox", false)]
+        [TestCase("xo", false)]
+        [TestCase("oooxoo", false)]
+        [TestCase("oooxoooo", false)]
+        [TestCase("ooooxoodo", false)]
+        public void RecursivelyParsesBalanced(string s, bool expectation)
+        {
+            var dict = new Dictionary<int, RuleParser>();
+            dict[0] = new ChoiceParser(new RuleParser[]
+            {
+                new SequenceParser(new RuleParser[]
+                {
+                    new ConstantParser('o'),
+                    new LookupParser(0, dict),
+                    new ConstantParser('o')
+                }),
+                new ConstantParser('x')
+            });
+
+            Accepts(dict[0], s).Should().Be(expectation);
+        }
 
         private bool Accepts(RuleParser rule, string s)
         {
