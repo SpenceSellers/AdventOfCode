@@ -43,12 +43,12 @@ namespace AdventOfCode.Days
                     EncounterNumber(value);
                 }
 
-                if (c == '*' || c == '+')
+                if (c is '*' or '+')
                 {
                     nextOperation = c;
                 }
 
-                if (c == '(')
+                if (c is '(')
                 {
                     var matchingIndex = FindMatch(expr, i);
                     var subExpr = expr.Substring(i+1, matchingIndex - i - 1);

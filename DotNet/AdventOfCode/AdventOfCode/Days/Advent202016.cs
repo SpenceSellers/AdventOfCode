@@ -38,7 +38,7 @@ namespace AdventOfCode.Days
         {
             var chunks = input
                 .Where(line => line.Length != 0)
-                .SplitList(line => line == "your ticket:" || line == "nearby tickets:")
+                .SplitList(line => line is "your ticket:" or "nearby tickets:")
                 .ToList();
 
             var ruleChunk = chunks[0];
