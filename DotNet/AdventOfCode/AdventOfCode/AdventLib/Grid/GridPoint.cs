@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace AdventOfCode.AdventLib.Grid
 {
-    public class GridPoint
+    public record GridPoint
     {
         public int X { get; }
         public int Y { get; }
@@ -14,8 +14,8 @@ namespace AdventOfCode.AdventLib.Grid
             Y = y;
         }
         
-        public static GridPoint Origin => new GridPoint(0, 0);
-        public GridPoint Add(GridPoint other) => new GridPoint(X + other.X, Y + other.Y);
+        public static GridPoint Origin => new(0, 0);
+        public GridPoint Add(GridPoint other) => new(X + other.X, Y + other.Y);
         public static GridPoint operator +(GridPoint a, GridPoint b) => a.Add(b);
 
         public GridPoint Scale(int scale) => new GridPoint(X * scale, Y * scale);
@@ -27,24 +27,10 @@ namespace AdventOfCode.AdventLib.Grid
             return $"({X},{Y})";
         }
 
-        public override bool Equals(object? obj)
-        {
-            if (obj is GridPoint p)
-            {
-                return p.X == X && p.Y == Y;
-            }
-            return false;
-        }
-
-        protected bool Equals(GridPoint other)
-        {
-            return X == other.X && Y == other.Y;
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(X, Y);
-        }
+        // public override int GetHashCode()
+        // {
+        //     return HashCode.Combine(X, Y);
+        // }
 
         public int ManhattanDistanceFromOrigin()
         {
