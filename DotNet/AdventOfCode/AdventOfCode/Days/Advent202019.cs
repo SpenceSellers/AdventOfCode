@@ -7,6 +7,32 @@ namespace AdventOfCode.Days
     {
         public override string PartOne(string[] input)
         {
+            return SolveDay(input);
+        }
+        
+        public override string PartTwo(string[] input)
+        {
+            var hacked = input.Select(line =>
+            {
+
+                if (line.StartsWith("8:"))
+                {
+                    return "8: 42 | 42 8";
+                }
+
+                if (line.StartsWith("11:"))
+                {
+                    return "11: 42 31 | 42 11 31";
+                }
+
+                return line;
+
+            });
+            return SolveDay(hacked);
+        }
+
+        private string SolveDay(IEnumerable<string> input)
+        {
             var (ruleLines, inputLines) = input.SplitList(l => l.Length == 0);
 
             var ruleLookup = new Dictionary<int, Parser>();
@@ -21,11 +47,6 @@ namespace AdventOfCode.Days
             return inputLines
                 .Count(line => rootParser.Accepts(line) == line.Length)
                 .ToString();
-        }
-
-        public override string PartTwo(string[] input)
-        {
-            throw new System.NotImplementedException();
         }
 
         private (int, Parser) ParseRule(string line, Dictionary<int, Parser> lookup)
