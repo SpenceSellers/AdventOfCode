@@ -69,7 +69,7 @@ namespace AdventOfCode.Days
             public List<Containment> ContainsBags;
         }
 
-        private class Containment
+        private record Containment
         {
             public int Count;
             public string Name;

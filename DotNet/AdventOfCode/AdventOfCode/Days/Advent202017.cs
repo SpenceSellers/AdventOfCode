@@ -75,6 +75,10 @@ namespace AdventOfCode.Days
                 {
                     var currentlyActive = grid.Contains(point);
                     var adjacentPoints = AdjacentPoints(point).Count(grid.Contains);
+                    if (adjacentPoints is > 4 and <= 10)
+                    {
+                        
+                    }
                     var nowActive = currentlyActive switch
                     {
                         true => adjacentPoints is 2 or 3,

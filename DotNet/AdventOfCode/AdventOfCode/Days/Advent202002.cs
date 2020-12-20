@@ -20,7 +20,7 @@ namespace AdventOfCode.Days
                 .Count(p => p.IsValidByPosition())
                 .ToString();
 
-        private class PasswordLine
+        private record PasswordLine
         {
             public int Min;
             public int Max;
