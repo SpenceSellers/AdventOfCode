@@ -114,5 +114,29 @@ namespace AdventOfCode
 
             yield return group;
         }
+
+        public static void Deconstruct<T>(this IEnumerable<T> items, out T a, out T b)
+        {
+            var list = items.Take(2).ToList();
+            a = list[0];
+            b = list[1];
+        }
+        
+        public static void Deconstruct<T>(this IEnumerable<T> items, out T a, out T b, out T c)
+        {
+            var list = items.Take(3).ToList();
+            a = list[0];
+            b = list[1];
+            c = list[2];
+        }
+        
+        public static void Deconstruct<T>(this IEnumerable<T> items, out T a, out T b, out T c, out T d)
+        {
+            var list = items.Take(4).ToList();
+            a = list[0];
+            b = list[1];
+            c = list[2];
+            d = list[3];
+        }
     }
 }
