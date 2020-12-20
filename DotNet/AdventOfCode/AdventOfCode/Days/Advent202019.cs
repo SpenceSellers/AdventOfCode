@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -19,7 +20,7 @@ namespace AdventOfCode.Days
                 {
                     return "8: 42 | 42 8";
                 }
-
+                
                 if (line.StartsWith("11:"))
                 {
                     return "11: 42 31 | 42 11 31";
@@ -28,6 +29,7 @@ namespace AdventOfCode.Days
                 return line;
 
             });
+            // 221 is wrong
             return SolveDay(hacked);
         }
 
@@ -44,9 +46,16 @@ namespace AdventOfCode.Days
 
             var rootParser = ruleLookup[0];
 
-            return inputLines
-                .Count(line => rootParser.Accepts(line) == line.Length)
-                .ToString();
+            var acceptable = inputLines
+                .Where(line =>
+                {
+                    var accepted = rootParser.Accepts(line);
+                    Console.Out.WriteLine($"{line.PadRight(20)} - {accepted} - {accepted == line.Length}");
+                    return accepted == line.Length;
+                })
+                .ToList();
+            
+            return acceptable.Count.ToString();
         }
 
         private (int, Parser) ParseRule(string line, Dictionary<int, Parser> lookup)
@@ -90,7 +99,16 @@ namespace AdventOfCode.Days
             
             public override int Accepts(string s)
             {
+                if (s.Length == 0)
+                {
+                    return -1;
+                }
                 return s[0] == _character ? 1 : -1;
+            }
+
+            public override string ToString()
+            {
+                return $"\"{_character}\"";
             }
         }
 
@@ -120,6 +138,11 @@ namespace AdventOfCode.Days
 
                 return accepted;
             }
+
+            public override string ToString()
+            {
+                return string.Join(" ", _parsers);
+            }
         }
 
         private class ChoiceParser : Parser
@@ -133,9 +156,19 @@ namespace AdventOfCode.Days
             
             public override int Accepts(string s)
             {
+                // Console.Out.WriteLine(string.Join(',', _parsers.Select(p => p.Accepts(s)).ToList()));
+                // return _parsers.Select(p => p.Accepts(s)).Max();
                 foreach (var parser in _parsers)
                 {
                     var accepted = parser.Accepts(s);
+                    // So. We're probably being too "greedy" by accepting the very first parser that works out for us, even if it doesn't parse all the way.
+                    // But that's how these rules work right?
+                    // We need to be able to backtrack across the whole program.
+                    
+                    // Going too short needs to be counted as "bad" as going too far.
+                    
+                    // Crap, it may make sense to return BOTH accepted answers.
+                    
                     if (accepted >= 0)
                     {
                         return accepted;
@@ -143,6 +176,11 @@ namespace AdventOfCode.Days
                 }
 
                 return -1;
+            }
+
+            public override string ToString()
+            {
+                return string.Join("|", _parsers);
             }
         }
 
@@ -160,6 +198,11 @@ namespace AdventOfCode.Days
             public override int Accepts(string s)
             {
                 return _parserTable[_key].Accepts(s);
+            }
+
+            public override string ToString()
+            {
+                return _key.ToString();
             }
         }
     }

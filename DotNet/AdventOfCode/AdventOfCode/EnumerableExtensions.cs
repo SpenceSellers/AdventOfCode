@@ -121,22 +121,14 @@ namespace AdventOfCode
             a = list[0];
             b = list[1];
         }
-        
-        public static void Deconstruct<T>(this IEnumerable<T> items, out T a, out T b, out T c)
+
+        public static IEnumerable<T> Trace<T>(this IEnumerable<T> items, string display = "traced")
         {
-            var list = items.Take(3).ToList();
-            a = list[0];
-            b = list[1];
-            c = list[2];
-        }
-        
-        public static void Deconstruct<T>(this IEnumerable<T> items, out T a, out T b, out T c, out T d)
-        {
-            var list = items.Take(4).ToList();
-            a = list[0];
-            b = list[1];
-            c = list[2];
-            d = list[3];
+            foreach (var item in items)
+            {
+                Console.Out.WriteLine($"{display}: {item.ToString()}");
+                yield return item;
+            }
         }
     }
 }
