@@ -1,5 +1,4 @@
 using System;
-using System.Reflection;
 
 namespace AdventOfCode.AdventLib.Grid
 {
@@ -18,7 +17,7 @@ namespace AdventOfCode.AdventLib.Grid
         public GridPoint Add(GridPoint other) => new(X + other.X, Y + other.Y);
         public static GridPoint operator +(GridPoint a, GridPoint b) => a.Add(b);
 
-        public GridPoint Scale(int scale) => new GridPoint(X * scale, Y * scale);
+        public GridPoint Scale(int scale) => new(X * scale, Y * scale);
 
         public static GridPoint operator -(GridPoint a, GridPoint b) => a.Add(b.Scale(-1));
 
@@ -26,11 +25,6 @@ namespace AdventOfCode.AdventLib.Grid
         {
             return $"({X},{Y})";
         }
-
-        // public override int GetHashCode()
-        // {
-        //     return HashCode.Combine(X, Y);
-        // }
 
         public int ManhattanDistanceFromOrigin()
         {
