@@ -2,17 +2,8 @@ using System;
 
 namespace AdventOfCode.AdventLib.Grid
 {
-    public record GridPoint
+    public record GridPoint(int X, int Y)
     {
-        public int X { get; }
-        public int Y { get; }
-
-        public GridPoint(int x, int y)
-        {
-            X = x;
-            Y = y;
-        }
-        
         public static GridPoint Origin => new(0, 0);
         public GridPoint Add(GridPoint other) => new(X + other.X, Y + other.Y);
         public static GridPoint operator +(GridPoint a, GridPoint b) => a.Add(b);
@@ -21,34 +12,18 @@ namespace AdventOfCode.AdventLib.Grid
 
         public static GridPoint operator -(GridPoint a, GridPoint b) => a.Add(b.Scale(-1));
 
-        public override string ToString()
-        {
-            return $"({X},{Y})";
-        }
+        public override string ToString() => $"({X},{Y})";
 
-        public int ManhattanDistanceFromOrigin()
-        {
-            return Math.Abs(X) + Math.Abs(Y);
-        }
+        public int ManhattanDistanceFromOrigin() => Math.Abs(X) + Math.Abs(Y);
 
-        public GridPoint RotateAroundOrigin(int times)
-        {
-            switch (times)
+        public GridPoint RotateAroundOrigin(int times) =>
+            times switch
             {
-                case 0:
-                    return this;
-                case 1:
-                    return new GridPoint(Y, -X);
-                case -1:
-                    return new GridPoint(-Y, X);
-            }
-
-            if (times > 0)
-            {
-                return RotateAroundOrigin(1).RotateAroundOrigin(times - 1);
-            }
-
-            return RotateAroundOrigin(-1).RotateAroundOrigin(times + 1);
-        }
+                0 => this,
+                1 => new GridPoint(Y, -X),
+                -1 => new GridPoint(-Y, X),
+                > 0 => RotateAroundOrigin(1).RotateAroundOrigin(times - 1),
+                _ => RotateAroundOrigin(-1).RotateAroundOrigin(times + 1)
+            };
     }
 }
