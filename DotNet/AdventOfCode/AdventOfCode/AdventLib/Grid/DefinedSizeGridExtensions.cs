@@ -62,5 +62,17 @@ namespace AdventOfCode.AdventLib.Grid
         {
             return grid.Region().AllPoints().Select(grid.Get);
         }
+
+        public static IDefinedSizeGrid<T> RotateClockwise<T>(this IDefinedSizeGrid<T> grid)
+        {
+            Console.Out.WriteLine("Rotating");
+            return grid.Warp(gp =>
+                {
+                    Console.Out.WriteLine("Yes");
+                    var (x, y) = gp;
+                    return new GridPoint(y, -x + grid.Height - 1);
+                })
+                .Windowed(new GridRegion(GridPoint.Origin, grid.Height, grid.Width));
+        }
     }
 }

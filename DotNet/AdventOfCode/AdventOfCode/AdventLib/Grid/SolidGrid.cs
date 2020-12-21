@@ -65,7 +65,7 @@ namespace AdventOfCode.AdventLib.Grid
 
             if (!ContainsPoint(point))
             {
-                throw new NonexistentCellException();
+                throw new NonexistentCellException(point);
             }
             
             return _grid[point.Y][point.X];

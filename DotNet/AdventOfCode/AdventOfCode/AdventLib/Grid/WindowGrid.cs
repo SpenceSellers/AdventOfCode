@@ -15,7 +15,7 @@ namespace AdventOfCode.AdventLib.Grid
         {
             if (!_windowRegion.ContainsPoint(point))
             {
-                throw new NonexistentCellException();
+                throw new NonexistentCellException(point);
             }
             
             // Test and fix for negative positions?

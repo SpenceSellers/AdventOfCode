@@ -47,13 +47,11 @@ namespace AdventOfCode.AdventLib.Grid
 
         public static IGrid<T> Warp<T>(this IGrid<T> grid, Func<GridPoint, GridPoint> warp)
         {
-            return CommonGrids.CoordinateGrid.Overlay(grid, (point, value) =>
+            return CommonGrids.CoordinateGrid.Map(point =>
             {
                 var mappedPoint = warp(point);
                 return grid.Get(mappedPoint);
             });
         }
-
-
     }
 }
