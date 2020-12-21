@@ -72,5 +72,23 @@ namespace AdventOfCode.AdventLib.Grid
                 })
                 .Windowed(new GridRegion(GridPoint.Origin, grid.Height, grid.Width));
         }
+
+        public static IDefinedSizeGrid<T> FlipVertically<T>(this IDefinedSizeGrid<T> grid)
+        {
+            return grid.Warp(gp =>
+            {
+                var (x, y) = gp;
+                return new GridPoint(x, grid.Height - y - 1);
+            }).Windowed(grid.Region());
+        }
+        
+        public static IDefinedSizeGrid<T> FlipHorizontally<T>(this IDefinedSizeGrid<T> grid)
+        {
+            return grid.Warp(gp =>
+            {
+                var (x, y) = gp;
+                return new GridPoint(grid.Width - x - 1, y);
+            }).Windowed(grid.Region());
+        }
     }
 }

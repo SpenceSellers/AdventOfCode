@@ -9,8 +9,9 @@ namespace AdventOfCode.AdventLib.Grid
 
         public IEnumerable<GridPoint> AllPoints()
         {
-            return Enumerable.Range(0, Height)
-                .SelectMany(y => Enumerable.Range(0, Width).Select(x => new GridPoint(x, y)));
+            // Should this start at origin, or zero?
+            return Enumerable.Range(Origin.Y, Height)
+                .SelectMany(y => Enumerable.Range(Origin.X, Width).Select(x => new GridPoint(x, y)));
         }
     }
 }

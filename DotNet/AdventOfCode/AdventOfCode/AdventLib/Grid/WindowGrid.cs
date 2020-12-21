@@ -13,13 +13,13 @@ namespace AdventOfCode.AdventLib.Grid
         
         public T Get(GridPoint point)
         {
-            if (!_windowRegion.ContainsPoint(point))
-            {
-                throw new NonexistentCellException(point);
-            }
+            // if (!_windowRegion.ContainsPoint(point))
+            // {
+            //     throw new NonexistentCellException(point);
+            // }
             
             // Test and fix for negative positions?
-            var mappedPoint = new GridPoint(point.X - _windowRegion.Origin.X, point.Y - _windowRegion.Origin.Y);
+            var mappedPoint = new GridPoint(point.X + _windowRegion.Origin.X, point.Y + _windowRegion.Origin.Y);
             return _baseGrid.Get(mappedPoint);
         }
 
