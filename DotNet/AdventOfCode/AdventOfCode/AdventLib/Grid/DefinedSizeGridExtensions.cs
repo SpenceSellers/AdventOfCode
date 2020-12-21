@@ -65,10 +65,8 @@ namespace AdventOfCode.AdventLib.Grid
 
         public static IDefinedSizeGrid<T> RotateClockwise<T>(this IDefinedSizeGrid<T> grid)
         {
-            Console.Out.WriteLine("Rotating");
             return grid.Warp(gp =>
                 {
-                    Console.Out.WriteLine("Yes");
                     var (x, y) = gp;
                     return new GridPoint(y, -x + grid.Height - 1);
                 })
