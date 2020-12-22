@@ -11,14 +11,14 @@ namespace AdventOfCode.Days
         {
         }
 
-        public override string PartOne(string[] input)
+        public override object PartOne(string[] input)
         {
             return ParsePassports(input)
                 .Count(HasRequiredFields)
                 .ToString();
         }
 
-        public override string PartTwo(string[] input)
+        public override object PartTwo(string[] input)
         {
             var passports = ParsePassports(input).ToList();
 

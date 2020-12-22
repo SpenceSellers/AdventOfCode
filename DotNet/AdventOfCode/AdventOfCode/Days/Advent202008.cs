@@ -10,7 +10,7 @@ namespace AdventOfCode.Days
         {
         }
 
-        public override string PartOne(string[] input)
+        public override object PartOne(string[] input)
         {
             var instructions = ParseInstructions(input);
             var machine = new HandheldGameMachine
@@ -31,7 +31,7 @@ namespace AdventOfCode.Days
             }
         }
         
-        public override string PartTwo(string[] input) =>
+        public override object PartTwo(string[] input) =>
             MutatedPrograms(ParseInstructions(input).ToList())
                 .Select(program => new HandheldGameMachine {Program = program})
                 .Select(RunUntilTermination)

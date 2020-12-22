@@ -13,13 +13,13 @@ namespace AdventOfCode.Days
         {
         }
 
-        public override string PartOne(string[] input)
+        public override object PartOne(string[] input)
         {
             var tickets = Parse(input);
             return tickets.AllInvalidValues().Sum().ToString();
         }
 
-        public override string PartTwo(string[] input)
+        public override object PartTwo(string[] input)
         {
             var tickets = Parse(input);
             var fields = tickets.LearnFields();

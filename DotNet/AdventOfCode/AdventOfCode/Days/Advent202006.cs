@@ -11,7 +11,7 @@ namespace AdventOfCode.Days
         {
         }
 
-        public override string PartOne(string[] input)
+        public override object PartOne(string[] input)
         {
             return GroupCount(input, (a, b) =>
             {
@@ -20,7 +20,7 @@ namespace AdventOfCode.Days
             }).ToString();
         }
 
-        public override string PartTwo(string[] input)
+        public override object PartTwo(string[] input)
         {
             return GroupCount(input, (a, b) =>
             {

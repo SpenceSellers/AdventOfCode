@@ -13,7 +13,7 @@ namespace AdventOfCode.Days
         {
         }
 
-        public override string PartOne(string[] input)
+        public override object PartOne(string[] input)
         {
             var rules = input.Select(ParseRule).ToList();
             var bagRules = new BagsRules(rules);
@@ -24,7 +24,7 @@ namespace AdventOfCode.Days
         }
 
 
-        public override string PartTwo(string[] input)
+        public override object PartTwo(string[] input)
         {
             var rules = input.Select(ParseRule).ToList();
             return new BagsRules(rules).BagsInside("shiny gold").ToString();

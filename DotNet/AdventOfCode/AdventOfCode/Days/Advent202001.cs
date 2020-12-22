@@ -9,12 +9,12 @@ namespace AdventOfCode.Days
         {
         }
         
-        public override string PartOne(string[] input)
+        public override object PartOne(string[] input)
         {
             return SolveFor(input, 2);
         }
 
-        public override string PartTwo(string[] input)
+        public override object PartTwo(string[] input)
         {
             return SolveFor(input, 3);
         }

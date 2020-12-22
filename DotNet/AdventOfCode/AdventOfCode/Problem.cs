@@ -28,8 +28,8 @@ namespace AdventOfCode
             Day = int.Parse(match.Groups[2].Value);
         }
         
-        public abstract string PartOne(string[] input);
-        public abstract string PartTwo(string[] input);
+        public abstract object PartOne(string[] input);
+        public abstract object PartTwo(string[] input);
 
     }
 }

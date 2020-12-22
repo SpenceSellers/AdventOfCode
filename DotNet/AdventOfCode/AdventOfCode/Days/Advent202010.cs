@@ -10,7 +10,7 @@ namespace AdventOfCode.Days
         {
         }
 
-        public override string PartOne(string[] input)
+        public override object PartOne(string[] input)
         {
             var adapters = input.Select(int.Parse);
             var remainingAdapters = adapters.ToList();
@@ -52,7 +52,7 @@ namespace AdventOfCode.Days
 
         private IDictionary<int, long> memoizedCounts = new Dictionary<int, long>();
 
-        public override string PartTwo(string[] input)
+        public override object PartTwo(string[] input)
         {
             var adapters = input.Select(int.Parse).ToHashSet();
             return ValidArrangements(adapters.Max(), 0, adapters).ToString();

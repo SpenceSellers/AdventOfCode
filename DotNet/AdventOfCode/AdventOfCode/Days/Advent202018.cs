@@ -7,12 +7,12 @@ namespace AdventOfCode.Days
 {
     public class Advent202018 : Problem
     {
-        public override string PartOne(string[] input)
+        public override object PartOne(string[] input)
         {
             return input.Select(i => SolveLine(i)).Sum().ToString();
         }
         
-        public override string PartTwo(string[] input)
+        public override object PartTwo(string[] input)
         {
             return input.Select(i => SolveLine2(i)).ToList().Sum().ToString();
         }

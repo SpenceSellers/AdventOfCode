@@ -6,12 +6,12 @@ namespace AdventOfCode.Days
 {
     public class Advent202019 : Problem
     {
-        public override string PartOne(string[] input)
+        public override object PartOne(string[] input)
         {
             return SolveDay(input);
         }
         
-        public override string PartTwo(string[] input)
+        public override object PartTwo(string[] input)
         {
             var hacked = input.Select(line =>
             {

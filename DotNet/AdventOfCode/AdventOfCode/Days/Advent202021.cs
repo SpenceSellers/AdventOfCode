@@ -7,7 +7,7 @@ namespace AdventOfCode.Days
 {
     public class Advent202021 : Problem
     {
-        public override string PartOne(string[] input)
+        public override object PartOne(string[] input)
         {
             var foods = input.Select(ParseFood).ToList();
             var allIngredients = AllIngredients(foods);
@@ -29,7 +29,7 @@ namespace AdventOfCode.Days
             return knownForSures;
         }
 
-        public override string PartTwo(string[] input)
+        public override object PartTwo(string[] input)
         {
             var foods = input.Select(ParseFood).ToList();
             var knownForSures = LearnPossibleAllergens(foods);

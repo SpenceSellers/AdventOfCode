@@ -9,7 +9,7 @@ namespace AdventOfCode.Days
         {
         }
 
-        public override string PartOne(string[] input)
+        public override object PartOne(string[] input)
         {
             var nums = input.Select(long.Parse).ToList();
             for (var i = 25; i < nums.Count; i++)
@@ -33,12 +33,12 @@ namespace AdventOfCode.Days
             });
         }
 
-        public override string PartTwo(string[] input)
+        public override object PartTwo(string[] input)
         {
             var nums = input.Select(long.Parse).ToList();
 
             // Don't talk to me about the duplicate work or the poor choice of type. Cycles are cheap and it's baked into the interface, OK?
-            var targetNumber = long.Parse(PartOne(input));
+            var targetNumber = long.Parse(PartOne(input).ToString());
 
             for (var i = 2;; i++)
             {

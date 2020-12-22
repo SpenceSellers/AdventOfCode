@@ -8,13 +8,13 @@ namespace AdventOfCode.Days
         {
         }
 
-        public override string PartOne(string[] input) =>
+        public override object PartOne(string[] input) =>
             input
                 .Select(ParseLine)
                 .Count(p => p.IsValidByCount())
                 .ToString();
 
-        public override string PartTwo(string[] input) =>
+        public override object PartTwo(string[] input) =>
             input
                 .Select(ParseLine)
                 .Count(p => p.IsValidByPosition())

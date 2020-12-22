@@ -34,8 +34,8 @@ namespace AdventOfCode
             var path = $"{inputDir}/{_inputPrefix}-{problem.Year}-{problem.Day}.txt";
             var lines = File.ReadAllLines(path);
 
-            if (_runPartOne) RunProblem("⭐", () => problem.PartOne(lines));
-            if (_runPartTwo) RunProblem("⭐⭐", () => problem.PartTwo(lines));
+            if (_runPartOne) RunProblem("⭐", () => problem.PartOne(lines).ToString());
+            if (_runPartTwo) RunProblem("⭐⭐", () => problem.PartTwo(lines).ToString());
         }
 
         private void RunProblem(string title, Func<string> func)

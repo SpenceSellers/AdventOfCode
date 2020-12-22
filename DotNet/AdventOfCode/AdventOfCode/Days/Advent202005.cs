@@ -11,12 +11,12 @@ namespace AdventOfCode.Days
         {
         }
 
-        public override string PartOne(string[] input)
+        public override object PartOne(string[] input)
         {
             return SeatIds(input).Max.ToString();
         }
         
-        public override string PartTwo(string[] input)
+        public override object PartTwo(string[] input)
         {
             var seatIds = SeatIds(input);
             var ourSeatId = seatIds.First(id => !seatIds.Contains(id + 1)) + 1;

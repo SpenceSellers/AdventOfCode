@@ -12,7 +12,7 @@ namespace AdventOfCode.Days
         {
         }
 
-        public override string PartOne(string[] input)
+        public override object PartOne(string[] input)
         {
             long mask0 = 0;
             long mask1 = 0;
@@ -41,7 +41,7 @@ namespace AdventOfCode.Days
             return values.Values.Sum().ToString();
         }
 
-        public override string PartTwo(string[] input)
+        public override object PartTwo(string[] input)
         {
             long mask1 = 0;
             long maskX = 0;

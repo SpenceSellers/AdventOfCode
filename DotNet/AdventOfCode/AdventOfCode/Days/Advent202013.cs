@@ -11,7 +11,7 @@ namespace AdventOfCode.Days
         {
         }
 
-        public override string PartOne(string[] input)
+        public override object PartOne(string[] input)
         {
             var initialTime = int.Parse(input[0]);
             var busses = input[1].Split(",");
@@ -29,7 +29,7 @@ namespace AdventOfCode.Days
             return (timeToNext * idOfNext).ToString();
         }
 
-        public override string PartTwo(string[] input)
+        public override object PartTwo(string[] input)
         {
             var busses = input[1]
                 .Split(",")

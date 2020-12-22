@@ -9,7 +9,7 @@ namespace AdventOfCode.Days
 {
     public class Advent202020 : Problem
     {
-        public override string PartOne(string[] input)
+        public override object PartOne(string[] input)
         {
             var grids = ParseGrids(input);
 
@@ -45,7 +45,7 @@ namespace AdventOfCode.Days
                 .ToString();
         }
         
-        public override string PartTwo(string[] input)
+        public override object PartTwo(string[] input)
         {
             
             var grids = ParseGrids(input);
