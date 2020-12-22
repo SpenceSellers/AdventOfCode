@@ -17,7 +17,7 @@ namespace AdventOfCode.Days
             {
                 a.UnionWith(b);
                 return a;
-            }).ToString();
+            });
         }
 
         public override object PartTwo(string[] input)
@@ -26,7 +26,7 @@ namespace AdventOfCode.Days
             {
                 a.IntersectWith(b);
                 return a;
-            }).ToString();
+            });
         }
 
         private static int GroupCount(IEnumerable<string> input, Func<ISet<char>, ISet<char>, ISet<char>> aggregator) =>

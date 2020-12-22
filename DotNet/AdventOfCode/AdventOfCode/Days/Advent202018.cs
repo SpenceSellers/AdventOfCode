@@ -9,12 +9,12 @@ namespace AdventOfCode.Days
     {
         public override object PartOne(string[] input)
         {
-            return input.Select(i => SolveLine(i)).Sum().ToString();
+            return input.Select(i => SolveLine(i)).Sum();
         }
         
         public override object PartTwo(string[] input)
         {
-            return input.Select(i => SolveLine2(i)).ToList().Sum().ToString();
+            return input.Select(i => SolveLine2(i)).ToList().Sum();
         }
 
         private long SolveLine(string expr)

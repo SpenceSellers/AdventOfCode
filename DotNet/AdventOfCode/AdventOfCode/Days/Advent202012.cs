@@ -13,13 +13,13 @@ namespace AdventOfCode.Days
         public override object PartOne(string[] input)
         {
             var ship = new Part1ShipState();
-            return SolvePart(ship, input).ToString();
+            return SolvePart(ship, input);
         }
 
         public override object PartTwo(string[] input)
         {
             var ship = new Part2ShipState();
-            return SolvePart(ship, input).ToString();
+            return SolvePart(ship, input);
         }
 
         private int SolvePart(ShipState ship, string[] input)

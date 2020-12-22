@@ -13,14 +13,14 @@ namespace AdventOfCode.Days
 
         public override object PartOne(string[] input)
         {
-            return SeatIds(input).Max.ToString();
+            return SeatIds(input).Max;
         }
         
         public override object PartTwo(string[] input)
         {
             var seatIds = SeatIds(input);
             var ourSeatId = seatIds.First(id => !seatIds.Contains(id + 1)) + 1;
-            return ourSeatId.ToString();
+            return ourSeatId;
         }
 
         private ImmutableSortedSet<int> SeatIds(IEnumerable<string> input) => input.Select(SeatId).ToImmutableSortedSet();

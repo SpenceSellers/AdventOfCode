@@ -14,8 +14,7 @@ namespace AdventOfCode.Days
         public override object PartOne(string[] input)
         {
             return ParsePassports(input)
-                .Count(HasRequiredFields)
-                .ToString();
+                .Count(HasRequiredFields);
         }
 
         public override object PartTwo(string[] input)

@@ -26,7 +26,7 @@ namespace AdventOfCode.Days
                 .OrderBy(x => x.First)
                 .FirstOrDefault();
 
-            return (timeToNext * idOfNext).ToString();
+            return timeToNext * idOfNext;
         }
 
         public override object PartTwo(string[] input)

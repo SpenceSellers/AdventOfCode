@@ -17,7 +17,7 @@ namespace AdventOfCode.Days
                 var candidates = nums.GetRange(i - 25, 25);
                 if (!CanBeMadeFrom(nums[i], candidates))
                 {
-                    return nums[i].ToString();
+                    return nums[i];
                 }
             }
 

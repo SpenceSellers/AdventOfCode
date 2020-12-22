@@ -14,7 +14,7 @@ namespace AdventOfCode.Days
 
         public override object PartOne(string[] input)
         {
-            return TreesForSlope(input, new GridPoint(3, 1)).ToString();
+            return TreesForSlope(input, new GridPoint(3, 1));
         }
 
         public override object PartTwo(string[] input)
@@ -30,8 +30,7 @@ namespace AdventOfCode.Days
 
             return slopes
                 .Select(s => new BigInteger(TreesForSlope(input, s)))
-                .Product()
-                .ToString();
+                .Product();
         }
 
         private static int TreesForSlope(string[] input, GridPoint slope)

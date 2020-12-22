@@ -40,7 +40,7 @@ namespace AdventOfCode.Days
             var differences = adapterStack.SequencesOfSize(2).Select(a => a[1] - a[0]).ToList();
             var diff1 = differences.Count(d => d == 1);
             var diff3 = differences.Count(d => d == 3);
-            return (diff1 * diff3).ToString();
+            return diff1 * diff3;
         }
 
         public bool AdapterCanFit(int adapter, int joltage)
@@ -55,7 +55,7 @@ namespace AdventOfCode.Days
         public override object PartTwo(string[] input)
         {
             var adapters = input.Select(int.Parse).ToHashSet();
-            return ValidArrangements(adapters.Max(), 0, adapters).ToString();
+            return ValidArrangements(adapters.Max(), 0, adapters);
         }
 
         private long ValidArrangements(int targetJoltage, int sourceJoltage, HashSet<int> adapters)

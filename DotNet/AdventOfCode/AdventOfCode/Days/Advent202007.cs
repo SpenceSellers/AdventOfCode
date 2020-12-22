@@ -19,15 +19,14 @@ namespace AdventOfCode.Days
             var bagRules = new BagsRules(rules);
 
             return rules
-                .Count(rule => bagRules.BagCanContain(rule.ParentName, "shiny gold"))
-                .ToString();
+                .Count(rule => bagRules.BagCanContain(rule.ParentName, "shiny gold"));
         }
 
 
         public override object PartTwo(string[] input)
         {
             var rules = input.Select(ParseRule).ToList();
-            return new BagsRules(rules).BagsInside("shiny gold").ToString();
+            return new BagsRules(rules).BagsInside("shiny gold");
         }
 
         private static Rule ParseRule(string rule)

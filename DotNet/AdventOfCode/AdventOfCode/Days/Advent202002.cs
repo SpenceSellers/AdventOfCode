@@ -11,14 +11,12 @@ namespace AdventOfCode.Days
         public override object PartOne(string[] input) =>
             input
                 .Select(ParseLine)
-                .Count(p => p.IsValidByCount())
-                .ToString();
+                .Count(p => p.IsValidByCount());
 
         public override object PartTwo(string[] input) =>
             input
                 .Select(ParseLine)
-                .Count(p => p.IsValidByPosition())
-                .ToString();
+                .Count(p => p.IsValidByPosition());
 
         private record PasswordLine
         {

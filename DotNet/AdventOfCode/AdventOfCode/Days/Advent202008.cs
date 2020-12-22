@@ -23,20 +23,19 @@ namespace AdventOfCode.Days
             {
                 if (executedInstructions.Contains(machine.ProgramCounter))
                 {
-                    return machine.Accumulator.ToString();
+                    return machine.Accumulator;
                 }
 
                 executedInstructions.Add(machine.ProgramCounter);
                 machine.Step();
             }
         }
-        
+
         public override object PartTwo(string[] input) =>
             MutatedPrograms(ParseInstructions(input).ToList())
                 .Select(program => new HandheldGameMachine {Program = program})
                 .Select(RunUntilTermination)
-                .FirstOrDefault(result => result != null)
-                .ToString();
+                .FirstOrDefault(result => result != null);
 
         private static int? RunUntilTermination(HandheldGameMachine machine)
         {

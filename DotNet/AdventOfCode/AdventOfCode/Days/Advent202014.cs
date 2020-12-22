@@ -38,7 +38,7 @@ namespace AdventOfCode.Days
                 }
             }
 
-            return values.Values.Sum().ToString();
+            return values.Values.Sum();
         }
 
         public override object PartTwo(string[] input)
@@ -71,7 +71,7 @@ namespace AdventOfCode.Days
                 }
             }
 
-            return values.Values.Sum().ToString();
+            return values.Values.Sum();
         }
 
         public IEnumerable<long> MaskOptions(long target, long allMask)

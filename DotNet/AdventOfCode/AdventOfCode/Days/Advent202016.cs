@@ -16,7 +16,7 @@ namespace AdventOfCode.Days
         public override object PartOne(string[] input)
         {
             var tickets = Parse(input);
-            return tickets.AllInvalidValues().Sum().ToString();
+            return tickets.AllInvalidValues().Sum();
         }
 
         public override object PartTwo(string[] input)
@@ -31,7 +31,7 @@ namespace AdventOfCode.Days
                 product *= num;
             }
 
-            return product.ToString();
+            return product;
         }
 
         private TicketSet Parse(string[] input)
