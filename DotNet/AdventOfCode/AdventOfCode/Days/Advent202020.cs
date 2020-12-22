@@ -92,7 +92,6 @@ namespace AdventOfCode.Days
                     .Where(kv => kv.Item2 == theCorner);
             }
 
-
             return null;
         }
 
