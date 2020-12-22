@@ -25,7 +25,7 @@ namespace AdventOfCode.Days
         {
             var allAllergens = foods.SelectMany(food => food.Allergens).ToHashSet();
 
-            var knownForSures = allAllergens.ToDictionary(allergen => allergen, allergen => Options(allergen, foods).ToHashSet());
+            var knownForSures = allAllergens.ToDictionary(allergen => allergen, allergen => NarrowOptionsForAllergens(allergen, foods).ToHashSet());
             return knownForSures;
         }
 
@@ -63,7 +63,7 @@ namespace AdventOfCode.Days
             }
         }
 
-        private static IEnumerable<string> Options(string allergen, IEnumerable<Food> foods)
+        private static IEnumerable<string> NarrowOptionsForAllergens(string allergen, IEnumerable<Food> foods)
         {
             var ingredientSets = foods.Where(food => food.Allergens.Contains(allergen)).Select(food => food.Ingredients)
                 .ToList();
@@ -77,14 +77,7 @@ namespace AdventOfCode.Days
             return common;
         }
 
-        private static List<Food> Strike(List<Food> foods, string ingredient, string allergen)
-        {
-            return foods.Select(food => food with {
-                Ingredients = food.Ingredients.Where(i => i != ingredient).ToHashSet(), 
-                Allergens = food.Allergens.Where(a => a != allergen).ToHashSet()}).ToList();
-        }
-
-        private HashSet<string> AllIngredients(IEnumerable<Food> foods) =>
+        private static HashSet<string> AllIngredients(IEnumerable<Food> foods) =>
             foods.SelectMany(food => food.Ingredients).ToHashSet();
 
         private Food ParseFood(string line)
