@@ -1,4 +1,4 @@
-using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -10,64 +10,82 @@ namespace AdventOfCode.Days
         public override string PartOne(string[] input)
         {
             var foods = input.Select(ParseFood).ToList();
+            var allIngredients = AllIngredients(foods);
+            var knownForSures = LearnPossibleAllergens(foods);
 
-            var knownAllergens = new Dictionary<string, string>();
+            var allergyIngredients = knownForSures.Values.SelectMany(v => v).ToHashSet();
+            var aaa = allIngredients.ToHashSet();
+            aaa.ExceptWith(allergyIngredients);
 
+            var total = foods.Select(food => food.Ingredients.Count(i => aaa.Contains(i))).Sum();
+            return total.ToString();
+        }
+
+        private static Dictionary<string, HashSet<string>> LearnPossibleAllergens(List<Food> foods)
+        {
+            var allAllergens = foods.SelectMany(food => food.Allergens).ToHashSet();
+
+            var knownForSures = allAllergens.ToDictionary(allergen => allergen, allergen => Options(allergen, foods).ToHashSet());
+            return knownForSures;
+        }
+
+        public override string PartTwo(string[] input)
+        {
+            var foods = input.Select(ParseFood).ToList();
+            var knownForSures = LearnPossibleAllergens(foods);
+            SolveForSingles(knownForSures);
+
+            var knownSingles = knownForSures.ToDictionary(kv => kv.Key, kv => kv.Value.First());
+
+            return string.Join(',', knownSingles.Keys.OrderBy(x => x).Select(k => knownSingles[k]));
+        }
+
+        private static void SolveForSingles(Dictionary<string, HashSet<string>> knownForSures)
+        {
+            var visited = new HashSet<string>();
             while (true)
             {
-                var knownPairings = KnownPairings(foods).ToList();
-
-                if (!knownPairings.Any())
+                var single = knownForSures.Where(kv => !visited.Contains(kv.Key) && kv.Value.Count == 1).Select(kv => kv.Key)
+                    .FirstOrDefault();
+                if (single == null)
                 {
                     break;
                 }
 
-                foreach (var (ingredient, allergen) in knownPairings)
+                visited.Add(single);
+
+                var ingredient = knownForSures[single].First();
+                foreach (var allergen in knownForSures.Keys)
                 {
-                    knownAllergens.TryAdd(ingredient, allergen);
-                    foreach (var food in foods)
-                    {
-                        food.Allergens.Remove(allergen);
-                        food.Ingredients.Remove(ingredient);
-                    }
+                    if (allergen == single) continue;
+                    knownForSures[allergen].Remove(ingredient);
                 }
             }
-            
-            var noAllergens = AllIngredients(foods);
-            noAllergens.ExceptWith(knownAllergens.Keys);
-
-            return foods.Select(food => food.Ingredients.Count).Sum().ToString();
         }
 
-        private static IEnumerable<(string, string)> KnownPairings(List<Food> foods)
+        private static IEnumerable<string> Options(string allergen, IEnumerable<Food> foods)
         {
-            foreach (var fooda in foods)
+            var ingredientSets = foods.Where(food => food.Allergens.Contains(allergen)).Select(food => food.Ingredients)
+                .ToList();
+
+            var common = ingredientSets.First().ToHashSet();
+            foreach (var ingredients in ingredientSets.Skip(1))
             {
-                if (fooda.Allergens.Count == 1 && fooda.Ingredients.Count == 1)
-                {
-                    Console.Out.WriteLine($"FOUND SINGLE {fooda.Ingredients.First()}- {fooda.Allergens.First()}");
-                    yield return (fooda.Ingredients.First(), fooda.Allergens.First());
-                }
-                
-                foreach (var foodb in foods)
-                {
-                    if (fooda == foodb) continue;
-                    var (commonIngredients, commonAllergens) = fooda.Commonality(foodb);
-                    if (commonAllergens.Count == 1 && commonIngredients.Count == 1)
-                    {
-                        Console.Out.WriteLine($"FOUND PAIR {commonIngredients.First()} - {commonAllergens.FirstOrDefault()}");
-                        yield return (commonIngredients.First(), commonAllergens.First());
-                    }
-                }
+                common.IntersectWith(ingredients);
             }
+
+            return common;
         }
 
-        private HashSet<string> AllIngredients(IEnumerable<Food> foods) => foods.SelectMany(food => food.Ingredients).ToHashSet();
-
-        public override string PartTwo(string[] input)
+        private static List<Food> Strike(List<Food> foods, string ingredient, string allergen)
         {
-            throw new System.NotImplementedException();
+            return foods.Select(food => food with {
+                Ingredients = food.Ingredients.Where(i => i != ingredient).ToHashSet(), 
+                Allergens = food.Allergens.Where(a => a != allergen).ToHashSet()}).ToList();
         }
+
+        private HashSet<string> AllIngredients(IEnumerable<Food> foods) =>
+            foods.SelectMany(food => food.Ingredients).ToHashSet();
 
         private Food ParseFood(string line)
         {
@@ -78,17 +96,6 @@ namespace AdventOfCode.Days
             return new Food(ingredients.ToHashSet(), allergens.ToHashSet());
         }
 
-        private record Food(HashSet<string> Ingredients, HashSet<string> Allergens)
-        {
-            public Food Commonality(Food other)
-            {
-                var ingredients = Ingredients.ToHashSet();
-                ingredients.IntersectWith(other.Ingredients);
-
-                var allergens = Allergens.ToHashSet();
-                allergens.IntersectWith(other.Allergens);
-                return new Food(ingredients, allergens);
-            }
-        }
+        private record Food(HashSet<string> Ingredients, HashSet<string> Allergens);
     }
 }
