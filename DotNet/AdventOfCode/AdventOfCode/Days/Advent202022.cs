@@ -50,34 +50,36 @@ namespace AdventOfCode.Days
                 }
             }
         }
+
+        private static List<((List<int>, List<int>), int)> _winnerCache = new();
         
         private static int PlayRecursiveGame(IList<int> deck1, IList<int> deck2)
         {
-            // Console.Out.WriteLine("===== BEGIN GAME =====");
             var previousRounds = new List<(List<int>, List<int>)>();
 
-            bool HavePlayedThisGameBefore() => previousRounds.Any(prev => prev.Item1.SequenceEqual(deck1) && prev.Item2.SequenceEqual(deck2));
+            var previndex = _winnerCache.FindIndex(prev => prev.Item1.Item1.SequenceEqual(deck1) && prev.Item1.Item2.SequenceEqual(deck2));
+            if (previndex >= 0)
+            {
+                Console.Out.WriteLine("CACHE HIT");
+                return _winnerCache[previndex].Item2;
+            }
+
+            bool HavePlayedThisRoundBefore() => previousRounds.Any(prev => prev.Item1.SequenceEqual(deck1) && prev.Item2.SequenceEqual(deck2));
 
             while (true)
             {
                 if (deck1.Count == 0)
                 {
-                    // Console.Out.WriteLine("Player 2 wins due to card exhaustion");
-                    // Console.Out.WriteLine("===== END GAME =====");
                     return 2;
                 }
 
                 if (deck2.Count == 0)
                 {
-                    // Console.Out.WriteLine("Player 1 wins due to card exhaustion");
-                    // Console.Out.WriteLine("===== END GAME =====");
                     return 1;
                 }
 
-                if (HavePlayedThisGameBefore())
+                if (HavePlayedThisRoundBefore())
                 {
-                    // Console.Out.WriteLine("Player 1 wins due to repeat game");
-                    // Console.Out.WriteLine("===== END GAME =====");
                     return 1;
                 }
                 previousRounds.Add((deck1.ToList(), deck2.ToList()));
@@ -89,29 +91,28 @@ namespace AdventOfCode.Days
                 {
                     if (d1top > d2top)
                     {
-                        // Console.Out.WriteLine("p1 wins round");
                         deck1.Add(d1top);
                         deck1.Add(d2top);
                     }
                     else
                     {
-                        // Console.Out.WriteLine("p2 wins round");
                         deck2.Add(d2top);
                         deck2.Add(d1top);
                     }
                 }
                 else
                 {
+                    var ddd1 = deck1.Take(d1top).ToList();
+                    var ddd2 = deck2.Take(d1top).ToList();
                     var winner = PlayRecursiveGame(deck1.Take(d1top).ToList(), deck2.Take(d2top).ToList());
+                    _winnerCache.Add(((ddd1, ddd2), winner));
                     if (winner == 1)
                     {
-                        // Console.Out.WriteLine("p1 wins round");
                         deck1.Add(d1top);
                         deck1.Add(d2top);
                     }
                     else
                     {
-                        // Console.Out.WriteLine("p2 wins round");
                         deck2.Add(d2top);
                         deck2.Add(d1top);
                     }
