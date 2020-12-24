@@ -44,10 +44,12 @@ namespace AdventOfCode.Days
         public override object PartTwo(string[] input)
         {
             var cups = input[0].ToCharArray().Select(c => int.Parse(c.ToString())).ToList();
-            for (int i = 10; i < 1_000_000; i++)
+            for (int i = 10; i <= 1_000_000; i++)
             {
                 cups.Add(i);
             }
+            
+            Console.Out.WriteLine($"Len: {cups.Count}");
 
             var moves = 1_000_000;
 
@@ -70,7 +72,10 @@ namespace AdventOfCode.Days
             var oneIndex = cups.IndexOf(1);
             var indexA = (oneIndex + 1) % cups.Count;
             var indexB = (oneIndex + 2) % cups.Count;
-            return ((long) cups[indexA]) * ((long) cups[indexB]);
+            var aa = (long) cups[indexA];
+            var bb = (long) cups[indexB];
+            Console.Out.WriteLine($"{aa} * {bb}");
+            return aa * bb;
         }
 
         private string ShowCups(IList<int> numbers)
@@ -83,7 +88,7 @@ namespace AdventOfCode.Days
             n--;
             while (true)
             {
-                if (n == -1) n = 9;
+                if (n == -1) n = cups.Count;
                 var idx = cups.IndexOf(n);
                 if (idx >= 0) return idx;
                 n--;
