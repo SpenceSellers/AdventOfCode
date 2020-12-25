@@ -8,8 +8,8 @@ namespace AdventOfCode
         {
             new ProblemRunner()
                 // .UseSampleInput()
-                .SkipPartOne()
-                .Run(new Advent202024());
+                // .SkipPartOne()
+                .Run(new Advent202025());
         }
     }
 }
