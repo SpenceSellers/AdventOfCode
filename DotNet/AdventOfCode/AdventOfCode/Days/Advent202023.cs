@@ -11,25 +11,21 @@ namespace AdventOfCode.Days
         public override object PartOne(string[] input)
         {
             var cups = input[0].ToCharArray().Select(c => int.Parse(c.ToString())).ToList();
-
+            
             var moves = 100;
-
+            
             for (var i = 0; i < moves; i++)
             {
-                Console.Out.WriteLine(ShowCups(cups));
                 var pickedUp = new List<int> {cups[1], cups[2], cups[3]};
-                Console.Out.WriteLine("Picked up:"+ ShowCups(pickedUp));
                 cups.RemoveRange(1, 3);
-                Console.Out.WriteLine(ShowCups(cups));
-
+            
                 var destinationIndex = FindIndexOfNextLowest(cups, cups[0]);
-                Console.Out.WriteLine($"Destination: {cups[destinationIndex]} @ {destinationIndex}");
                 cups.InsertRange(destinationIndex + 1, pickedUp);
                 var currentCup = cups[0];
                 cups.RemoveAt(0);
                 cups.Add(currentCup);
             }
-
+            
             var oneIndex = cups.IndexOf(1);
             var sb = new StringBuilder();
             for (int i = 1; i < 9; i++)
@@ -37,8 +33,9 @@ namespace AdventOfCode.Days
                 var index = (oneIndex + i) % cups.Count;
                 sb.Append(cups[index]);
             }
-
+            
             return sb.ToString();
+            return null;
         }
 
         public override object PartTwo(string[] input)
@@ -51,7 +48,7 @@ namespace AdventOfCode.Days
             
             Console.Out.WriteLine($"Len: {cups.Count}");
 
-            var moves = 1_000_000;
+            var moves = 10_000_000;
 
             for (var i = 0; i < moves; i++)
             {
@@ -65,7 +62,8 @@ namespace AdventOfCode.Days
                 cups.Add(currentCup);
                 if (i % 10_000 == 0)
                 {
-                    Console.Out.WriteLine(i);
+                    var ratio = ((double) i) / moves;
+                    Console.Out.WriteLine($"{i} ({ratio * 100}%)");
                 }
             }
 
@@ -88,7 +86,7 @@ namespace AdventOfCode.Days
             n--;
             while (true)
             {
-                if (n == -1) n = cups.Count;
+                if (n == -1) n = cups.Count + 1;
                 var idx = cups.IndexOf(n);
                 if (idx >= 0) return idx;
                 n--;
