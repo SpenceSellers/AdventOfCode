@@ -19,8 +19,65 @@ namespace AdventOfCode.Days
         
         public override object PartOne(string[] input)
         {
-            var hexPlane = new Dictionary<(int, int), bool>();
+            var hexPlane = BuildInitialState(input);
+
+            return hexPlane.Values.Count(c => c);
+        }
+
+        public override object PartTwo(string[] input)
+        {
+            var hexPlane = BuildInitialState(input);
+
+            for (int i = 0; i < 100; i++)
+            {
+                var nextStep = new Dictionary<(int, int), bool>();
+                var toConsider = hexPlane.Where(kv => kv.Value).Select(kv => kv.Key).SelectMany(PositionsToConsider).ToHashSet();
+                foreach (var pos in toConsider)
+                {
+                    var current = hexPlane.GetDefault(pos, false);
+                    var adjacent = AdjacentPositions(pos)
+                        .Select(adjPos => hexPlane.GetDefault(adjPos, false))
+                        .Count(x => x);
+
+                    var next = current switch
+                    {
+                        false => adjacent == 2,
+                        true => adjacent is not (0 or > 2)
+                    };
+
+                    nextStep[pos] = next;
+                }
+
+                hexPlane = nextStep;
+            }
+            
+            return hexPlane.Values.Count(c => c);
+        }
+
+        private IEnumerable<(int, int)> PositionsToConsider((int, int) pos)
+        {
+            yield return pos;
+            foreach (var adjacentPosition in AdjacentPositions(pos))
+            {
+                yield return adjacentPosition;
+            }
+        }
+
+        private IEnumerable<(int, int)> AdjacentPositions((int, int) pos)
+        {
+            var directions = new[]
+            {
+                HexDirection.West, HexDirection.East, HexDirection.SouthEast, HexDirection.SouthWest,
+                HexDirection.NorthEast, HexDirection.NorthWest
+            };
+
+            return directions.Select(d => ApplyDirection(pos, d));
+        }
+
+        private Dictionary<(int, int), bool> BuildInitialState(string[] input)
+        {
             var instructions = input.Select(ParseLine);
+            var hexPlane = new Dictionary<(int, int), bool>();
             foreach (var hexDirections in instructions)
             {
                 var currentPos = (0, 0);
@@ -28,15 +85,11 @@ namespace AdventOfCode.Days
                 {
                     currentPos = ApplyDirection(currentPos, hexDirection);
                 }
+
                 hexPlane.UpdateWithDefault(currentPos, false, b => !b);
             }
 
-            return hexPlane.Values.Count(c => c);
-        }
-
-        public override object PartTwo(string[] input)
-        {
-            throw new System.NotImplementedException();
+            return hexPlane;
         }
 
         private (int, int) ApplyDirection((int, int) coord, HexDirection direction)

@@ -28,5 +28,11 @@ namespace AdventOfCode
 
             dict[key] = updater(before);
         }
+
+        public static V GetDefault<K, V>(this IDictionary<K, V> dict, K key, V def)
+        {
+            var existed = dict.TryGetValue(key, out var value);
+            return existed ? value : def;
+        }
     }
 }
