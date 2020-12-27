@@ -7,7 +7,6 @@ namespace AdventOfCode.Days
         public override object PartOne(string[] input)
         {
             var (doorKey, cardKey) = input.Select(long.Parse);
-            var doorKeyLoopCount = FindLoopCount(doorKey);
             var cardKeyLoopCount = FindLoopCount(cardKey);
 
             var key = ApplyEncryption(doorKey, cardKeyLoopCount);
