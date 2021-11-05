@@ -51,5 +51,27 @@ namespace AdventTests.Parsing
             groups[0].Should().Contain("g1 two");
             groups[2].Should().Contain("g3 two");
         }
+
+        [Test]
+        public void ShouldSupportOtherSeparators()
+        {
+            var input = new[]
+            {
+                "g1 one",
+                "g1 two",
+                "g1 three",
+                "=====",
+                "g2 one",
+                "=====",
+                "g3 one",
+                "g3 two"
+            };
+
+            var groups = new SeparatedGroupParser().Parse(input, "=====").Select(x => x.ToList()).ToList();
+
+            groups.Should().HaveCount(3);
+            groups[0].Should().Contain("g1 two");
+            groups[2].Should().Contain("g3 two");
+        }
     }
 }
