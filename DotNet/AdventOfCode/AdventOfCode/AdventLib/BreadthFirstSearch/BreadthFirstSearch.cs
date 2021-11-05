@@ -15,10 +15,10 @@ namespace AdventOfCode.AdventLib.BreadthFirstSearch
         /// <summary>
         /// Performs a breadth-first search across the space of all possible JSON strings.
         /// </summary>
-        public IEnumerable<BfsNode<TState>> Bfs()
+        public IEnumerable<TState> Bfs()
         {
-            var initialState = new BfsNode<TState> { State = _config.InitialState };
-            var queue = new Queue<BfsNode<TState>>();
+            var initialState = _config.InitialState;
+            var queue = new Queue<TState>();
             QueueAll(queue, new []{initialState});
 
             var count = 0;
@@ -44,7 +44,7 @@ namespace AdventOfCode.AdventLib.BreadthFirstSearch
         }
 
 
-        private IEnumerable<BfsNode<TState>> NextStates(BfsNode<TState> node)
+        private IEnumerable<TState> NextStates(TState node)
         {
             return _config.NextStates(node);
         }
