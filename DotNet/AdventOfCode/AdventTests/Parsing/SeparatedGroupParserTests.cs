@@ -1,5 +1,5 @@
 using System.Linq;
-using AdventOfCode.Parsing;
+using AdventOfCode.AdventLib.Parsing;
 using FluentAssertions;
 using NUnit.Framework;
 

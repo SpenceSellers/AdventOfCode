@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using AdventOfCode.AdventLib;
 
 namespace AdventOfCode.Days
 {

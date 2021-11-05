@@ -1,5 +1,6 @@
 using System.Linq;
 using AdventOfCode;
+using AdventOfCode.AdventLib;
 using FluentAssertions;
 using NUnit.Framework;
 

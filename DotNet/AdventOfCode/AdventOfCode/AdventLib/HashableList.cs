@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AdventOfCode
+namespace AdventOfCode.AdventLib
 {
     public class HashableList<T> : IReadOnlyList<T>
     {

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace AdventOfCode
+namespace AdventOfCode.AdventLib
 {
     public static class DictionaryExtensions
     {

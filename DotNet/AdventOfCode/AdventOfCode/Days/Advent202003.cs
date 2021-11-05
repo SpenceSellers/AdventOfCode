@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using AdventOfCode.AdventLib;
 using AdventOfCode.AdventLib.Grid;
 
 namespace AdventOfCode.Days

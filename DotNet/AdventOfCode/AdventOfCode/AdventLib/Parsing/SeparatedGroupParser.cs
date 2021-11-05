@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AdventOfCode.Parsing
+namespace AdventOfCode.AdventLib.Parsing
 {
     /// <summary>
     /// Parses groups of input separated by newlines.
