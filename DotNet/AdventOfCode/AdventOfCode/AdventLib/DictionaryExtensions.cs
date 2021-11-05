@@ -7,14 +7,7 @@ namespace AdventOfCode.AdventLib
     {
         public static void Increment<T>(this IDictionary<T, int> dict, T key, int count = 1)
         {
-            if (dict.ContainsKey(key))
-            {
-                dict[key] += count;
-            }
-            else
-            {
-                dict[key] = count;
-            }
+            dict.UpdateWithDefault(key, 0, i => i + count);
         }
 
         public static void UpdateWithDefault<K, V>(this IDictionary<K, V> dict, K key, V initialDefault,

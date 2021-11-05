@@ -2,6 +2,9 @@ using System;
 
 namespace AdventOfCode.AdventLib.Grid
 {
+    /// <summary>
+    /// A point in 2D integer space. Negative coordinates are fine.
+    /// </summary>
     public record GridPoint(int X, int Y)
     {
         public static GridPoint Origin => new(0, 0);

@@ -27,6 +27,9 @@ namespace AdventOfCode.AdventLib
             yield return chunk;
         }
 
+        /// <summary>
+        /// Breaks a sequence into chunks of length n. Any values (if any) in an incomplete chunk at the end will be thrown away.
+        /// </summary>
         public static IEnumerable<IList<T>> CompleteChunks<T>(this IEnumerable<T> items, int n)
         {
             return Chunks(items, n).Where(chunk => chunk.Count == n);
