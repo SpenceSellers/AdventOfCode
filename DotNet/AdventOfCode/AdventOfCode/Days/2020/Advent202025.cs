@@ -1,7 +1,7 @@
 using System.Linq;
 using AdventOfCode.AdventLib;
 
-namespace AdventOfCode.Days
+namespace AdventOfCode.Days._2020
 {
     public class Advent202025 : Problem
     {

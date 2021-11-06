@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
-namespace AdventOfCode.Days
+namespace AdventOfCode.Days._2020
 {
     public class Advent202005 : Problem
     {

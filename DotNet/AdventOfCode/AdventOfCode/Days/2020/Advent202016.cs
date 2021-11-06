@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -6,7 +5,7 @@ using System.Numerics;
 using System.Text.RegularExpressions;
 using AdventOfCode.AdventLib;
 
-namespace AdventOfCode.Days
+namespace AdventOfCode.Days._2020
 {
     public class Advent202016 : Problem
     {

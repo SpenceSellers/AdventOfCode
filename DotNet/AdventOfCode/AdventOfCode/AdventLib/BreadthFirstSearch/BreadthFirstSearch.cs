@@ -40,14 +40,10 @@ namespace AdventOfCode.AdventLib.BreadthFirstSearch
                     _seenStates.Add(seenKey);
                 }
 
-                // Don't queue if the current node can never lead to a solution node
-                if (_config.CanLeadToSuccessState(next))
-                {
-                    var nextStates = NextStates(next)
-                        .Where(s => !HasSeenItem(s))
-                        .ToList();
-                    QueueAll(nextStates);
-                }
+                var nextStates = NextStates(next)
+                    .Where(s => !HasSeenItem(s))
+                    .ToList();
+                QueueAll(nextStates);
             }
         }
 

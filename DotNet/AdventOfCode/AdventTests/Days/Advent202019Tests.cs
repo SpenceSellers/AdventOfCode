@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using AdventOfCode.Days;
+using AdventOfCode.Days._2020;
 using FluentAssertions;
 using NUnit.Framework;
 
