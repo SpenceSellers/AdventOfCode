@@ -47,9 +47,9 @@ namespace AdventOfCode.AdventLib.Grid
 
         public static IGrid<T> Warp<T>(this IGrid<T> grid, Func<GridPoint, GridPoint> warp)
         {
-            return CommonGrids.CoordinateGrid.Map(point =>
+            return new GeneratedGrid<T>(p =>
             {
-                var mappedPoint = warp(point);
+                var mappedPoint = warp(p);
                 return grid.Get(mappedPoint);
             });
         }

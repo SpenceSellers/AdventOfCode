@@ -6,4 +6,8 @@
         <LangVersion>9</LangVersion>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="Days\2021" />
+    </ItemGroup>
+
 </Project>

@@ -1,5 +1,4 @@
-﻿using AdventOfCode.Days;
-using AdventOfCode.Days._2020;
+﻿using AdventOfCode.Days._2020;
 
 namespace AdventOfCode
 {
