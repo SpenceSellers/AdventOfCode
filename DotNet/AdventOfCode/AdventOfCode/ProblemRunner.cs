@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
+using System.Text;
 
 namespace AdventOfCode
 {
@@ -39,7 +40,7 @@ namespace AdventOfCode
         {
             var inputPath = FilePath(problem, "input");
             var samplePath = FilePath(problem, "sample");
-            EnsureFileExists(inputPath, () => SessionToken != null ? FetchInput(problem) : Array.Empty<byte>());
+            EnsureFileExists(inputPath, () => FetchInput(problem) ?? Array.Empty<byte>());
             EnsureFileExists(samplePath, Array.Empty<byte>);
             var lines = File.ReadAllLines(_inputSource switch
             {
@@ -86,6 +87,10 @@ namespace AdventOfCode
 
         private byte[] FetchInput(Problem problem)
         {
+            if (SessionToken == null)
+            {
+                return null;
+            }
             try
             {
                 using var client = new HttpClient();
@@ -96,12 +101,18 @@ namespace AdventOfCode
 
                 var response = client.Send(request);
                 Console.Out.WriteLine("Fetched puzzle input");
-                return response.Content.ReadAsByteArrayAsync().Result;
+                var bytes = response.Content.ReadAsByteArrayAsync().Result;
+                if (Encoding.UTF8.GetString(bytes).Contains("Please don't repeatedly request this endpoint before it unlocks!"))
+                {
+                    Console.Out.WriteLine("Day has not started yet, creating empty file.");
+                    return null;
+                }
+                return bytes;
             }
             catch (Exception e)
             {
                 Console.Out.WriteLine("Failed to fetch puzzle input, creating empty file");
-                return new byte[] { };
+                return null;
             }
         }
 
