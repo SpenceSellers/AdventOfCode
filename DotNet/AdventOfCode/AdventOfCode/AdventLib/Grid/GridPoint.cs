@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace AdventOfCode.AdventLib.Grid
 {
@@ -28,5 +29,27 @@ namespace AdventOfCode.AdventLib.Grid
                 > 0 => RotateAroundOrigin(1).RotateAroundOrigin(times - 1),
                 _ => RotateAroundOrigin(-1).RotateAroundOrigin(times + 1)
             };
+
+        public IEnumerable<GridPoint> Adjacent4
+        {
+            get
+            {
+                yield return this + new GridPoint(-1, 0);
+                yield return this + new GridPoint(+1, 0);
+                yield return this + new GridPoint(0, -1);
+                yield return this + new GridPoint(0, 1);
+            }
+        }
+
+        public IEnumerable<GridPoint> Adjacent8
+        {
+            get
+            {
+                yield return this + new GridPoint(-1, 0);
+                yield return this + new GridPoint(+1, 0);
+                yield return this + new GridPoint(0, -1);
+                yield return this + new GridPoint(0, 1);
+            }
+        }
     }
 }
