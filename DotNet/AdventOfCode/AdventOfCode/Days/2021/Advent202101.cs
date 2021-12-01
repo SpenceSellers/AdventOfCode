@@ -9,8 +9,7 @@ namespace AdventOfCode.Days._2021
     {
         public override object PartOne(string[] input)
         {
-            var depths = input.Select(int.Parse);
-            return CountAscending(depths);
+            return CountAscending(input.Select(int.Parse));
         }
 
         public override object PartTwo(string[] input)
@@ -22,7 +21,7 @@ namespace AdventOfCode.Days._2021
             return CountAscending(depthSums);
         }
 
-        private static object CountAscending(IEnumerable<int> depths)
+        private static int CountAscending(IEnumerable<int> depths)
         {
             int? previous = null;
             var count = 0;
