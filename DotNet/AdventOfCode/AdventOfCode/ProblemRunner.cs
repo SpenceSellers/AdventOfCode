@@ -40,7 +40,7 @@ namespace AdventOfCode
         {
             var inputPath = FilePath(problem, "input");
             var samplePath = FilePath(problem, "sample");
-            EnsureFileExists(inputPath, () => FetchInput(problem) ?? Array.Empty<byte>());
+            EnsureFileExists(inputPath, () => new PuzzleFetcher(problem.Year, problem.Day).FetchInput() ?? Array.Empty<byte>());
             EnsureFileExists(samplePath, Array.Empty<byte>);
             var lines = File.ReadAllLines(_inputSource switch
             {
@@ -85,37 +85,5 @@ namespace AdventOfCode
             Console.Out.WriteLine($"Created file at {path}");
         }
 
-        private byte[] FetchInput(Problem problem)
-        {
-            if (SessionToken == null)
-            {
-                return null;
-            }
-            try
-            {
-                using var client = new HttpClient();
-                var request = new HttpRequestMessage();
-                request.Headers.Add("Cookie", $"session={SessionToken}");
-                request.Method = HttpMethod.Get;
-                request.RequestUri = new Uri($"https://adventofcode.com/{problem.Year}/day/{problem.Day}/input");
-
-                var response = client.Send(request);
-                Console.Out.WriteLine("Fetched puzzle input");
-                var bytes = response.Content.ReadAsByteArrayAsync().Result;
-                if (Encoding.UTF8.GetString(bytes).Contains("Please don't repeatedly request this endpoint before it unlocks!"))
-                {
-                    Console.Out.WriteLine("Day has not started yet, creating empty file.");
-                    return null;
-                }
-                return bytes;
-            }
-            catch (Exception e)
-            {
-                Console.Out.WriteLine("Failed to fetch puzzle input, creating empty file");
-                return null;
-            }
-        }
-
-        private static string? SessionToken => Environment.GetEnvironmentVariable("SESSION_TOKEN");
     }
 }
