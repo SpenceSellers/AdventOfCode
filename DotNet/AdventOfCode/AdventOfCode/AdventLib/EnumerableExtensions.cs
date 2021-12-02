@@ -117,6 +117,11 @@ namespace AdventOfCode.AdventLib
             yield return group;
         }
 
+        public static IEnumerable<IList<T>> SplitList<T>(this IEnumerable<T> items, T splitOn)
+        {
+            return items.SplitList(i => i.Equals(splitOn));
+        }
+
         public static void Deconstruct<T>(this IEnumerable<T> items, out T a, out T b)
         {
             var list = items.Take(2).ToList();

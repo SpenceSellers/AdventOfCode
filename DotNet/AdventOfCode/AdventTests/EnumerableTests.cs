@@ -102,5 +102,16 @@ namespace AdventTests
             splitted[0].Should().HaveCount(6);
             splitted[1].Should().HaveCount(0);
         }
+
+        [Test]
+        public void ShouldSplitListsCorrectlyUsingEquality()
+        {
+            var list = new[] {1, 2, 3, 4, 5, 6, 7};
+
+            var splitted = list.SplitList(3).ToList();
+            splitted.Should().HaveCount(2);
+            splitted[0].Should().Equal(1, 2);
+            splitted[1].Should().Equal(4, 5, 6, 7);
+        }
     }
 }
