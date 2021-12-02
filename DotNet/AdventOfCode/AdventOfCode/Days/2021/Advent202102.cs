@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AdventOfCode.Days._2021
@@ -6,52 +8,53 @@ namespace AdventOfCode.Days._2021
     {
         public override object PartOne(string[] input)
         {
-            var instructions = input.Select(x => x.Split()).Select(x => (x[0], int.Parse(x[1])));
-            var x = 0;
-            var y = 0;
-            foreach (var (direction, distance) in instructions)
+            var horizontal = 0;
+            var depth = 0;
+            PilotSubmarine(input, new Dictionary<string, Action<int>>
             {
-                switch (direction)
-                {
-                    case "forward":
-                        x += distance;
-                        break;
-                    case "down":
-                        y += distance;
-                        break;
-                    case "up":
-                        y -= distance;
-                        break;
-                }
-            }
+                {"forward", x => horizontal += x},
+                {"down", x => depth += x},
+                {"up", x => depth -= x}
+            });
 
-            return x * y;
+            return horizontal * depth;
         }
 
         public override object PartTwo(string[] input)
         {
-            var instructions = input.Select(x => x.Split()).Select(x => (x[0], int.Parse(x[1])));
-            var x = 0;
-            var y = 0;
+            var horizontal = 0;
+            var depth = 0;
             var aim = 0;
+            PilotSubmarine(input, new Dictionary<string, Action<int>>
+            {
+                {"forward", x =>
+                    {
+                        horizontal += x;
+                        depth += x * aim;
+                    }
+                },
+                {"down", x => aim += x},
+                {"up", x => aim -= x}
+            });
+
+            return horizontal * depth;
+        }
+
+        private void PilotSubmarine(string[] input, Dictionary<string, Action<int>> handlers)
+        {
+            var instructions = Parse(input);
             foreach (var (direction, distance) in instructions)
             {
-                switch (direction)
-                {
-                    case "forward":
-                        x += distance;
-                        y += distance * aim;
-                        break;
-                    case "down":
-                        aim += distance;
-                        break;
-                    case "up":
-                        aim -= distance;
-                        break;
-                }
+                handlers[direction](distance);
             }
+        }
 
-            return x * y;
+        private static IEnumerable<(string, int)> Parse(string[] input)
+        {
+            var instructions = input
+                .Select(x => x.Split())
+                .Select(x => (x[0], int.Parse(x[1])));
+            return instructions;
         }
     }
 }
