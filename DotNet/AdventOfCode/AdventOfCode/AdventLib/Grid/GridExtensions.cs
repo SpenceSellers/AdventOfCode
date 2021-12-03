@@ -16,6 +16,15 @@ namespace AdventOfCode.AdventLib.Grid
             return new WindowGrid<T>(grid, window);
         }
 
+        /// <summary>
+        /// Useful when you've done some transforms that don't change the shape of a defined size grid, but the types
+        /// aren't convinced of that.
+        /// </summary>
+        public static WindowGrid<T> SameRegionAs<T>(this IGrid<T> grid, IDefinedSizeGrid<T> definedSizeGrid)
+        {
+            return grid.Windowed(definedSizeGrid.Region());
+        }
+
         // AKA "zip"
         public static IGrid<TNew> Overlay<TOld1, TOld2, TNew>(
             this IGrid<TOld1> a,

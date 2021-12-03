@@ -26,6 +26,27 @@ namespace AdventOfCode.AdventLib.Grid
             return new GridRegion(GridPoint.Origin, grid.Width, grid.Height);
         }
 
+        /// <summary>
+        /// Perform some operations on a grid, but keep the outline of the original.
+        /// </summary>
+        public static WindowGrid<TOut> KeepingRegion<TIn, TOut>(
+            this IDefinedSizeGrid<TIn> grid,
+            Func<IDefinedSizeGrid<TIn>, IGrid<TOut>> func)
+        {
+            var region = grid.Region();
+            var result = func(grid);
+            if (result is IDefinedSizeGrid<TOut> definedResult)
+            {
+                // TODO we should probably only care if the resulting region is SMALLER than the old region
+                if (!definedResult.Region().Equals(region))
+                {
+                    throw new InvalidOperationException(
+                        $"KeepingRegion() function returned a defined size grid that changes the region of the grid");
+                }
+            }
+            return new WindowGrid<TOut>(result, region);
+        }
+
         public static string Export<T>(this IDefinedSizeGrid<T> grid)
         {
             return string.Join("\n", Enumerable.Range(0, grid.Height).Select(y =>
