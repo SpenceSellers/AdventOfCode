@@ -90,5 +90,25 @@ namespace AdventOfCode.AdventLib.Grid
                 return new GridPoint(grid.Width - x - 1, y);
             }).Windowed(grid.Region());
         }
+
+        public static IEnumerable<T> GetRow<T>(this IDefinedSizeGrid<T> grid, int y)
+        {
+            return grid.Region().XCoords().Select(x => grid.Get(new GridPoint(x, y)));
+        }
+
+        public static IEnumerable<T> GetColumn<T>(this IDefinedSizeGrid<T> grid, int x)
+        {
+            return grid.Region().YCoords().Select(y => grid.Get(new GridPoint(x, y)));
+        }
+
+        public static IEnumerable<IEnumerable<T>> Rows<T>(this IDefinedSizeGrid<T> grid)
+        {
+            return grid.Region().YCoords().Select(grid.GetRow);
+        }
+
+        public static IEnumerable<IEnumerable<T>> Columns<T>(this IDefinedSizeGrid<T> grid)
+        {
+            return grid.Region().XCoords().Select(grid.GetColumn);
+        }
     }
 }

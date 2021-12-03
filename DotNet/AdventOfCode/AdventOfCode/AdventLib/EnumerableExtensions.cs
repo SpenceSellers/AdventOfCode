@@ -137,5 +137,14 @@ namespace AdventOfCode.AdventLib
                 yield return item;
             }
         }
+
+        public static List<T> Realize<T>(this IEnumerable<T> items) =>
+            items.ToList();
+
+        public static List<List<T>> Realize<T>(this IEnumerable<IEnumerable<T>> items) =>
+            items.Select(i => i.ToList()).ToList();
+
+        public static List<List<List<T>>> Realize<T>(this IEnumerable<IEnumerable<IEnumerable<T>>> items) =>
+            items.Select(i => i.Select(j => j.ToList()).ToList()).ToList();
     }
 }

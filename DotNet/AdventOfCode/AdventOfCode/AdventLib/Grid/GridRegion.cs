@@ -13,5 +13,8 @@ namespace AdventOfCode.AdventLib.Grid
             return Enumerable.Range(Origin.Y, Height)
                 .SelectMany(y => Enumerable.Range(Origin.X, Width).Select(x => new GridPoint(x, y)));
         }
+
+        public IEnumerable<int> XCoords() => Enumerable.Range(Origin.X, Width);
+        public IEnumerable<int> YCoords() => Enumerable.Range(Origin.Y, Height);
     }
 }
