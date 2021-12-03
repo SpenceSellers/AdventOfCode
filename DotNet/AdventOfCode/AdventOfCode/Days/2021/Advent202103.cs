@@ -20,32 +20,25 @@ namespace AdventOfCode.Days._2021
         public override object PartTwo(string[] input)
         {
             var bits = input.Select(x => x.ToCharArray()).ToList();
-
-            var oxygenResult = ReduceBits(bits, false);
-            var oxygen = ToInt(oxygenResult);
-
-            var co2Result = ReduceBits(bits, true);
-            var co2 = ToInt(co2Result);
+            var oxygen = ToInt(ReduceBits(bits, false));
+            var co2 = ToInt(ReduceBits(bits, true));
             return oxygen * co2;
         }
 
-        private static List<char> CommonBits(IReadOnlyList<char[]> bits)
-        {
-            var length = bits[0].Length;
-            var commonBits = Transpose(length, bits)
+        private static List<char> CommonBits(IList<char[]> bits) =>
+            Transpose(bits)
                 .Select(column =>
                 {
                     var ones = column.Count(x => x == '1');
                     return ones >= (bits.Count + 1) / 2 ? '1' : '0';
                 }).ToList();
-            return commonBits;
-        }
 
         /// <summary>
         /// Rotate the bits on their side so we don't have to think sideways
         /// </summary>
-        private static IEnumerable<List<char>> Transpose(int length, IReadOnlyCollection<char[]> bits)
+        private static IEnumerable<List<char>> Transpose(IList<char[]> bits)
         {
+            var length = bits[0].Length;
             for (var i = 0; i < length; i++)
             {
                 var column = bits.Select(x => x[i]).ToList();
@@ -56,10 +49,7 @@ namespace AdventOfCode.Days._2021
         private static IEnumerable<char> Invert(IEnumerable<char> l) => l.Select(Invert);
         private static char Invert(char c) => c == '1' ? '0' : '1';
 
-        private static int ToInt(IEnumerable<char> bits)
-        {
-            return Convert.ToInt32(string.Join("", bits), 2);
-        }
+        private static int ToInt(IEnumerable<char> bits) => Convert.ToInt32(string.Join("", bits), 2);
 
         private static IEnumerable<char> ReduceBits(List<char[]> bits, bool invert)
         {
@@ -71,13 +61,11 @@ namespace AdventOfCode.Days._2021
                 bits = bits.Where(c => c[i] == criticalBit).ToList();
                 if (bits.Count == 1)
                 {
-                    break;
+                    return bits[0];
                 }
             }
 
-            Debug.Assert(bits.Count == 1, "We should have arrived at a single number by now");
-
-            return bits[0];
+            throw new InvalidOperationException("There are more than one candidate bitstrings left");
         }
     }
 }
