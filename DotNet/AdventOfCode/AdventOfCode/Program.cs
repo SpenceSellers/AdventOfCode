@@ -8,7 +8,7 @@ namespace AdventOfCode
         static void Main(string[] args)
         {
             new ProblemRunner()
-                .UseSampleInput()
+                // .UseSampleInput()
                 // .SkipPartOne()
                 .Run(new Advent202103());
         }
