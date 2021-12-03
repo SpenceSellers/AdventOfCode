@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace AdventOfCode.Days._2021
@@ -11,25 +12,39 @@ namespace AdventOfCode.Days._2021
             var bits = input.Select(x => x.ToCharArray()).ToList();
             var commonBits = CommonBits(bits);
 
-            var a =  Convert.ToInt32(string.Join("", commonBits), 2);
-            var b =  Convert.ToInt32(Invert(string.Join("", commonBits)), 2);
-            return a * b;
+            var gamma = ToInt(commonBits);
+            var epsilon =  ToInt(Invert(commonBits));
+            return gamma * epsilon;
         }
 
-        private static List<char> CommonBits(List<char[]> bits)
+        public override object PartTwo(string[] input)
+        {
+            var bits = input.Select(x => x.ToCharArray()).ToList();
+
+            var oxygenResult = ReduceBits(bits, false);
+            var oxygen = ToInt(oxygenResult);
+
+            var co2Result = ReduceBits(bits, true);
+            var co2 = ToInt(co2Result);
+            return oxygen * co2;
+        }
+
+        private static List<char> CommonBits(IReadOnlyList<char[]> bits)
         {
             var length = bits[0].Length;
             var commonBits = Transpose(length, bits)
                 .Select(column =>
                 {
                     var ones = column.Count(x => x == '1');
-                    var zeroes = column.Count(x => x == '0');
-                    return ones >= zeroes ? '1' : '0';
+                    return ones >= (bits.Count + 1) / 2 ? '1' : '0';
                 }).ToList();
             return commonBits;
         }
 
-        private static IEnumerable<IEnumerable<char>> Transpose(int length, List<char[]> bits)
+        /// <summary>
+        /// Rotate the bits on their side so we don't have to think sideways
+        /// </summary>
+        private static IEnumerable<List<char>> Transpose(int length, IReadOnlyCollection<char[]> bits)
         {
             for (var i = 0; i < length; i++)
             {
@@ -38,20 +53,21 @@ namespace AdventOfCode.Days._2021
             }
         }
 
-        private static string Invert(string s)
+        private static IEnumerable<char> Invert(IEnumerable<char> l) => l.Select(Invert);
+        private static char Invert(char c) => c == '1' ? '0' : '1';
+
+        private static int ToInt(IEnumerable<char> bits)
         {
-            return string.Join("", s.ToCharArray().Select(x => x == '1' ? '0' : '1'));
+            return Convert.ToInt32(string.Join("", bits), 2);
         }
 
-        public override object PartTwo(string[] input)
+        private static IEnumerable<char> ReduceBits(List<char[]> bits, bool invert)
         {
-            var bits = input.Select(x => x.ToCharArray()).ToList();
-            var originalBits = bits;
-
             for (var i = 0; i < bits[0].Length; i++)
             {
                 var commonBits = CommonBits(bits);
                 var criticalBit = commonBits[i];
+                criticalBit = invert ? Invert(criticalBit) : criticalBit;
                 bits = bits.Where(c => c[i] == criticalBit).ToList();
                 if (bits.Count == 1)
                 {
@@ -59,31 +75,9 @@ namespace AdventOfCode.Days._2021
                 }
             }
 
-            if (bits.Count != 1)
-            {
-                throw new Exception("Uh oh " + bits.Count);
-            }
-            var aaa = Convert.ToInt32(string.Join("", bits[0]), 2);
+            Debug.Assert(bits.Count == 1, "We should have arrived at a single number by now");
 
-            bits = originalBits;
-            for (var i = 0; i < bits[0].Length; i++)
-            {
-                var commonBits = CommonBits(bits);
-                var criticalBit = commonBits[i] == '1' ? '0' : '1';
-                bits = bits.Where(c => c[i] == criticalBit).ToList();
-                if (bits.Count == 1)
-                {
-                    break;
-                }
-            }
-
-            if (bits.Count != 1)
-            {
-                throw new Exception("Uh oh " + bits.Count);
-            }
-
-            var bbb = Convert.ToInt32(string.Join("", bits[0]), 2);
-            return aaa * bbb;
+            return bits[0];
         }
     }
 }
