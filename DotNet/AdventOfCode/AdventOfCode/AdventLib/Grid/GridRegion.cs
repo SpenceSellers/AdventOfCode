@@ -7,30 +7,11 @@ namespace AdventOfCode.AdventLib.Grid
     {
         public bool ContainsPoint(GridPoint p) => p.X >= Origin.X && p.X < Origin.X + Width && p.Y >= Origin.Y && p.Y < Origin.Y + Height;
 
-        public bool ContainsRegion(GridRegion other)
-        {
-            if (other.Origin.X < Origin.X)
-            {
-                return false;
-            }
-
-            if (other.Origin.Y < Origin.Y)
-            {
-                return false;
-            }
-
-            if (other.Origin.X + other.Width > Origin.X + Width)
-            {
-                return false;
-            }
-
-            if (other.Origin.Y + other.Height > Origin.Y + Height)
-            {
-                return false;
-            }
-
-            return true;
-        }
+        public bool ContainsRegion(GridRegion other) =>
+            other.Origin.X >= Origin.X &&
+            other.Origin.Y >= Origin.Y &&
+            other.Origin.X + other.Width <= Origin.X + Width &&
+            other.Origin.Y + other.Height <= Origin.Y + Height;
 
         public IEnumerable<GridPoint> AllPoints()
         {

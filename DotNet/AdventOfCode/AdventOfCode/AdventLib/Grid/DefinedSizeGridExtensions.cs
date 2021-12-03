@@ -37,8 +37,7 @@ namespace AdventOfCode.AdventLib.Grid
             var result = func(grid);
             if (result is IDefinedSizeGrid<TOut> definedResult)
             {
-                // TODO we should probably only care if the resulting region is SMALLER than the old region
-                if (!definedResult.Region().Equals(region))
+                if (!definedResult.Region().ContainsRegion(region))
                 {
                     throw new InvalidOperationException(
                         $"KeepingRegion() function returned a defined size grid that changes the region of the grid");
