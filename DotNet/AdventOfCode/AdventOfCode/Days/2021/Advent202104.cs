@@ -11,44 +11,55 @@ namespace AdventOfCode.Days._2021
     {
         public override object PartOne(string[] input)
         {
-            var balls = input[0].Split(",").Select(int.Parse).ToList();
+            var balls = input[0]
+                .Split(",")
+                .Select(int.Parse)
+                .ToList();
             var boards = ParseBoards(input);
 
-            for (var i = 0; i < balls.Count; i++)
+            foreach (var ballsForThisRound in BallRounds(balls))
             {
-                var ballsForThisRound = balls.Take(i);
                 var winningBoard = boards.FirstOrDefault(board => BoardHasWon(board, ballsForThisRound.ToHashSet()));
                 if (winningBoard is not null)
                 {
-                    var winningNumber = ballsForThisRound.Last();
-                    var nums = winningBoard.AllCells().ToHashSet().Except(ballsForThisRound).Sum();
-                    return nums * winningNumber;
+                    var winningBall = ballsForThisRound.Last();
+                    var boardSum = winningBoard
+                        .AllCells()
+                        .Except(ballsForThisRound)
+                        .Sum();
+                    return boardSum * winningBall;
                 }
             }
 
             return null;
         }
 
-
         public override object PartTwo(string[] input)
         {
-            var balls = input[0].Split(",").Select(int.Parse).ToList();
+            var balls = input[0]
+                .Split(",")
+                .Select(int.Parse)
+                .ToList();
             var boards = ParseBoards(input);
 
-            for (var i = 0; i < balls.Count; i++)
+            foreach (var ballsForThisRound in BallRounds(balls))
             {
-                var ballsForThisRound = balls.Take(i).ToList();
-                var winningBoards = boards
+                var boardsThatWonThisRound = boards
                     .Where(board => BoardHasWon(board, ballsForThisRound.ToHashSet()))
                     .ToList();
-                if (boards.Count == 1 & winningBoards.Count == 1)
+
+                // Was this the last winning board?
+                if (boards.Count == 1 & boardsThatWonThisRound.Count == 1)
                 {
-                    var winningBoard = winningBoards.Single();
-                    var winningNumber = ballsForThisRound.Last();
-                    var nums = winningBoard.AllCells().ToHashSet().Except(ballsForThisRound).Sum();
-                    return nums * winningNumber;
+                    var winningBoard = boardsThatWonThisRound.Single();
+                    var winningBall = ballsForThisRound.Last();
+                    var boardSum = winningBoard
+                        .AllCells()
+                        .Except(ballsForThisRound)
+                        .Sum();
+                    return boardSum * winningBall;
                 }
-                foreach (var winningBoard in winningBoards)
+                foreach (var winningBoard in boardsThatWonThisRound)
                 {
                     boards.Remove(winningBoard);
                 }
@@ -57,20 +68,28 @@ namespace AdventOfCode.Days._2021
             return null;
         }
 
-        private bool BoardHasWon(IDefinedSizeGrid<int> board, HashSet<int> balls)
+        /// <summary>
+        /// Bingo is theoretically a stateless game. Return each successive state of the game: First the first ball,
+        /// then the first two balls, then the first three, etc.
+        /// </summary>
+        private IEnumerable<List<int>> BallRounds(List<int> balls)
         {
-            return board.Columns().Any(col => col.All(balls.Contains)) || board.Rows().Any(row => row.All(balls.Contains));
+            return balls.Select((_, i) => balls.Take(i).ToList());
         }
+
+        // I literally added .Rows() and .Columns() to my grid library right before I saw the problem.
+        private bool BoardHasWon(IDefinedSizeGrid<int> board, HashSet<int> balls) =>
+            board.Columns().Any(col => col.All(balls.Contains)) ||
+            board.Rows().Any(row => row.All(balls.Contains));
 
         private static List<SolidGrid<int>> ParseBoards(string[] input)
         {
-            var boardLines = new SeparatedGroupParser().Parse(input[2..]);
-            var boards = boardLines
+            return new SeparatedGroupParser()
+                .Parse(input[2..])
                 .Select(boardGroup => boardGroup
                     .Select(boardLine => boardLine.Split(" ", StringSplitOptions.RemoveEmptyEntries).Select(int.Parse)))
                 .Select(board => new SolidGrid<int>(board))
                 .Realize();
-            return boards;
         }
     }
 }
