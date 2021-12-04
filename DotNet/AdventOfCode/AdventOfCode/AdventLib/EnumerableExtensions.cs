@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using AdventOfCode.AdventLib.Grid;
 
 namespace AdventOfCode.AdventLib
 {
@@ -165,19 +166,9 @@ namespace AdventOfCode.AdventLib
             }
         }
 
-        public static IEnumerable<(TOriginal, TA)> SelectAlongside<TOriginal, TA>(
-            this IEnumerable<TOriginal> items,
-            Func<TOriginal, TA> func)
+        public static SolidGrid<T> ToGrid<T>(this IEnumerable<IEnumerable<T>> items)
         {
-            return items.Select(x => (x, func(x)));
-        }
-
-        public static IEnumerable<(TOriginal, TA, TB)> SelectAlongside<TOriginal, TA, TB>(
-            this IEnumerable<TOriginal> items,
-            Func<TOriginal, TA> funcA,
-            Func<TOriginal, TB> funcB)
-        {
-            return items.Select(x => (x, funcA(x), funcB(x)));
+            return new SolidGrid<T>(items);
         }
     }
 }

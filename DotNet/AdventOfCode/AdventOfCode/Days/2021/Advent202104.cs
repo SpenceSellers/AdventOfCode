@@ -19,7 +19,8 @@ namespace AdventOfCode.Days._2021
 
             var (winningRound, winningBoard) = BallRounds(balls)
                 .SelectAlongside(round => boards.FirstOrDefault(board => BoardHasWon(board, round.ToHashSet())))
-                .FirstOrDefault(a => a.Item2 != null);
+                .Where2(board => board != null)
+                .First();
 
             var winningBall = winningRound.Last();
             return winningBoard
@@ -53,6 +54,7 @@ namespace AdventOfCode.Days._2021
                         .Sum();
                     return boardSum * winningBall;
                 }
+
                 foreach (var winningBoard in boardsThatWonThisRound)
                 {
                     boards.Remove(winningBoard);
@@ -66,24 +68,22 @@ namespace AdventOfCode.Days._2021
         /// Bingo is theoretically a stateless game. Return each successive state of the game: First the first ball,
         /// then the first two balls, then the first three, etc.
         /// </summary>
-        private IEnumerable<List<int>> BallRounds(List<int> balls)
-        {
-            return balls.Select((_, i) => balls.Take(i).ToList());
-        }
+        private IEnumerable<List<int>> BallRounds(List<int> balls) =>
+            balls.Select((_, i) => balls.Take(i).ToList());
 
         // I literally added .Rows() and .Columns() to my grid library right before I saw the problem.
         private bool BoardHasWon(IDefinedSizeGrid<int> board, HashSet<int> balls) =>
             board.Columns().Any(col => col.All(balls.Contains)) ||
             board.Rows().Any(row => row.All(balls.Contains));
 
-        private static List<SolidGrid<int>> ParseBoards(string[] input)
-        {
-            return new SeparatedGroupParser()
+        private static List<SolidGrid<int>> ParseBoards(string[] input) =>
+            new SeparatedGroupParser()
                 .Parse(input[2..])
                 .Select(boardGroup => boardGroup
-                    .Select(boardLine => boardLine.Split(" ", StringSplitOptions.RemoveEmptyEntries).Select(int.Parse)))
-                .Select(board => new SolidGrid<int>(board))
-                .Realize();
-        }
+                    .Select(boardLine => boardLine
+                        .Split(" ", StringSplitOptions.RemoveEmptyEntries)
+                        .Select(int.Parse)))
+                .Select(board => board.ToGrid())
+                .ToList();
     }
 }
