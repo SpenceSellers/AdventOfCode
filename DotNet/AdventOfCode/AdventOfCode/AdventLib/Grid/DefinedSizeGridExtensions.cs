@@ -60,9 +60,9 @@ namespace AdventOfCode.AdventLib.Grid
                 // Fun, halfway useful character mappings for debugging.
                 string {Length: 1} s => s[0],
                 bool i => i ? 'X' : '.',
-                int i when i is >= 0 and <= 9 => i.ToString()[0],
-                int i when i > 9 => '>',
-                int i when i < 0 => '-',
+                int i and >= 0 and <= 9 => i.ToString()[0],
+                > 9 => '>',
+                < 0 => '-',
                 null => ' ',
                 _ => '?'
             };

@@ -146,5 +146,23 @@ namespace AdventOfCode.AdventLib
 
         public static List<List<List<T>>> Realize<T>(this IEnumerable<IEnumerable<IEnumerable<T>>> items) =>
             items.Select(i => i.Select(j => j.ToList()).ToList()).ToList();
+
+        /// <summary>
+        /// Convert rows into columns
+        /// </summary>
+        private static IEnumerable<List<T>> Transpose<T>(IEnumerable<IList<T>> items)
+        {
+            var list = items.ToList();
+            var length = list.First().Count;
+            if (list.Any(row => row.Count != length))
+            {
+                throw new ArgumentException("List does not contain the same number of elements on each row");
+            }
+            for (var i = 0; i < length; i++)
+            {
+                var column = list.Select(x => x[i]).ToList();
+                yield return column;
+            }
+        }
     }
 }

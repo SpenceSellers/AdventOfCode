@@ -16,15 +16,6 @@ namespace AdventOfCode.AdventLib.Grid
             return new WindowGrid<T>(grid, window);
         }
 
-        /// <summary>
-        /// Useful when you've done some transforms that don't change the shape of a defined size grid, but the types
-        /// aren't convinced of that.
-        /// </summary>
-        public static WindowGrid<T> SameRegionAs<T>(this IGrid<T> grid, IDefinedSizeGrid<T> definedSizeGrid)
-        {
-            return grid.Windowed(definedSizeGrid.Region());
-        }
-
         // AKA "zip"
         public static IGrid<TNew> Overlay<TOld1, TOld2, TNew>(
             this IGrid<TOld1> a,
@@ -54,6 +45,9 @@ namespace AdventOfCode.AdventLib.Grid
             return funcs.Overlay(argumentGrid, (f, x) => f(x));
         }
 
+        /// <summary>
+        /// Map the _coordinates_ of a grid
+        /// </summary>
         public static IGrid<T> Warp<T>(this IGrid<T> grid, Func<GridPoint, GridPoint> warp)
         {
             return new GeneratedGrid<T>(p =>
