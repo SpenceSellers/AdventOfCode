@@ -17,21 +17,15 @@ namespace AdventOfCode.Days._2021
                 .ToList();
             var boards = ParseBoards(input);
 
-            foreach (var ballsForThisRound in BallRounds(balls))
-            {
-                var winningBoard = boards.FirstOrDefault(board => BoardHasWon(board, ballsForThisRound.ToHashSet()));
-                if (winningBoard is not null)
-                {
-                    var winningBall = ballsForThisRound.Last();
-                    var boardSum = winningBoard
-                        .AllCells()
-                        .Except(ballsForThisRound)
-                        .Sum();
-                    return boardSum * winningBall;
-                }
-            }
+            var (winningRound, winningBoard) = BallRounds(balls)
+                .SelectAlongside(round => boards.FirstOrDefault(board => BoardHasWon(board, round.ToHashSet())))
+                .FirstOrDefault(a => a.Item2 != null);
 
-            return null;
+            var winningBall = winningRound.Last();
+            return winningBoard
+                .AllCells()
+                .Except(winningRound)
+                .Sum() * winningBall;
         }
 
         public override object PartTwo(string[] input)

@@ -150,7 +150,7 @@ namespace AdventOfCode.AdventLib
         /// <summary>
         /// Convert rows into columns
         /// </summary>
-        private static IEnumerable<List<T>> Transpose<T>(IEnumerable<IList<T>> items)
+        public static IEnumerable<List<T>> Transpose<T>(IEnumerable<IList<T>> items)
         {
             var list = items.ToList();
             var length = list.First().Count;
@@ -163,6 +163,21 @@ namespace AdventOfCode.AdventLib
                 var column = list.Select(x => x[i]).ToList();
                 yield return column;
             }
+        }
+
+        public static IEnumerable<(TOriginal, TA)> SelectAlongside<TOriginal, TA>(
+            this IEnumerable<TOriginal> items,
+            Func<TOriginal, TA> func)
+        {
+            return items.Select(x => (x, func(x)));
+        }
+
+        public static IEnumerable<(TOriginal, TA, TB)> SelectAlongside<TOriginal, TA, TB>(
+            this IEnumerable<TOriginal> items,
+            Func<TOriginal, TA> funcA,
+            Func<TOriginal, TB> funcB)
+        {
+            return items.Select(x => (x, funcA(x), funcB(x)));
         }
     }
 }
