@@ -17,6 +17,7 @@ namespace AdventOfCode.Days._2021
                 .ToList();
             var boards = ParseBoards(input);
 
+            // We're just going to look through all of the game states and select out the first one that won
             var (winningRound, winningBoard) = BallRounds(balls)
                 .SelectAlongside(round => boards.FirstOrDefault(board => BoardHasWon(board, round.ToHashSet())))
                 .Where2(board => board != null)
