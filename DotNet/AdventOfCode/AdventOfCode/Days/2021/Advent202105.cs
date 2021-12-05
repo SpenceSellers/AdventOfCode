@@ -9,22 +9,26 @@ namespace AdventOfCode.Days._2021
     {
         public override object PartOne(string[] input)
         {
-            var lineSegments = input.Select(line =>
-            {
-                line.Split("->").Deconstruct(out var left, out var right);
-                left.Split(",").Select(int.Parse).Deconstruct(out var lx, out var ly);
-                right.Split(",").Select(int.Parse).Deconstruct(out var rx, out var ry);
-                return (new GridPoint(lx, ly), new GridPoint(rx, ry));
-            }).ToList();
+            return Solve(input, true);
+        }
+        public override object PartTwo(string[] input)
+        {
+            return Solve(input, false);
+        }
 
-            var axisAlignedSegments = lineSegments
-                .Where(x => IsAxisAligned(x.Item1, x.Item2))
-                .ToList();
+        private object Solve(string[] input, bool axisOnly)
+        {
+            var lineSegments = ParseInput(input);
+
+            if (axisOnly)
+            {
+                lineSegments = lineSegments
+                    .Where(x => IsAxisAligned(x.Item1, x.Item2));
+            }
+
+            var allPoints = lineSegments.SelectMany(x => PointsOnLine(x.Item1, x.Item2));
 
             var grid = new SparseGrid<int>();
-
-            var allPoints = axisAlignedSegments.SelectMany(x => PointsOnLine(x.Item1, x.Item2));
-
             foreach (var gridPoint in allPoints)
             {
                 grid.Update(gridPoint, 0, count => count + 1);
@@ -33,26 +37,31 @@ namespace AdventOfCode.Days._2021
             return grid.AllDefinedCells.Values.Count(x => x != 1);
         }
 
-        public bool IsAxisAligned(GridPoint a, GridPoint b)
+        private static IEnumerable<(GridPoint, GridPoint)> ParseInput(string[] input)
         {
-            return a.X == b.X || a.Y == b.Y;
+            var lineSegments = input.Select(line =>
+            {
+                line.Split("->").Deconstruct(out var left, out var right);
+                left.Split(",").Select(int.Parse).Deconstruct(out var lx, out var ly);
+                right.Split(",").Select(int.Parse).Deconstruct(out var rx, out var ry);
+                return (new GridPoint(lx, ly), new GridPoint(rx, ry));
+            });
+            return lineSegments;
         }
 
-        public IEnumerable<GridPoint> PointsOnLine(GridPoint a, GridPoint b)
+        private bool IsAxisAligned(GridPoint a, GridPoint b) => a.X == b.X || a.Y == b.Y;
+
+        private IEnumerable<GridPoint> PointsOnLine(GridPoint start, GridPoint end)
         {
-            var increment = (b - a).UnitAxes;
-            var last = a;
-            yield return a;
-            while (last != b)
+            var increment = (end - start).UnitAxes;
+            var current = start;
+            yield return start;
+            while (current != end)
             {
-                last += increment;
-                yield return last;
+                current += increment;
+                yield return current;
             }
         }
 
-        public override object PartTwo(string[] input)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }
