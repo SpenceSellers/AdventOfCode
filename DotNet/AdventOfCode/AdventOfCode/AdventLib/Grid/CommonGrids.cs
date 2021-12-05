@@ -5,6 +5,6 @@ namespace AdventOfCode.AdventLib.Grid
         /// <summary>
         /// A Grid where each cell contains its own coordinates
         /// </summary>
-        public static IGrid<GridPoint> CoordinateGrid = new GeneratedGrid<GridPoint>(point => point);
+        public static readonly IGrid<GridPoint> CoordinateGrid = new GeneratedGrid<GridPoint>(point => point);
     }
 }

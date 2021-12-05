@@ -51,5 +51,25 @@ namespace AdventOfCode.AdventLib.Grid
                 yield return this + new GridPoint(0, 1);
             }
         }
+
+        public GridPoint UnitAxes
+        {
+            get
+            {
+                var x = X switch
+                {
+                    > 0 => 1,
+                    < 0 => -1,
+                    0 => 0
+                };
+                var y = Y switch
+                {
+                    > 0 => 1,
+                    < 0 => -1,
+                    0 => 0
+                };
+                return new GridPoint(x, y);
+            }
+        }
     }
 }
