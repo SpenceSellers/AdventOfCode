@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 
 namespace AdventOfCode.AdventLib
 {
@@ -11,6 +12,11 @@ namespace AdventOfCode.AdventLib
         }
 
         public static void Increment<T>(this IDictionary<T, long> dict, T key, long count = 1)
+        {
+            dict.UpdateWithDefault(key, 0, i => i + count);
+        }
+
+        public static void Increment<T>(this IDictionary<T, BigInteger> dict, T key, BigInteger count)
         {
             dict.UpdateWithDefault(key, 0, i => i + count);
         }

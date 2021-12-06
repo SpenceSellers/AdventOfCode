@@ -36,7 +36,7 @@ namespace AdventOfCode.Days._2021
             return fishFacts.Values.Sum();
         }
 
-        public IEnumerable<long> FishFactors(long fish)
+        private IEnumerable<long> TickFish(long fish)
         {
             if (fish == 0)
             {
@@ -49,12 +49,12 @@ namespace AdventOfCode.Days._2021
             }
         }
 
-        public Dictionary<long, long> DoStep(Dictionary<long, long> initialFish)
+        private Dictionary<long, long> DoStep(Dictionary<long, long> initialFish)
         {
             var output = new Dictionary<long, long>();
             foreach (var (f, count) in initialFish)
             {
-                foreach (var newFish in FishFactors(f))
+                foreach (var newFish in TickFish(f))
                 {
                     output.Increment(newFish, count);
                 }
