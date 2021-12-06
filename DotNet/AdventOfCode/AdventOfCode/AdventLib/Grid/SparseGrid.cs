@@ -8,22 +8,12 @@ namespace AdventOfCode.AdventLib.Grid
         private readonly Dictionary<GridPoint, T> _cells = new();
         public T Get(GridPoint point)
         {
-            if (_cells.ContainsKey(point))
-            {
-                return _cells[point];
-            }
-
-            throw new NonexistentCellException(point);
+            return _cells.ContainsKey(point) ? _cells[point] : throw new NonexistentCellException(point);
         }
 
         public T GetOrDefault(GridPoint point, T defaultValue)
         {
-            if (_cells.ContainsKey(point))
-            {
-                return _cells[point];
-            }
-
-            return defaultValue;
+            return _cells.ContainsKey(point) ? _cells[point] : defaultValue;
         }
 
         public void Set(GridPoint point, T value)

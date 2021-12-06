@@ -52,6 +52,11 @@ namespace AdventOfCode.AdventLib.Grid
             }
         }
 
+        /// <summary>
+        /// Converts (20, -7) into (1, -1).
+        /// Beware of how it will change the effective angle of the point from the origin if used on non-45-degree
+        /// aligned vectors.
+        /// </summary>
         public GridPoint UnitAxes
         {
             get
@@ -69,6 +74,24 @@ namespace AdventOfCode.AdventLib.Grid
                     0 => 0
                 };
                 return new GridPoint(x, y);
+            }
+        }
+
+        public IEnumerable<GridPoint> PointsBetween(GridPoint start, GridPoint end, bool inclusiveStart = true, bool inclusiveEnd = true)
+        {
+            var increment = (end - start).UnitAxes;
+            var current = start;
+            if (inclusiveStart)
+            {
+                yield return start;
+            }
+            while (current != end)
+            {
+                current += increment;
+                if (inclusiveEnd || current != end)
+                {
+                    yield return current;
+                }
             }
         }
     }
