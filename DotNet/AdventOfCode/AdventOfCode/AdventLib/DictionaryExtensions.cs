@@ -38,5 +38,14 @@ namespace AdventOfCode.AdventLib
             var existed = dict.TryGetValue(key, out var value);
             return existed ? value : def;
         }
+
+        public static V Caching<K, V>(this IDictionary<K, V> dict, K key, Func<K, V> func)
+        {
+            if (dict.ContainsKey(key)) return dict[key];
+
+            var result = func(key);
+            dict.Add(key, result);
+            return result;
+        }
     }
 }
