@@ -45,7 +45,7 @@ namespace AdventOfCode.Days._2021
         {
             var dist = Math.Abs(crab - destination);
             // I know there's an equation to get this in a closed-form solution. I tried.
-            // I googled THREE different variants of the equation. Never figured it out. I give up.
+            // I googled THREE different variants of the equation. Never got them to work. I give up.
             return _arithmeticSumCache.Caching(dist, _ => Enumerable.Range(1, dist).Sum());
         }
 
