@@ -64,6 +64,22 @@ namespace AdventOfCode.AdventLib
             return enumerable.SelectMany((e, i) => enumerable.Skip(i + 1).Combinations(k - 1).Select(c => Enumerable.Repeat(e, 1).Concat(c)));
         }
 
+
+        // Thanks, stack overflow
+        public static IEnumerable<IEnumerable<T>>
+            Permutations<T>(this IList<T> list, int length = -1)
+        {
+            if (length == -1)
+            {
+                length = list.Count;
+            }
+            if (length == 1) return list.Select(t => new T[] { t });
+
+            return Permutations(list, length - 1)
+                .SelectMany(t => list.Where(e => !t.Contains(e)),
+                    (t1, t2) => t1.Concat(new T[] { t2 }));
+        }
+
         /// <summary>
         /// Returns all contiguous sub-sequences of a given size
         /// </summary>
