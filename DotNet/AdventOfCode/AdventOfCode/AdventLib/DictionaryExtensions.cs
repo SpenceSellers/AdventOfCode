@@ -39,11 +39,14 @@ namespace AdventOfCode.AdventLib
             return existed ? value : def;
         }
 
-        public static V Caching<K, V>(this IDictionary<K, V> dict, K key, Func<K, V> func)
+        /// <summary>
+        /// Treat a dictionary as a quick-and-dirty cache.
+        /// </summary>
+        public static V Caching<K, V>(this IDictionary<K, V> dict, K key, Func<K, V> calculateValue)
         {
             if (dict.ContainsKey(key)) return dict[key];
 
-            var result = func(key);
+            var result = calculateValue(key);
             dict.Add(key, result);
             return result;
         }

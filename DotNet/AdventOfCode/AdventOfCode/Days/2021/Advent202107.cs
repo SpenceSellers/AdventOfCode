@@ -35,7 +35,6 @@ namespace AdventOfCode.Days._2021
             var max = a.Max();
             var min = a.Min();
 
-
             return InclusiveRange(min, max).Select(i => CostToConvergePart2(a, i)).Min();
         }
 
