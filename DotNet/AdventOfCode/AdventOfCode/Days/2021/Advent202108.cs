@@ -67,11 +67,13 @@ namespace AdventOfCode.Days._2021
             {"abcdfg", 9},
         };
 
+        // We're going to need this 200 times, let's cache it.
+        private readonly Lazy<List<Dictionary<char, char>>> AllPossibleMappingsCache = new(() => AllPossibleMappings().ToList());
+
         public override object PartTwo(string[] input)
         {
             return ParseInput(input).Select((line, i) =>
             {
-                Console.Out.WriteLine($"Line {i}");
                 var examples = line[0];
                 var digits = line[1];
                 var mapping = BruteForceMapping(examples);
@@ -82,13 +84,13 @@ namespace AdventOfCode.Days._2021
 
         private Dictionary<char, char> BruteForceMapping(List<string> examples)
         {
-            return AllPossibleMappings()
+            return AllPossibleMappingsCache.Value
                 .Where(mapping => MappingIsPossible(mapping, examples))
                 .ToList().First();
         }
         
         // Yep, we're seriously going to brute force everything the answer could be.
-        private IEnumerable<Dictionary<char, char>> AllPossibleMappings() {
+        private static IEnumerable<Dictionary<char, char>> AllPossibleMappings() {
             return "abcdefg"
                 .ToList()
                 .Permutations()
@@ -104,12 +106,9 @@ namespace AdventOfCode.Days._2021
 
         private bool MappingIsPossible(Dictionary<char, char> mapping, List<string> examples)
         {
-            var mapped = examples
-                .Select(example => ApplyMapping(mapping, example))
-                .Select(mapped => _digitTable.GetValueOrDefault(NormalizeString(mapped), -1))
-                .Where(x => x is not -1)
-                .ToList();
-            return mapped.ToHashSet().Count == 10;
+            return examples
+                .Select(example => NormalizeString(ApplyMapping(mapping, example)))
+                .All(mapped => _digitTable.ContainsKey(mapped));
         }
     }
 }
