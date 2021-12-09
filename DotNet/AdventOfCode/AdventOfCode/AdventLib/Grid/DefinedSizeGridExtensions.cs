@@ -6,6 +6,11 @@ namespace AdventOfCode.AdventLib.Grid
 {
     public static class DefinedSizeGridExtensions
     {
+        public static T GetOrDefault<T>(this IDefinedSizeGrid<T> grid, GridPoint p, T defaultValue = default)
+        {
+            return grid.Region().ContainsPoint(p) ? grid.Get(p) : defaultValue;
+        }
+
         public static IDefinedSizeGrid<TNew> Map<TOld, TNew>(this IDefinedSizeGrid<TOld> grid, Func<TOld, TNew> func)
         {
             return new DefinedSizeMappedGrid<TOld,TNew>(grid, func);
@@ -44,6 +49,14 @@ namespace AdventOfCode.AdventLib.Grid
                 }
             }
             return new WindowGrid<TOut>(result, region);
+        }
+
+        /// <summary>
+        /// Maps points inside the inner grid to the inner grid, but everything outside comes from the outer grid.
+        /// </summary>
+        public static IGrid<T> EmbedInside<T>(this IDefinedSizeGrid<T> innerGrid, IGrid<T> outerGrid)
+        {
+            return new GeneratedGrid<T>(p => innerGrid.Region().ContainsPoint(p) ? innerGrid.Get(p) : outerGrid.Get(p));
         }
 
         public static string Export<T>(this IDefinedSizeGrid<T> grid)

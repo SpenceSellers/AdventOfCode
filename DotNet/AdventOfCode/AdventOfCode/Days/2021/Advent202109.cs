@@ -17,6 +17,18 @@ namespace AdventOfCode.Days._2021
                 .Sum();
         }
 
+        public override object PartTwo(string[] input)
+        {
+            var grid = input.ToGrid().Map(x => int.Parse(x.ToString()));
+
+            return FindLowestPoints(grid)
+                .Select(lowest => ExpandBasin(grid, lowest))
+                .Select(basin => basin.Count)
+                .OrderByDescending(size => size)
+                .Take(3)
+                .Product();
+        }
+
         private static IEnumerable<GridPoint> FindLowestPoints(IDefinedSizeGrid<int> grid)
         {
             return grid
@@ -26,43 +38,29 @@ namespace AdventOfCode.Days._2021
                 {
                     var height = grid.Get(point);
                     return point.Adjacent4
-                        .Where(adjacentPoint => grid.Region().ContainsPoint(adjacentPoint))
-                        .All(adjacentPoint => grid.Get(adjacentPoint) > height);
+                        .All(adjacentPoint => grid.GetOrDefault(adjacentPoint, 9) > height);
                 });
-        }
-
-        public override object PartTwo(string[] input)
-        {
-            var grid = input.ToGrid().Map(x => int.Parse(x.ToString()));
-            var lowestPoints = FindLowestPoints(grid);
-            var basins = lowestPoints.Select(lowest => ExpandBasin(grid, lowest))
-                .ToList();
-
-            return basins.Select(basin => basin.Count).OrderByDescending(size => size).Take(3).Product();
         }
 
         private HashSet<GridPoint> ExpandBasin(IDefinedSizeGrid<int> grid, GridPoint lowestPoint)
         {
-            var pointsInBasin = new HashSet<GridPoint>();
-            pointsInBasin.Add(lowestPoint);
+            var pointsInBasin = new HashSet<GridPoint> { lowestPoint };
 
             var pointsToInvestigate = new Queue<GridPoint>();
             pointsToInvestigate.Enqueue(lowestPoint);
             while (pointsToInvestigate.Any())
             {
-                var currentPoint = pointsToInvestigate.Dequeue();
-                var candidatePoints = currentPoint.Adjacent4.Where(p => grid.Region().ContainsPoint(p));
+                var candidatePoints = pointsToInvestigate
+                    .Dequeue()
+                    .Adjacent4
+                    .Where(p =>
+                        grid.GetOrDefault(p, 9) != 9 &&
+                        !pointsInBasin.Contains(p));
 
                 foreach (var candidatePoint in candidatePoints)
                 {
-                    if (grid.Get(candidatePoint) != 9)
-                    {
-                        var wasAdded = pointsInBasin.Add(candidatePoint);
-                        if (wasAdded)
-                        {
-                            pointsToInvestigate.Enqueue(candidatePoint);
-                        }
-                    }
+                    pointsInBasin.Add(candidatePoint);
+                    pointsToInvestigate.Enqueue(candidatePoint);
                 }
             }
 
