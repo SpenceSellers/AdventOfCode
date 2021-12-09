@@ -44,6 +44,9 @@ namespace AdventOfCode.Days._2021
                         .All(adjacentPoint => grid.GetOrDefault(adjacentPoint, 9) > height);
                 });
 
+        /// <summary>
+        /// Finds the basin that some point is sitting in.
+        /// </summary>
         private HashSet<GridPoint> ExpandBasin(IDefinedSizeGrid<int> grid, GridPoint lowestPoint)
         {
             var pointsInBasin = new HashSet<GridPoint> { lowestPoint };
