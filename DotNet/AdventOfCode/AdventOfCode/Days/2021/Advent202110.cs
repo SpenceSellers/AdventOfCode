@@ -1,8 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Versioning;
-using AdventOfCode.AdventLib;
 
 namespace AdventOfCode.Days._2021
 {
@@ -10,9 +7,10 @@ namespace AdventOfCode.Days._2021
     {
         public override object PartOne(string[] input)
         {
-            var results = input.Select(ExamineSyntaxForProblems).ToList();
-            return results.Where(c => c.CorruptedChar is not null)
-                .Select(c => GetCorruptionScore(c.CorruptedChar.Value)).Sum();
+            return input.Select(ExamineSyntaxForProblems)
+                .Where(c => c.CorruptedChar is not null)
+                .Select(c => GetCorruptionScore(c.CorruptedChar.Value))
+                .Sum();
         }
 
         public override object PartTwo(string[] input)
