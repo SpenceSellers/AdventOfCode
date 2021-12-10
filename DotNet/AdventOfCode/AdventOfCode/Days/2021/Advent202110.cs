@@ -8,14 +8,26 @@ namespace AdventOfCode.Days._2021
 {
     public class Advent202110 : Problem
     {
-
         public override object PartOne(string[] input)
         {
-            var results = input.Select(FirstIncorrectChar).ToList();
-            return results.Where(c => c is not null).Select(c => GetScore(c.Value)).Sum();
+            var results = input.Select(ExamineSyntaxForProblems).ToList();
+            return results.Where(c => c.CorruptedChar is not null)
+                .Select(c => GetCorruptionScore(c.CorruptedChar.Value)).Sum();
         }
 
-        public int GetScore(char c) => c switch
+        public override object PartTwo(string[] input)
+        {
+            var scores = input
+                .Select(ExamineSyntaxForProblems)
+                .Where(x => x.RemainingChars.Any())
+                .Select(x => GetCorrectionScore(x.RemainingChars))
+                .OrderBy(x => x)
+                .ToList();
+
+            return scores[scores.Count / 2];
+        }
+
+        private int GetCorruptionScore(char c) => c switch
         {
             ')' => 3,
             ']' => 57,
@@ -23,12 +35,12 @@ namespace AdventOfCode.Days._2021
             '>' => 25137
         };
 
-        private char? FirstIncorrectChar(string line)
+        private (char? CorruptedChar, List<char> RemainingChars) ExamineSyntaxForProblems(string line)
         {
             var stack = new Stack<char>();
             foreach (var c in line)
             {
-                char? closer = c switch
+                char? closerForOpener = c switch
                 {
                     '(' => ')',
                     '[' => ']',
@@ -37,55 +49,24 @@ namespace AdventOfCode.Days._2021
                     _ => null
                 };
 
-                if (closer is not null)
+                if (closerForOpener is not null)
                 {
-                    stack.Push(closer.Value);
+                    stack.Push(closerForOpener.Value);
                 }
                 else
                 {
                     var correctCloser = stack.Pop();
                     if (c != correctCloser)
                     {
-                        return c;
+                        return (c, new List<char>());
                     }
                 }
             }
 
-            return null;
+            return (null, stack.ToList());
         }
 
-        private List<char> FirstIncorrectChar2(string line)
-        {
-            var stack = new Stack<char>();
-            foreach (var c in line)
-            {
-                char? closer = c switch
-                {
-                    '(' => ')',
-                    '[' => ']',
-                    '<' => '>',
-                    '{' => '}',
-                    _ => null
-                };
-
-                if (closer is not null)
-                {
-                    stack.Push(closer.Value);
-                }
-                else
-                {
-                    var correctCloser = stack.Pop();
-                    if (c != correctCloser)
-                    {
-                        return null;
-                    }
-                }
-            }
-
-            return stack.ToList();
-        }
-
-        private long ScorePart2(IEnumerable<char> chars)
+        private long GetCorrectionScore(IEnumerable<char> chars)
         {
             var sum = 0L;
             foreach (var c in chars)
@@ -103,18 +84,6 @@ namespace AdventOfCode.Days._2021
             }
 
             return sum;
-        }
-
-        public override object PartTwo(string[] input)
-        {
-            var scores = input
-                .Select(FirstIncorrectChar2)
-                .Where(x => x != null)
-                .Select(ScorePart2)
-                .OrderBy(x => x)
-                .ToList();
-
-            return scores[scores.Count / 2];
         }
     }
 }
