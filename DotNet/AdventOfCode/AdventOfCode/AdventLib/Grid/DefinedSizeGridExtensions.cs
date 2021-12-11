@@ -96,6 +96,11 @@ namespace AdventOfCode.AdventLib.Grid
             return grid.Region().AllPoints().Select(grid.Get);
         }
 
+        public static IEnumerable<(GridPoint Point, T CellValue)> AllEntries<T>(this IDefinedSizeGrid<T> grid)
+        {
+            return grid.Region().AllPoints().Select(p => (p, grid.Get(p)));
+        }
+
         public static IDefinedSizeGrid<T> RotateClockwise<T>(this IDefinedSizeGrid<T> grid)
         {
             return grid.Warp(gp =>

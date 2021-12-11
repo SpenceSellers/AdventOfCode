@@ -46,7 +46,11 @@ namespace AdventOfCode.AdventLib.Grid
             get
             {
                 yield return this + new GridPoint(-1, 0);
+                yield return this + new GridPoint(-1, -1);
+                yield return this + new GridPoint(-1, +1);
                 yield return this + new GridPoint(+1, 0);
+                yield return this + new GridPoint(+1, -1);
+                yield return this + new GridPoint(+1, 1);
                 yield return this + new GridPoint(0, -1);
                 yield return this + new GridPoint(0, 1);
             }
