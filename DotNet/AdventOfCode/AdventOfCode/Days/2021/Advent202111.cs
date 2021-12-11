@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
 using AdventOfCode.AdventLib;
 using AdventOfCode.AdventLib.Grid;
 
@@ -23,9 +21,29 @@ namespace AdventOfCode.Days._2021
             return totalFlashed;
         }
 
+        public override object PartTwo(string[] input)
+        {
+            var octopi = input.ToGrid().Map(x => int.Parse(x.ToString()));
+            var i = 0;
+            while (true)
+            {
+                var (nextState, flashed) = Step(octopi);
+                octopi = nextState;
+                if (flashed == octopi.Height * octopi.Width)
+                {
+                    return i + 1;
+                }
+
+                i++;
+            }
+        }
+
         private (IDefinedSizeGrid<int>, int) Step(IDefinedSizeGrid<int> grid)
         {
+            // Increment
             var nextState = grid.Map(x => x + 1).Solidify();
+
+            // Flash
             var haveFlashed = new HashSet<GridPoint>();
             var didFlash = true;
             while (didFlash)
@@ -47,6 +65,7 @@ namespace AdventOfCode.Days._2021
                 }
             }
 
+            // Reset flashers
             foreach (var flashPoint in haveFlashed)
             {
                 nextState.Set(flashPoint, 0);
@@ -55,9 +74,5 @@ namespace AdventOfCode.Days._2021
             return (nextState, haveFlashed.Count);
         }
 
-        public override object PartTwo(string[] input)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }
