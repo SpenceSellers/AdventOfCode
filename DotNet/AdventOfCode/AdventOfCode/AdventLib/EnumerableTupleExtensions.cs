@@ -32,6 +32,18 @@ namespace AdventOfCode
             return items.Select(x => (func(x.Item1), x.Item2));
         }
 
+        public static IEnumerable<TOld> Select1<TOld, TB>(
+            this IEnumerable<(TOld, TB)> items)
+        {
+            return items.Select(x => x.Item1);
+        }
+
+        public static IEnumerable<TOld> Select2<TA, TOld>(
+            this IEnumerable<(TA, TOld)> items)
+        {
+            return items.Select(x => x.Item2);
+        }
+
         public static IEnumerable<(TA, TNew)> Select2<TOld, TNew, TA>(
             this IEnumerable<(TA, TOld)> items,
             Func<TOld, TNew> func)

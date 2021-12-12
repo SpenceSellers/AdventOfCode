@@ -27,7 +27,7 @@ namespace AdventOfCode.AdventLib.BreadthFirstSearch
             {
                 var next = _queue.Dequeue();
 
-                Console.Out.WriteLine(next);
+                // Console.Out.WriteLine(next);
                 // Is this one of the winning states we're looking for?
                 if (_config.IsSuccessState(next))
                 {
