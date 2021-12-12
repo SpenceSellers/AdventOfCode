@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using AdventOfCode.AdventLib.BreadthFirstSearch;
 
@@ -50,28 +51,12 @@ namespace AdventOfCode.Days._2021
                     var possibleWaysToGo = edges
                         .Where1(cave => cave == last)
                         .Select2()
-                        .Where(cave =>
+                        .Where(cave => (IsLargeCave(cave), haveVisitedSmallCaveTwice, cave) switch
                         {
-                            if (IsLargeCave(cave))
-                            {
-                                return true;
-                            }
-
-                            if (haveVisitedSmallCaveTwice)
-                            {
-                                return !path.Contains(cave);
-                            }
-                            else
-                            {
-                                if (cave is "start" or "end")
-                                {
-                                    return !path.Contains(cave);
-                                }
-                                else
-                                {
-                                    return true;
-                                }
-                            }
+                            (true, _, _) => true,
+                            (_, true, _) => !path.Contains(cave),
+                            (_, false, "start" or "end") => !path.Contains(cave),
+                            (_, false, _) => true
                         });
 
                     return possibleWaysToGo.Select(next => path.Append(next).ToList());
@@ -79,8 +64,7 @@ namespace AdventOfCode.Days._2021
             };
 
             var bfs = new BreadthFirstSearch<List<string>>(bfsConfig);
-            var paths = bfs.Bfs().ToList();
-            return paths.Count;
+            return bfs.Bfs().Count();
         }
 
         private static List<(string, string)> ParseDirectedEdges(string[] input)
