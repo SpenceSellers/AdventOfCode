@@ -50,7 +50,7 @@ namespace AdventOfCode.AdventLib.Grid
                 if (gridPoint.Y > maxY) maxY = gridPoint.Y;
             }
 
-            return new GridRegion(new GridPoint(minX, minY), maxX - minX, maxY - minY);
+            return new GridRegion(new GridPoint(minX, minY), maxX - minX + 1, maxY - minY + 1);
         }
 
         public IGrid<T> FillingEmptySpacesWith(T defaultValue)

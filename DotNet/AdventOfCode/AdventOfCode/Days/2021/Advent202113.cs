@@ -85,7 +85,28 @@ namespace AdventOfCode.Days._2021
 
         public override object PartTwo(string[] input)
         {
-            throw new System.NotImplementedException();
+            var (coordLines, foldLines) = new SeparatedGroupParser().Parse(input).Two();
+
+            var points = coordLines
+                .Select(line => line.Split(",").Select(int.Parse).Two())
+                .Select(i => new GridPoint(i.Item1, i.Item2))
+                .ToGrid();
+
+            var folds = foldLines
+                .Select(line => new Regex("fold along (.)=(.*)").Captures(line).Two())
+                .Select(a => new Fold(a.Item1 == "x" ? Axis.X : Axis.Y, int.Parse(a.Item2)))
+                .ToList();
+
+            // var folded = DoFold(points, folds[0]);
+            var folded = points;
+            foreach (var fold in folds)
+            {
+                folded = DoFold(folded, fold);
+            }
+
+            Console.Out.WriteLine(folded.AsDefinedSizeNotPreservingCoordinates().Dump());
+
+            return folded.AllDefinedCells.Count();
         }
     }
 }
