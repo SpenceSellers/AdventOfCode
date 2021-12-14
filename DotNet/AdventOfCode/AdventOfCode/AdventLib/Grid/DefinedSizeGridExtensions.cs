@@ -59,7 +59,7 @@ namespace AdventOfCode.AdventLib.Grid
             return new GeneratedGrid<T>(p => innerGrid.Region().ContainsPoint(p) ? innerGrid.Get(p) : outerGrid.Get(p));
         }
 
-        public static string Export<T>(this IDefinedSizeGrid<T> grid)
+        public static string Dump<T>(this IDefinedSizeGrid<T> grid)
         {
             return string.Join("\n", Enumerable.Range(0, grid.Height).Select(y =>
                 string.Join("", Enumerable.Range(0, grid.Width).Select(x => CellChar(grid.Get(new GridPoint(x, y)))))));
@@ -87,7 +87,7 @@ namespace AdventOfCode.AdventLib.Grid
             {
                 Console.Out.WriteLine($"Trace {label}");
             }
-            Console.Out.WriteLine(grid.Export());
+            Console.Out.WriteLine(grid.Dump());
             return grid;
         }
 

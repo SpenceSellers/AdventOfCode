@@ -7,6 +7,12 @@ namespace AdventOfCode
 {
     public static class EnumerableTupleExtensions
     {
+        public static (T, T) Two<T>(this IEnumerable<T> items)
+        {
+            var iter = items.Take(2).ToList();
+            return (iter[0], iter[1]);
+        }
+
         /// <summary>
         /// Select, but we keep the original items around too
         /// </summary>
