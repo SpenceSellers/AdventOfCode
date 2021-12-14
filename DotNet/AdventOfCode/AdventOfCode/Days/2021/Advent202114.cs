@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using AdventOfCode.AdventLib;
-using Microsoft.VisualBasic;
 
 namespace AdventOfCode.Days._2021
 {
@@ -11,78 +9,63 @@ namespace AdventOfCode.Days._2021
     {
         public override object PartOne(string[] input)
         {
-            var initial = input[0].ToCharArray();
-            var rules = input[2..]
-                .Select(s => new Regex("(..) -> (.)")
-                    .Captures(s)
-                    .Two())
-                .ToDictionary();
-
-            var currentState = initial.ToList();
-
-            for (int i = 0; i < 10; i++)
-            {
-                var h = currentState.Histogram();
-
-                // Console.Out.WriteLine($"{i}::: K is {h['K']}, O is {h['O']}, difference is {h['K'] - h['O']}");
-                Console.Out.WriteLine($"{i}, {h['K'] - h['O']}");
-
-                currentState = DoStep(currentState, rules);
-            }
-
-            var histogram = currentState.Histogram();
-            return histogram.Values.Max() - histogram.Values.Min();
-        }
-
-        private List<char> DoStep(IEnumerable<char> initial, Dictionary<string, string> rules)
-        {
-            var next = new List<char> { initial.First() };
-            foreach (var pair in initial.SequencesOfSize(2))
-            {
-                var pairString = $"{pair[0]}{pair[1]}";
-                if (rules.TryGetValue(pairString, out var newChar))
-                {
-                    next.Add(newChar[0]);
-                }
-                next.Add(pair[1]);
-            }
-
-            return next;
+            return SolveDay(input, 10);
         }
 
         public override object PartTwo(string[] input)
         {
-            var initial = input[0].ToCharArray();
-            var rules = input[2..]
-                .Select(s => new Regex("(..) -> (.)")
-                    .Captures(s)
-                    .Two())
-                .ToDictionary();
+            return SolveDay(input, 40);
+        }
 
+        private object SolveDay(string[] input, int n)
+        {
+            var initial = input[0].ToCharArray();
+            var substitutionRules = ParseSubstitutionRules(input);
+
+            // Change the way we think about the input from characters, to the count of PAIRS of characters
             var pairs = initial
                 .SequencesOfSize(2)
                 .Select(x => $"{x[0]}{x[1]}")
                 .Histogram();
 
-            var substitutionRules = rules.ToDictionary(k => k.Key, v => new[] { v.Key[0] + v.Value, v.Value + v.Key[1] });
             var current = pairs;
-            for (var i = 0; i < 40; i++)
+            for (var i = 0; i < n; i++)
             {
-                current = DoStep2(current, substitutionRules);
+                current = DoStep(current, substitutionRules);
             }
 
+            var histogram = CountLettersFromPairs(current, initial);
+
+            return histogram.Values.Max() - histogram.Values.Min();
+        }
+
+        private static Dictionary<string, string[]> ParseSubstitutionRules(string[] input)
+        {
+            var rawRules = input[2..]
+                .Select(s => new Regex("(..) -> (.)")
+                    .Captures(s)
+                    .Two())
+                .ToDictionary();
+
+            // Build substitution rules that output PAIRS of characters, not individual characters
+            return rawRules
+                .ToDictionary(k => k.Key, v => new[] { v.Key[0] + v.Value, v.Value + v.Key[1] });
+        }
+
+        private static Dictionary<char, long> CountLettersFromPairs(Dictionary<string, long> current, char[] initial)
+        {
             var histogram = new Dictionary<char, long>();
             foreach (var (k, v) in current)
             {
                 histogram.Increment(k[0], v);
             }
+
             // We're not considering the very last character, let's add it in
             histogram.Increment(initial[^1]);
-
-            return histogram.Values.Max() - histogram.Values.Min();
+            return histogram;
         }
 
-        private Dictionary<string, long> DoStep2(
+        private Dictionary<string, long> DoStep(
             Dictionary<string, long> current,
             Dictionary<string, string[]> substitutionRules)
         {
@@ -99,6 +82,7 @@ namespace AdventOfCode.Days._2021
                 }
                 else
                 {
+                    // We don't have a substitution rule for this, so let's keep it the same
                     nextStep.UpdateWithDefault(pair, 0, i => i + 1);
                 }
             }
