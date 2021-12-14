@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using AdventOfCode.AdventLib.Grid;
 
 namespace AdventOfCode.AdventLib
@@ -185,6 +186,17 @@ namespace AdventOfCode.AdventLib
         public static SolidGrid<T> ToGrid<T>(this IEnumerable<IEnumerable<T>> items)
         {
             return new SolidGrid<T>(items);
+        }
+
+        public static Dictionary<T, int> Histogram<T>(this IEnumerable<T> items)
+        {
+            var dict = new Dictionary<T, int>();
+            foreach (var item in items)
+            {
+                dict.UpdateWithDefault(item, 0, i => i + 1);
+            }
+
+            return dict;
         }
     }
 }

@@ -13,6 +13,11 @@ namespace AdventOfCode
             return (iter[0], iter[1]);
         }
 
+        public static Dictionary<TA, TB> ToDictionary<TA, TB>(this IEnumerable<(TA, TB)> items)
+        {
+            return items.ToDictionary(x => x.Item1, x => x.Item2);
+        }
+
         /// <summary>
         /// Select, but we keep the original items around too
         /// </summary>
