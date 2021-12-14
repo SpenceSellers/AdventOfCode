@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using AdventOfCode.AdventLib;
@@ -19,15 +20,9 @@ namespace AdventOfCode.Days._2021
         {
             var (coordLines, foldLines) = new SeparatedGroupParser().Parse(input).Two();
 
-            var points = coordLines
-                .Select(line => line.Split(",").Select(int.Parse).Two())
-                .Select(i => new GridPoint(i.Item1, i.Item2))
-                .ToGrid();
+            var points = ParseCoordinates(coordLines);
 
-            var folds = foldLines
-                .Select(line => new Regex("fold along (.)=(.*)").Captures(line).Two())
-                .Select(a => new Fold(a.Item1 == "x" ? Axis.X : Axis.Y, int.Parse(a.Item2)))
-                .ToList();
+            var folds = ParseFolds(foldLines);
 
             var folded = DoFold(points, folds[0]);
 
@@ -36,12 +31,45 @@ namespace AdventOfCode.Days._2021
             return folded.AllDefinedCells.Count();
         }
 
+        public override object PartTwo(string[] input)
+        {
+            var (coordLines, foldLines) = new SeparatedGroupParser().Parse(input).Two();
+
+            var points = ParseCoordinates(coordLines);
+
+            var folds = ParseFolds(foldLines);
+
+            // var folded = DoFold(points, folds[0]);
+            var folded = points;
+            foreach (var fold in folds)
+            {
+                folded = DoFold(folded, fold);
+            }
+
+            return folded.AsDefinedSizeNotPreservingCoordinates().Dump();
+        }
+
+        private static List<Fold> ParseFolds(IEnumerable<string> foldLines)
+        {
+            var folds = foldLines
+                .Select(line => new Regex("fold along (.)=(.*)").Captures(line).Two())
+                .Select(a => new Fold(a.Item1 == "x" ? Axis.X : Axis.Y, int.Parse(a.Item2)))
+                .ToList();
+            return folds;
+        }
+
+        private static SparseGrid<bool> ParseCoordinates(IEnumerable<string> coordLines)
+        {
+            var points = coordLines
+                .Select(line => line.Split(",").Select(int.Parse).Two())
+                .Select(i => new GridPoint(i.Item1, i.Item2))
+                .ToGrid();
+            return points;
+        }
+
         private SparseGrid<bool> DoFold(SparseGrid<bool> grid, Fold fold)
         {
             var nextGrid = new SparseGrid<bool>();
-            var region = grid.BoundingRegion();
-            var smaller = fold.Axis == Axis.X ? region.Origin.X : region.Origin.Y;
-            var larger = fold.Axis == Axis.X ? region.Origin.X + region.Width : region.Origin.Y + region.Height;
             foreach (var (point, _) in grid.AllDefinedCells)
             {
                 if (fold.Axis == Axis.X)
@@ -57,7 +85,6 @@ namespace AdventOfCode.Days._2021
                     else
                     {
                         var gridPoint = new GridPoint(fold.Coordinate - Math.Abs(fold.Coordinate - point.X), point.Y);
-                        Console.Out.WriteLine($"After fold is {gridPoint}");
                         nextGrid.Set(gridPoint, true);
                     }
                 }
@@ -74,39 +101,12 @@ namespace AdventOfCode.Days._2021
                     else
                     {
                         var gridPoint = new GridPoint(point.X, fold.Coordinate - Math.Abs(fold.Coordinate - point.Y));
-                        Console.Out.WriteLine($"{point} After fold {fold} is {gridPoint}");
                         nextGrid.Set(gridPoint, true);
                     }
                 }
             }
 
             return nextGrid;
-        }
-
-        public override object PartTwo(string[] input)
-        {
-            var (coordLines, foldLines) = new SeparatedGroupParser().Parse(input).Two();
-
-            var points = coordLines
-                .Select(line => line.Split(",").Select(int.Parse).Two())
-                .Select(i => new GridPoint(i.Item1, i.Item2))
-                .ToGrid();
-
-            var folds = foldLines
-                .Select(line => new Regex("fold along (.)=(.*)").Captures(line).Two())
-                .Select(a => new Fold(a.Item1 == "x" ? Axis.X : Axis.Y, int.Parse(a.Item2)))
-                .ToList();
-
-            // var folded = DoFold(points, folds[0]);
-            var folded = points;
-            foreach (var fold in folds)
-            {
-                folded = DoFold(folded, fold);
-            }
-
-            Console.Out.WriteLine(folded.AsDefinedSizeNotPreservingCoordinates().Dump());
-
-            return folded.AllDefinedCells.Count();
         }
     }
 }
