@@ -188,9 +188,9 @@ namespace AdventOfCode.AdventLib
             return new SolidGrid<T>(items);
         }
 
-        public static Dictionary<T, int> Histogram<T>(this IEnumerable<T> items)
+        public static Dictionary<T, long> Histogram<T>(this IEnumerable<T> items)
         {
-            var dict = new Dictionary<T, int>();
+            var dict = new Dictionary<T, long>();
             foreach (var item in items)
             {
                 dict.UpdateWithDefault(item, 0, i => i + 1);

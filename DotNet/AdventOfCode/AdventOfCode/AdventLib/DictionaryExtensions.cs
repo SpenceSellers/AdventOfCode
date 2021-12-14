@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
+using System.Text;
 
 namespace AdventOfCode.AdventLib
 {
@@ -49,6 +51,17 @@ namespace AdventOfCode.AdventLib
             var result = calculateValue(key);
             dict.Add(key, result);
             return result;
+        }
+
+        public static string Dump<K, V>(this IDictionary<K, V> dict)
+        {
+            var sb = new StringBuilder();
+            foreach (var k in dict.Keys.OrderBy(x => x))
+            {
+                sb.AppendLine($"{k}: {dict[k]}");
+            }
+
+            return sb.ToString();
         }
     }
 }
