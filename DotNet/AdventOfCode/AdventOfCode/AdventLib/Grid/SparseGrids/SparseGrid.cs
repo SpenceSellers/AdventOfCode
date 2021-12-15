@@ -4,17 +4,12 @@ using System.Linq;
 
 namespace AdventOfCode.AdventLib.Grid
 {
-    public class SparseGrid<T> : IMutableGrid<T>
+    public class SparseGrid<T> : IMutableGrid<T>, IFiniteSparseGrid<T>
     {
         private readonly Dictionary<GridPoint, T> _cells = new();
         public T Get(GridPoint point)
         {
             return _cells.ContainsKey(point) ? _cells[point] : throw new NonexistentCellException(point);
-        }
-
-        public T GetOrDefault(GridPoint point, T defaultValue)
-        {
-            return _cells.ContainsKey(point) ? _cells[point] : defaultValue;
         }
 
         public void Set(GridPoint point, T value)
@@ -30,7 +25,7 @@ namespace AdventOfCode.AdventLib.Grid
         // Todo this should probably be a mutable+sparse grid extension method
         public void Update(GridPoint p, T initialValue, Func<T, T> updater)
         {
-            Set(p, updater(GetOrDefault(p, initialValue)));
+            Set(p, updater(this.GetOrDefault(p, initialValue)));
         }
 
         public IReadOnlyDictionary<GridPoint, T> AllDefinedCells => _cells;
@@ -55,7 +50,7 @@ namespace AdventOfCode.AdventLib.Grid
 
         public IGrid<T> FillingEmptySpacesWith(T defaultValue)
         {
-            return new GeneratedGrid<T>(point => GetOrDefault(point, defaultValue));
+            return new GeneratedGrid<T>(point => this.GetOrDefault(point, defaultValue));
         }
 
         public IDefinedSizeGrid<T> AsDefinedSizeNotPreservingCoordinates()
