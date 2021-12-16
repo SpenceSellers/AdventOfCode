@@ -10,7 +10,7 @@ namespace AdventOfCode
             new ProblemRunner()
                 // .UseSampleInput()
                 // .SkipPartOne()
-                .Run(new Advent202115());
+                .Run(new Advent202116());
         }
     }
 }

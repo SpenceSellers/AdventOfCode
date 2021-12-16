@@ -110,7 +110,12 @@ namespace AdventOfCode.AdventLib
         {
             return items.Aggregate(1, (current, i) => current * i);
         }
-        
+
+        public static long Product(this IEnumerable<long> items)
+        {
+            return items.Aggregate(1L, (current, i) => current * i);
+        }
+
         public static BigInteger Product(this IEnumerable<BigInteger> items)
         {
             return items.Aggregate(BigInteger.One, (current, i) => current * i);
