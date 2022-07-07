@@ -8,26 +8,6 @@ namespace AdventOfCode.Days._2021;
 
 public class Advent202116 : Problem
 {
-    private static readonly Dictionary<char, string> _hexLookup = new()
-    {
-        { '0', "0000" },
-        { '1', "0001" },
-        { '2', "0010" },
-        { '3', "0011" },
-        { '4', "0100" },
-        { '5', "0101" },
-        { '6', "0110" },
-        { '7', "0111" },
-        { '8', "1000" },
-        { '9', "1001" },
-        { 'A', "1010" },
-        { 'B', "1011" },
-        { 'C', "1100" },
-        { 'D', "1101" },
-        { 'E', "1110" },
-        { 'F', "1111" }
-    };
-
     private class PacketParser
     {
         private readonly string _input;
@@ -41,12 +21,10 @@ public class Advent202116 : Problem
 
         public record Packet
         {
-            public int Version { get; set; }
-            public int Type { get; set; }
-            public string Payload { get; set; }
-            public List<Packet> ChildPackets { get; set; } = new();
-
-            public bool IsLiteral => Type == 4;
+            public int Version { get; init; }
+            public int Type { get; init; }
+            public string Payload { get; init; }
+            public List<Packet> ChildPackets { get; init; } = new();
 
             public long PayloadLong => Convert.ToInt64(Payload, 2);
 
@@ -178,8 +156,28 @@ public class Advent202116 : Problem
 
     private static PacketParser.Packet ParsePacket(string[] input)
     {
-        var bits = string.Join("", input[0].Select(c => _hexLookup[c]));
+        var bits = string.Join("", input[0].Select(c => HexLookup[c]));
         var parser = new PacketParser(bits);
         return parser.ParsePacket();
     }
+
+    private static readonly Dictionary<char, string> HexLookup = new()
+    {
+        { '0', "0000" },
+        { '1', "0001" },
+        { '2', "0010" },
+        { '3', "0011" },
+        { '4', "0100" },
+        { '5', "0101" },
+        { '6', "0110" },
+        { '7', "0111" },
+        { '8', "1000" },
+        { '9', "1001" },
+        { 'A', "1010" },
+        { 'B', "1011" },
+        { 'C', "1100" },
+        { 'D', "1101" },
+        { 'E', "1110" },
+        { 'F', "1111" }
+    };
 }
