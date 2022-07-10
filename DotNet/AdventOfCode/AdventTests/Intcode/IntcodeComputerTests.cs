@@ -15,7 +15,7 @@ public class IntcodeComputerTests
         var input = new[] { 1, 9, 10, 3, 2, 3, 11, 0, 99, 30, 40, 50 };
         var computer = new IntcodeComputer(input);
         computer.RunToCompletion();
-        computer.Nums.Should().BeEquivalentTo(new[] { 3500, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50 });
+        computer.LinearNums.Should().BeEquivalentTo(new[] { 3500, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50 });
     }
 
     [Test]
@@ -24,7 +24,7 @@ public class IntcodeComputerTests
         var input = new[] { 1, 9, 10, 3, 2, 3, 11, 0, 99, 30, 40, 50 };
         var computer = new IntcodeComputer(input);
         computer.Step();
-        computer.Nums.Should().BeEquivalentTo(new[] { 1, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50 });
+        computer.LinearNums.Should().BeEquivalentTo(new[] { 1, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50 });
     }
 
     [Test]
@@ -91,6 +91,17 @@ public class IntcodeComputerTests
         computer.InputHandler = () => input;
         computer.RunToCompletion();
         returned.Should().Be(expected);
+    }
+
+    [Test]
+    public void ShouldSupportLargeNumbers()
+    {
+        var program = new long[] { 104, 1125899906842624, 99 };
+        var computer = new IntcodeComputer(program);
+        var returned = 0L;
+        computer.OutputHandler = (x) => returned = x;
+        computer.RunToCompletion();
+        returned.Should().Be(1125899906842624);
     }
 
     

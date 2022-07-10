@@ -14,7 +14,24 @@ public enum ComputerState
 
 public class IntcodeComputer
 {
-    public List<long> Nums { get; }
+    // public List<long> Nums { get; }
+    public Dictionary<long, long> Nums;
+
+    public IList<long> LinearNums
+    {
+        get
+        {
+            var maxKey = Nums.Keys.Max();
+            var result = new long[maxKey + 1];
+            foreach (var (i, v) in Nums)
+            {
+                result[i] = v;
+            }
+
+            return result;
+        }
+    }
+
     public int Pc { get; set; }
     public ComputerState State { get; private set; } = ComputerState.Running;
 
@@ -25,12 +42,12 @@ public class IntcodeComputer
 
     public IntcodeComputer(IEnumerable<long> nums)
     {
-        Nums = nums.ToList();
+        Nums = nums.WithIndex().ToDictionary(x => (long) x.index, x => x.value);
     }
 
     public IntcodeComputer(IEnumerable<int> nums)
     {
-        Nums = nums.Select(x => (long) x).ToList();
+        Nums = nums.WithIndex().ToDictionary(x => (long) x.index, x => (long) x.value);
     }
 
     public void Step()
@@ -209,6 +226,8 @@ public class IntcodeComputer
     private void InputInstruction(List<long> modes)
     {
         var input = InputHandler();
+        // This doesn't work:
+        // var pos = FetchArgs(1, modes);
         // Input pos is always immediate mode
         var pos = GetParameter(1, Nums[Pc + 1]);
         WriteParameter(0, pos, input);
@@ -218,8 +237,9 @@ public class IntcodeComputer
     private void OutputInstruction(List<long> modes)
     {
         // Output is always position mode
-        var value = GetParameter(0, Nums[Pc + 1]);
-        OutputHandler(value);
+        var value = FetchArgs(1, modes);
+        // var value = GetParameter(0, Nums[Pc + 1]);
+        OutputHandler(value[0]);
         Pc += 2;
     }
 

@@ -203,5 +203,10 @@ namespace AdventOfCode.AdventLib
 
             return dict;
         }
+
+        public static IEnumerable<(int index, T value)> WithIndex<T>(this IEnumerable<T> items)
+        {
+            return items.Select((x, i) => (i, x));
+        }
     }
 }
