@@ -72,6 +72,41 @@ public class IntcodeComputer
 
         return (opcode, modes);
     }
+    
+    private static int ParseOpcode(int rawOpcode, Span<int> modes)
+    {
+        var opcode = rawOpcode % 100;
+        var modesInt = rawOpcode / 100;
+
+        var i = 0;
+        while (modesInt != 0)
+        {
+            modes[i] = modesInt % 10;
+            i++;
+            modesInt /= 10;
+        }
+
+        return opcode;
+    }
+
+    private int[] FetchArgs(int count, int[] modes)
+    {
+        var results = new int[count];
+        for (int i = 0; i < count; i++)
+        {
+            results[i] = GetParameter(modes.IndexOrDefault(i), Nums[Pc + i + 1]);
+        }
+
+        return results;
+    }
+    
+    private void FetchArgs(int[] modes, Span<int> results)
+    {
+        for (int i = 0; i < results.Length; i++)
+        {
+            results[i] = GetParameter(modes.IndexOrDefault(i), Nums[Pc + i + 1]);
+        }
+    }
 
     public void RunToCompletion(RunOptions options = null)
     {
@@ -85,7 +120,7 @@ public class IntcodeComputer
             Step();
             if (_stepCounter % 1000 == 0)
             {
-                Console.Out.WriteLine($"Step {_stepCounter}");
+                // Console.Out.WriteLine($"Step {_stepCounter}");
             }
         }
     }
@@ -136,9 +171,10 @@ public class IntcodeComputer
 
     private void Add(int[] modes)
     {
-        var a = GetParameter(modes.IndexOrDefault(0), Nums[Pc + 1]);
-        var b = GetParameter(modes.IndexOrDefault(1), Nums[Pc + 2]);
-        var result = a + b;
+        Span<int> args = stackalloc int[2];
+        FetchArgs(modes, args);
+        // var args = FetchArgs(2, modes);
+        var result = args[0] + args[1];
         var resLoc = Nums[Pc + 3];
         WriteParameter(modes.IndexOrDefault(2), resLoc, result);
         Pc += 4;
@@ -146,9 +182,8 @@ public class IntcodeComputer
 
     private void Multiply(int[] modes)
     {
-        var a = GetParameter(modes.IndexOrDefault(0), Nums[Pc + 1]);
-        var b = GetParameter(modes.IndexOrDefault(1), Nums[Pc + 2]);
-        var result = a * b;
+        var args = FetchArgs(2, modes);
+        var result = args[0] * args[1];
         var resLoc = Nums[Pc + 3];
         WriteParameter(modes.IndexOrDefault(2), resLoc, result);
         Pc += 4;
@@ -170,6 +205,12 @@ public class IntcodeComputer
         OutputHandler(value);
         Pc += 2;
     }
+
+    // private void JumpIfTrue(List<int> modes)
+    // {
+    //     var cond = GetParameter(modes.IndexOrDefault(1), Nums[Pc + 1]);
+    //     var dest = GetParameter(modes.IndexOrDefault(2), Nums[Pc + 2]);
+    // }
 
     private void Halt()
     {

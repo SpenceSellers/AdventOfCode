@@ -26,7 +26,17 @@ public class Advent201905 : Problem
 
     public override object PartTwo(string[] input)
     {
-        var computer = new IntcodeComputer(input.First().Split(",").Select(x => int.Parse(x)));
-        return null;
+        var outputs = new List<int>();
+        var computer = new IntcodeComputer(input.First().Split(",").Select(x => int.Parse(x)))
+        {
+            InputHandler = () => 5,
+            OutputHandler = (x) =>
+            {
+                Console.Out.WriteLine(x);
+                outputs.Add(x);
+            }
+        };
+        computer.RunToCompletion();
+        return outputs.Last();
     }
 }
