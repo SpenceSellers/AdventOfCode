@@ -47,6 +47,18 @@ public class IntcodeComputer
             case 4:
                 OutputInstruction(modes);
                 break;
+            case 5:
+                JumpIfTrue(modes);
+                break;
+            case 6:
+                JumpIfFalse(modes);
+                break;
+            case 7:
+                LessThan(modes);
+                break;
+            case 8:
+                Equals(modes);
+                break;
             case 99:
                 Halt();
                 break;
@@ -89,10 +101,10 @@ public class IntcodeComputer
         return opcode;
     }
 
-    private int[] FetchArgs(int count, int[] modes)
+    private int[] FetchArgs(int count, IList<int> modes)
     {
         var results = new int[count];
-        for (int i = 0; i < count; i++)
+        for (var i = 0; i < count; i++)
         {
             results[i] = GetParameter(modes.IndexOrDefault(i), Nums[Pc + i + 1]);
         }
@@ -206,11 +218,60 @@ public class IntcodeComputer
         Pc += 2;
     }
 
-    // private void JumpIfTrue(List<int> modes)
-    // {
-    //     var cond = GetParameter(modes.IndexOrDefault(1), Nums[Pc + 1]);
-    //     var dest = GetParameter(modes.IndexOrDefault(2), Nums[Pc + 2]);
-    // }
+    private void JumpIfTrue(IList<int> modes)
+    {
+        var args = FetchArgs(2, modes);
+        if (args[0] != 0)
+        {
+            Pc = args[1];
+        }
+        else
+        {
+            Pc += 3;
+        }
+    }
+
+    private void JumpIfFalse(IList<int> modes)
+    {
+        var args = FetchArgs(2, modes);
+        if (args[0] == 0)
+        {
+            Pc = args[1];
+        }
+        else
+        {
+            Pc += 3;
+        }
+    }
+
+    private void LessThan(IList<int> modes)
+    {
+        var args = FetchArgs(2, modes);
+        if (args[0] < args[1])
+        {
+            Nums[Nums[Pc + 3]] = 1;
+        }
+        else
+        {
+            Nums[Nums[Pc + 3]] = 0;
+        }
+        Pc += 4;
+    }
+
+    private void Equals(IList<int> modes)
+    {
+        var args = FetchArgs(2, modes);
+        if (args[0] == args[1])
+        {
+            Nums[Nums[Pc + 3]] = 1;
+        }
+        else
+        {
+            Nums[Nums[Pc + 3]] = 0;
+        }
+
+        Pc += 4;
+    }
 
     private void Halt()
     {
