@@ -18,6 +18,9 @@ public class IntcodeComputer
     public int Pc { get; set; }
     public ComputerState State { get; private set; } = ComputerState.Running;
 
+    public Func<int> InputHandler = () => throw new ApplicationException("Input handler is not defined");
+    public Action<int> OutputHandler = (int x) => throw new ApplicationException("Output handler is not defined");
+
     public IntcodeComputer(IEnumerable<int> nums)
     {
         Nums = nums.ToList();
@@ -37,12 +40,18 @@ public class IntcodeComputer
             case 2:
                 Multiply(modes.ToArray());
                 break;
+            case 3:
+                InputInstruction(modes);
+                break;
+            case 4:
+                OutputInstruction(modes);
+                break;
             case 99:
                 Halt();
                 break;
             default:
                 Console.Out.WriteLine($"Unknown opcode {opcode}");
-                throw new Exception("Unknown opcode");
+                throw new Exception($"Unknown opcode {opcode}");
         }
     }
 
@@ -98,13 +107,23 @@ public class IntcodeComputer
         };
     }
 
+    private void WriteParameter(int mode, int parameterValue, int resultValue)
+    {
+        if (mode != 0)
+        {
+            throw new ArgumentException($"Invalid mode for write: {mode}");
+        }
+
+        Nums[parameterValue] = resultValue;
+    }
+
     private void Add(int[] modes)
     {
         var a = GetParameter(modes.IndexOrDefault(0), Nums[Pc + 1]);
         var b = GetParameter(modes.IndexOrDefault(1), Nums[Pc + 2]);
         var result = a + b;
-        var resLoc =Nums[Pc + 3];
-        Nums[resLoc] = result;
+        var resLoc = Nums[Pc + 3];
+        WriteParameter(modes.IndexOrDefault(2), resLoc, result);
         Pc += 4;
     }
 
@@ -114,8 +133,23 @@ public class IntcodeComputer
         var b = GetParameter(modes.IndexOrDefault(1), Nums[Pc + 2]);
         var result = a * b;
         var resLoc = Nums[Pc + 3];
-        Nums[resLoc] = result;
+        WriteParameter(modes.IndexOrDefault(2), resLoc, result);
         Pc += 4;
+    }
+
+    private void InputInstruction(List<int> modes)
+    {
+        var input = InputHandler();
+        // Input pos is always immediate mode
+        var pos = GetParameter(1, Nums[Pc + 1]);
+        WriteParameter(0, pos, input);
+    }
+    
+    private void OutputInstruction(List<int> modes)
+    {
+        // Output is always position mode
+        var value = GetParameter(0, Nums[Pc + 1]);
+        OutputHandler(value);
     }
 
     private void Halt()
