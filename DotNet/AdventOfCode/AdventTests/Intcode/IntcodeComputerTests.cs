@@ -23,4 +23,13 @@ public class IntcodeComputerTests
         computer.Step();
         computer.Nums.Should().BeEquivalentTo(new[] { 1, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50 });
     }
+
+    [Test]
+    public void ShouldUseImmediateMode()
+    {
+        var input = new[] { 1002, 4, 3, 4, 33 };
+        var computer = new IntcodeComputer(input);
+        computer.Step();
+        computer.Nums[4].Should().Be(99);
+    }
 }

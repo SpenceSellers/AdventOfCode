@@ -25,16 +25,17 @@ public class IntcodeComputer
 
     public void Step()
     {
-        var opcode = Nums[Pc];
-        // PrintDebugInfo();
+        var rawOpcode = Nums[Pc];
+        var (opcode, modes) = ParseOpcode(rawOpcode);
+        modes.JsonTrace();
 
         switch (opcode)
         {
             case 1:
-                Add();
+                Add(modes.ToArray());
                 break;
             case 2:
-                Multiply();
+                Multiply(modes.ToArray());
                 break;
             case 99:
                 Halt();
@@ -43,6 +44,21 @@ public class IntcodeComputer
                 Console.Out.WriteLine($"Unknown opcode {opcode}");
                 throw new Exception("Unknown opcode");
         }
+    }
+
+    private static (int opcode, List<int> modes) ParseOpcode(int rawOpcode)
+    {
+        var opcode = rawOpcode % 100;
+        var modesInt = rawOpcode / 100;
+
+        var modes = new List<int>();
+        while (modesInt != 0)
+        {
+            modes.Add(modesInt % 10);
+            modesInt /= 10;
+        }
+
+        return (opcode, modes);
     }
 
     public void RunToCompletion()
@@ -70,17 +86,33 @@ public class IntcodeComputer
         Console.Out.WriteLine(lineThree);
     }
 
-    private void Add()
+    private int GetParameter(int mode, int value)
     {
-        var result = Nums[Nums[Pc + 1]] + Nums[Nums[Pc + 2]];
+        return mode switch
+        {
+            // Position
+            0 => Nums[value],
+            // Immediate
+            1 => value,
+            _ => throw new ArgumentException("Unknown mode " + mode)
+        };
+    }
+
+    private void Add(int[] modes)
+    {
+        var a = GetParameter(modes.IndexOrDefault(0), Nums[Pc + 1]);
+        var b = GetParameter(modes.IndexOrDefault(1), Nums[Pc + 2]);
+        var result = a + b;
         var resLoc =Nums[Pc + 3];
         Nums[resLoc] = result;
         Pc += 4;
     }
 
-    private void Multiply()
+    private void Multiply(int[] modes)
     {
-        var result = Nums[Nums[Pc + 1]] * Nums[Nums[Pc + 2]];
+        var a = GetParameter(modes.IndexOrDefault(0), Nums[Pc + 1]);
+        var b = GetParameter(modes.IndexOrDefault(1), Nums[Pc + 2]);
+        var result = a * b;
         var resLoc = Nums[Pc + 3];
         Nums[resLoc] = result;
         Pc += 4;
