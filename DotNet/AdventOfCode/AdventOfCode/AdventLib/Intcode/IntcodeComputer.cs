@@ -21,6 +21,8 @@ public class IntcodeComputer
     public Func<int> InputHandler = () => throw new ApplicationException("Input handler is not defined");
     public Action<int> OutputHandler = (int x) => throw new ApplicationException("Output handler is not defined");
 
+    private long _stepCounter = 0;
+
     public IntcodeComputer(IEnumerable<int> nums)
     {
         Nums = nums.ToList();
@@ -30,7 +32,6 @@ public class IntcodeComputer
     {
         var rawOpcode = Nums[Pc];
         var (opcode, modes) = ParseOpcode(rawOpcode);
-        modes.JsonTrace();
 
         switch (opcode)
         {
@@ -53,6 +54,8 @@ public class IntcodeComputer
                 Console.Out.WriteLine($"Unknown opcode {opcode}");
                 throw new Exception($"Unknown opcode {opcode}");
         }
+
+        _stepCounter++;
     }
 
     private static (int opcode, List<int> modes) ParseOpcode(int rawOpcode)
@@ -70,12 +73,26 @@ public class IntcodeComputer
         return (opcode, modes);
     }
 
-    public void RunToCompletion()
+    public void RunToCompletion(RunOptions options = null)
     {
+        options ??= new RunOptions();
         while (State == ComputerState.Running)
         {
+            if (options.Limit >= 0 && _stepCounter >= options.Limit)
+            {
+                break;
+            }
             Step();
+            if (_stepCounter % 1000 == 0)
+            {
+                Console.Out.WriteLine($"Step {_stepCounter}");
+            }
         }
+    }
+
+    public class RunOptions
+    {
+        public long Limit = -1;
     }
 
     private void PrintDebugInfo()
@@ -143,6 +160,7 @@ public class IntcodeComputer
         // Input pos is always immediate mode
         var pos = GetParameter(1, Nums[Pc + 1]);
         WriteParameter(0, pos, input);
+        Pc += 2;
     }
     
     private void OutputInstruction(List<int> modes)
@@ -150,6 +168,7 @@ public class IntcodeComputer
         // Output is always position mode
         var value = GetParameter(0, Nums[Pc + 1]);
         OutputHandler(value);
+        Pc += 2;
     }
 
     private void Halt()
