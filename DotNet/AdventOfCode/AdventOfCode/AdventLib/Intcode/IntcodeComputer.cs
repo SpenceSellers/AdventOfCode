@@ -14,18 +14,23 @@ public enum ComputerState
 
 public class IntcodeComputer
 {
-    public List<int> Nums { get; }
+    public List<long> Nums { get; }
     public int Pc { get; set; }
     public ComputerState State { get; private set; } = ComputerState.Running;
 
-    public Func<int> InputHandler = () => throw new ApplicationException("Input handler is not defined");
-    public Action<int> OutputHandler = (int x) => throw new ApplicationException("Output handler is not defined");
+    public Func<long> InputHandler = () => throw new ApplicationException("Input handler is not defined");
+    public Action<long> OutputHandler = (long x) => throw new ApplicationException("Output handler is not defined");
 
     private long _stepCounter = 0;
 
-    public IntcodeComputer(IEnumerable<int> nums)
+    public IntcodeComputer(IEnumerable<long> nums)
     {
         Nums = nums.ToList();
+    }
+
+    public IntcodeComputer(IEnumerable<int> nums)
+    {
+        Nums = nums.Select(x => (long) x).ToList();
     }
 
     public void Step()
@@ -70,12 +75,12 @@ public class IntcodeComputer
         _stepCounter++;
     }
 
-    private static (int opcode, List<int> modes) ParseOpcode(int rawOpcode)
+    private static (long opcode, List<long> modes) ParseOpcode(long rawOpcode)
     {
         var opcode = rawOpcode % 100;
         var modesInt = rawOpcode / 100;
 
-        var modes = new List<int>();
+        var modes = new List<long>();
         while (modesInt != 0)
         {
             modes.Add(modesInt % 10);
@@ -85,7 +90,7 @@ public class IntcodeComputer
         return (opcode, modes);
     }
     
-    private static int ParseOpcode(int rawOpcode, Span<int> modes)
+    private static long ParseOpcode(long rawOpcode, Span<long> modes)
     {
         var opcode = rawOpcode % 100;
         var modesInt = rawOpcode / 100;
@@ -101,9 +106,9 @@ public class IntcodeComputer
         return opcode;
     }
 
-    private int[] FetchArgs(int count, IList<int> modes)
+    private long[] FetchArgs(int count, IList<long> modes)
     {
-        var results = new int[count];
+        var results = new long[count];
         for (var i = 0; i < count; i++)
         {
             results[i] = GetParameter(modes.IndexOrDefault(i), Nums[Pc + i + 1]);
@@ -112,7 +117,7 @@ public class IntcodeComputer
         return results;
     }
     
-    private void FetchArgs(int[] modes, Span<int> results)
+    private void FetchArgs(long[] modes, Span<long> results)
     {
         for (int i = 0; i < results.Length; i++)
         {
@@ -159,31 +164,31 @@ public class IntcodeComputer
         Console.Out.WriteLine(lineThree);
     }
 
-    private int GetParameter(int mode, int value)
+    private long GetParameter(long mode, long value)
     {
         return mode switch
         {
             // Position
-            0 => Nums[value],
+            0 => Nums[(int) value],
             // Immediate
             1 => value,
             _ => throw new ArgumentException("Unknown mode " + mode)
         };
     }
 
-    private void WriteParameter(int mode, int parameterValue, int resultValue)
+    private void WriteParameter(long mode, long parameterValue, long resultValue)
     {
         if (mode != 0)
         {
             throw new ArgumentException($"Invalid mode for write: {mode}");
         }
 
-        Nums[parameterValue] = resultValue;
+        Nums[(int) parameterValue] = resultValue;
     }
 
-    private void Add(int[] modes)
+    private void Add(long[] modes)
     {
-        Span<int> args = stackalloc int[2];
+        Span<long> args = stackalloc long[2];
         FetchArgs(modes, args);
         // var args = FetchArgs(2, modes);
         var result = args[0] + args[1];
@@ -192,7 +197,7 @@ public class IntcodeComputer
         Pc += 4;
     }
 
-    private void Multiply(int[] modes)
+    private void Multiply(long[] modes)
     {
         var args = FetchArgs(2, modes);
         var result = args[0] * args[1];
@@ -201,7 +206,7 @@ public class IntcodeComputer
         Pc += 4;
     }
 
-    private void InputInstruction(List<int> modes)
+    private void InputInstruction(List<long> modes)
     {
         var input = InputHandler();
         // Input pos is always immediate mode
@@ -210,7 +215,7 @@ public class IntcodeComputer
         Pc += 2;
     }
     
-    private void OutputInstruction(List<int> modes)
+    private void OutputInstruction(List<long> modes)
     {
         // Output is always position mode
         var value = GetParameter(0, Nums[Pc + 1]);
@@ -218,12 +223,12 @@ public class IntcodeComputer
         Pc += 2;
     }
 
-    private void JumpIfTrue(IList<int> modes)
+    private void JumpIfTrue(IList<long> modes)
     {
         var args = FetchArgs(2, modes);
         if (args[0] != 0)
         {
-            Pc = args[1];
+            Pc = (int) args[1];
         }
         else
         {
@@ -231,12 +236,12 @@ public class IntcodeComputer
         }
     }
 
-    private void JumpIfFalse(IList<int> modes)
+    private void JumpIfFalse(IList<long> modes)
     {
         var args = FetchArgs(2, modes);
         if (args[0] == 0)
         {
-            Pc = args[1];
+            Pc = (int) args[1];
         }
         else
         {
@@ -244,30 +249,30 @@ public class IntcodeComputer
         }
     }
 
-    private void LessThan(IList<int> modes)
+    private void LessThan(IList<long> modes)
     {
         var args = FetchArgs(2, modes);
         if (args[0] < args[1])
         {
-            Nums[Nums[Pc + 3]] = 1;
+            Nums[(int) Nums[Pc + 3]] = 1;
         }
         else
         {
-            Nums[Nums[Pc + 3]] = 0;
+            Nums[(int) Nums[Pc + 3]] = 0;
         }
         Pc += 4;
     }
 
-    private void Equals(IList<int> modes)
+    private void Equals(IList<long> modes)
     {
         var args = FetchArgs(2, modes);
         if (args[0] == args[1])
         {
-            Nums[Nums[Pc + 3]] = 1;
+            Nums[(int) Nums[Pc + 3]] = 1;
         }
         else
         {
-            Nums[Nums[Pc + 3]] = 0;
+            Nums[(int) Nums[Pc + 3]] = 0;
         }
 
         Pc += 4;

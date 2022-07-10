@@ -69,24 +69,24 @@ public class IntcodeComputerTests
     {
         var input = new[] {4, 0};
         var computer = new IntcodeComputer(input);
-        var returned = 0;
+        var returned = 0L;
         computer.OutputHandler = (x) => returned = x;
         computer.Step();
         returned.Should().Be(4);
     }
 
-    [TestCase(1, 0, new[] {3,9,8,9,10,9,4,9,99,-1,8}, TestName = "Equals - Position Mode - False")]
-    [TestCase(1, 0, new[] {3,3,1108,-1,8,3,4,3,99}, TestName = "Equals - Immediate Mode - False")]
-    [TestCase(1, 1, new[] {3,9,7,9,10,9,4,9,99,-1,8}, TestName = "LessThan - Position Mode - True")]
-    [TestCase(10, 0, new[] {3,9,7,9,10,9,4,9,99,-1,8}, TestName = "LessThan - Position Mode - False")]
-    [TestCase(0, 0, new[] {3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9}, TestName = "Jump - Position Mode - True")]
-    [TestCase(100, 1, new[] {3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9}, TestName = "Jump - Position Mode - False")]
-    [TestCase(0, 0, new[] {3,3,1105,-1,9,1101,0,0,12,4,12,99,1}, TestName = "Jump - Immediate Mode - True")]
-    [TestCase(100, 1, new[] {3,3,1105,-1,9,1101,0,0,12,4,12,99,1}, TestName = "Jump - Immediate Mode - False")]
-    public void ShouldCompare(int input, int expected, int[] program)
+    [TestCase(1, 0, new long[] {3,9,8,9,10,9,4,9,99,-1,8}, TestName = "Equals - Position Mode - False")]
+    [TestCase(1, 0, new long[] {3,3,1108,-1,8,3,4,3,99}, TestName = "Equals - Immediate Mode - False")]
+    [TestCase(1, 1, new long[] {3,9,7,9,10,9,4,9,99,-1,8}, TestName = "LessThan - Position Mode - True")]
+    [TestCase(10, 0, new long[] {3,9,7,9,10,9,4,9,99,-1,8}, TestName = "LessThan - Position Mode - False")]
+    [TestCase(0, 0, new long[] {3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9}, TestName = "Jump - Position Mode - True")]
+    [TestCase(100, 1, new long[] {3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9}, TestName = "Jump - Position Mode - False")]
+    [TestCase(0, 0, new long[] {3,3,1105,-1,9,1101,0,0,12,4,12,99,1}, TestName = "Jump - Immediate Mode - True")]
+    [TestCase(100, 1, new long[] {3,3,1105,-1,9,1101,0,0,12,4,12,99,1}, TestName = "Jump - Immediate Mode - False")]
+    public void ShouldCompare(int input, int expected, long[] program)
     {
         var computer = new IntcodeComputer(program);
-        var returned = -99;
+        var returned = -99L;
         computer.OutputHandler = (x) => returned = x;
         computer.InputHandler = () => input;
         computer.RunToCompletion();

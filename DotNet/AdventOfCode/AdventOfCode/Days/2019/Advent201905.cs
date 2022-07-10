@@ -10,8 +10,8 @@ public class Advent201905 : Problem
 {
     public override object PartOne(string[] input)
     {
-        var outputs = new List<int>();
-        var computer = new IntcodeComputer(input.First().Split(",").Select(x => int.Parse(x)))
+        var outputs = new List<long>();
+        var computer = new IntcodeComputer(input.First().Split(",").Select(x => long.Parse(x)))
         {
             InputHandler = () => 1,
             OutputHandler = (x) =>
@@ -26,8 +26,8 @@ public class Advent201905 : Problem
 
     public override object PartTwo(string[] input)
     {
-        var outputs = new List<int>();
-        var computer = new IntcodeComputer(input.First().Split(",").Select(x => int.Parse(x)))
+        var outputs = new List<long>();
+        var computer = new IntcodeComputer(input.First().Split(",").Select(x => long.Parse(x)))
         {
             InputHandler = () => 5,
             OutputHandler = (x) =>
