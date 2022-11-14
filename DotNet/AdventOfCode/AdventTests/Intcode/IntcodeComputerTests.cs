@@ -104,6 +104,29 @@ public class IntcodeComputerTests
         returned.Should().Be(1125899906842624);
     }
 
+    [Test]
+    public void ShouldAdjustRelativeOffset()
+    {
+        var program = new long[] { 109, 42, 99 };
+        var computer = new IntcodeComputer(program);
+        computer.RunToCompletion();
+        computer.RelativeBase.Should().Be(42);
+    }
+
+    [Test]
+    public void ShouldUseRelativeOffset()
+    {
+        var program = new long[] { 204, 1, 99 };
+        var returned = 0L;
+        var computer = new IntcodeComputer(program)
+        {
+            RelativeBase = 1,
+            OutputHandler = (x) => returned = x
+        };
+        computer.RunToCompletion();
+        returned.Should().Be(99);
+    }
+
     
     [Test]
     public void Speed()

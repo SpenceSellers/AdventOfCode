@@ -34,6 +34,7 @@ public class IntcodeComputer
 
     public int Pc { get; set; }
     public ComputerState State { get; private set; } = ComputerState.Running;
+    public long RelativeBase { get; set; }= 0;
 
     public Func<long> InputHandler = () => throw new ApplicationException("Input handler is not defined");
     public Action<long> OutputHandler = (long x) => throw new ApplicationException("Output handler is not defined");
@@ -81,6 +82,9 @@ public class IntcodeComputer
             case 8:
                 Equals(modes);
                 break;
+            case 9:
+                AdjustRelativeBase(modes);
+                break;
             case 99:
                 Halt();
                 break;
@@ -106,7 +110,7 @@ public class IntcodeComputer
 
         return (opcode, modes);
     }
-    
+
     private static long ParseOpcode(long rawOpcode, Span<long> modes)
     {
         var opcode = rawOpcode % 100;
@@ -133,7 +137,7 @@ public class IntcodeComputer
 
         return results;
     }
-    
+
     private void FetchArgs(long[] modes, Span<long> results)
     {
         for (int i = 0; i < results.Length; i++)
@@ -186,9 +190,10 @@ public class IntcodeComputer
         return mode switch
         {
             // Position
-            0 => Nums[(int) value],
+            0 => Nums[value],
             // Immediate
             1 => value,
+            2 => Nums[value + RelativeBase],
             _ => throw new ArgumentException("Unknown mode " + mode)
         };
     }
@@ -226,14 +231,18 @@ public class IntcodeComputer
     private void InputInstruction(List<long> modes)
     {
         var input = InputHandler();
+        modes.JsonTrace("Modes input");
         // This doesn't work:
         // var pos = FetchArgs(1, modes);
         // Input pos is always immediate mode
-        var pos = GetParameter(1, Nums[Pc + 1]);
-        WriteParameter(0, pos, input);
+        // var pos = GetParameter(1, Nums[Pc + 1]);
+        var args = FetchArgs(1, modes);
+        // args.JsonTrace("Args");
+        // pos.JsonTrace("Pos original");
+        WriteParameter(0, args[0], input);
         Pc += 2;
     }
-    
+
     private void OutputInstruction(List<long> modes)
     {
         // Output is always position mode
@@ -296,6 +305,13 @@ public class IntcodeComputer
         }
 
         Pc += 4;
+    }
+
+    private void AdjustRelativeBase(IList<long> modes)
+    {
+        var args = FetchArgs(1, modes);
+        RelativeBase += args[0];
+        Pc += 2;
     }
 
     private void Halt()
