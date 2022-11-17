@@ -15,9 +15,6 @@ namespace AdventOfCode.AdventLib.BreadthFirstSearch
             _config = config;
         }
 
-        /// <summary>
-        /// Performs a breadth-first search across the space of all possible JSON strings.
-        /// </summary>
         public IEnumerable<TState> Bfs()
         {
             var initialState = _config.InitialState;

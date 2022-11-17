@@ -23,6 +23,9 @@ namespace AdventOfCode.AdventLib
             dict.UpdateWithDefault(key, 0, i => i + count);
         }
 
+        /// <summary>
+        /// The updater func will still be run on initialDefault if the key doesn't exist.
+        /// </summary>
         public static void UpdateWithDefault<K, V>(this IDictionary<K, V> dict, K key, V initialDefault,
             Func<V, V> updater)
         {
