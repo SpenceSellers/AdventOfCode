@@ -4,11 +4,16 @@ using System.Collections.Generic;
 
 namespace AdventOfCode.AdventLib;
 
+/// <summary>
+/// A list growable in both directions, implemented by a copy-on-resize circular buffer.
+/// </summary>
 public class DoubleEndedQueue<T> : IEnumerable<T>
 {
     private T[] _buffer;
     private int _start = 0; // first index that actually contains an item
     private int _end = 0; // Index of first empty item
+
+    private const int ResizingFactor = 2;
 
     public DoubleEndedQueue(int initialCapacity = 1)
     {
@@ -27,6 +32,28 @@ public class DoubleEndedQueue<T> : IEnumerable<T>
             {
                 return (_buffer.Length - _start) + _end;
             }
+        }
+    }
+
+    public T this[int index]
+    {
+        get
+        {
+            if (index < 0 || index >= Count)
+            {
+                throw new IndexOutOfRangeException();
+            }
+            var i = Backwards(_start, index);
+            return _buffer[i];
+        }
+        set
+        {
+            if (index < 0 || index >= Count)
+            {
+                throw new IndexOutOfRangeException();
+            }
+            var i = Backwards(_start, index);
+            _buffer[i] = value;
         }
     }
 
@@ -88,22 +115,22 @@ public class DoubleEndedQueue<T> : IEnumerable<T>
     /// <summary>
     /// A step towards the "back" / end of the buffer
     /// </summary>
-    private int Backwards(int x)
+    private int Backwards(int x, int distance = 1)
     {
-        return (x + 1 + _buffer.Length) % _buffer.Length;
+        return (x + distance + _buffer.Length) % _buffer.Length;
     }
 
     /// <summary>
     /// A step towards the "front" / start of the buffer
     /// </summary>
-    private int Forwards(int x )
+    private int Forwards(int x, int distance = 1)
     {
-        return (x - 1 + _buffer.Length) % _buffer.Length;
+        return (x - distance + _buffer.Length) % _buffer.Length;
     }
 
     private void Resize()
     {
-        var nextSize =_buffer.Length * 2;
+        var nextSize =_buffer.Length * ResizingFactor;
         var newBuffer = new T[nextSize];
         var i = 0;
         foreach (var val in this)

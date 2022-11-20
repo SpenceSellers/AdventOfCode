@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using AdventOfCode.AdventLib;
 using AdventTests.TestUtils;
 using FluentAssertions;
@@ -40,16 +41,6 @@ public class DoubleEndedQueueTests
         q.PushBack(200);
         q.PopFront().Should().Be(100);
         q.PopFront().Should().Be(200);
-    }
-
-    [Test]
-    public void PushPopSwitchMultipleDegenerate()
-    {
-        var q = new DoubleEndedQueue<int>();
-        q.PushFront(100);
-        q.PushFront(200);
-        q.PopBack().Should().Be(100);
-        q.PopBack().Should().Be(200);
     }
 
     [Test]
@@ -122,5 +113,93 @@ public class DoubleEndedQueueTests
                 q.PopBack();
             }
         }
+    }
+
+    [Test]
+    public void Iterates()
+    {
+        var q = new DoubleEndedQueue<int>();
+        q.PushFront(2);
+        q.PushFront(1);
+        q.PushBack(3);
+        q.PushBack(4);
+        q.ToList().Should().BeEquivalentTo(new[] { 1, 2, 3, 4 }, cfg => cfg.WithStrictOrdering());
+    }
+
+    [Test]
+    public void IndexGet()
+    {
+        var q = new DoubleEndedQueue<int>();
+        q.PushFront(3);
+        q.PushFront(2);
+        q.PushFront(1);
+        q.PushBack(4);
+        q.PushBack(5);
+        q.PushBack(6);
+        q[0].Should().Be(1);
+        q[1].Should().Be(2);
+        q[2].Should().Be(3);
+        q[3].Should().Be(4);
+        q[4].Should().Be(5);
+        q[5].Should().Be(6);
+    }
+
+    [Test]
+    public void IndexSet()
+    {
+        var q = new DoubleEndedQueue<int>();
+        q.PushFront(3);
+        q.PushFront(2);
+        q.PushFront(1);
+        q.PushBack(4);
+        q.PushBack(5);
+        q.PushBack(6);
+
+        q[0] = 000;
+        q[1] = 100;
+        q[2] = 200;
+        q[3] = 300;
+        q[4] = 400;
+        q[5] = 500;
+
+        q.ToList().Should().BeEquivalentTo(new[] { 0, 100, 200, 300, 400, 500 }, c => c.WithStrictOrdering());
+    }
+
+    [Test]
+    public void IndexGetOutOfBounds()
+    {
+        var q = new DoubleEndedQueue<int>();
+        q.PushFront(3);
+        q.PushFront(2);
+        q.PushFront(1);
+        q.PushBack(4);
+        q.PushBack(5);
+        q.PushBack(6);
+
+        var six = () => q[6];
+        var seven = () => q[7];
+        var negative = () => q[-1];
+        six.Should().Throw<IndexOutOfRangeException>();
+        seven.Should().Throw<IndexOutOfRangeException>();
+        negative.Should().Throw<IndexOutOfRangeException>();
+    }
+
+    [Test]
+    public void IndexSetOutOfBounds()
+    {
+        var q = new DoubleEndedQueue<int>();
+        q.PushFront(3);
+        q.PushFront(2);
+        q.PushFront(1);
+        q.PushBack(4);
+        q.PushBack(5);
+        q.PushBack(6);
+
+        var six = () => q[6] = 10;
+        var seven = () => q[7] = 10;
+        var negative = () => q[-1] = 10;
+        six.Should().Throw<IndexOutOfRangeException>();
+        seven.Should().Throw<IndexOutOfRangeException>();
+        negative.Should().Throw<IndexOutOfRangeException>();
     }
 }
