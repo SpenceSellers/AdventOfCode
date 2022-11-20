@@ -8,7 +8,7 @@ namespace AdventOfCode.AdventLib;
 /// <summary>
 /// A list growable in both directions, implemented by a copy-on-resize circular buffer.
 /// </summary>
-public class DoubleEndedList<T> : IEnumerable<T>
+public class DoubleEndedList<T> : IList<T>
 {
     private T[] _buffer;
     private int _start = 0;
@@ -21,6 +21,52 @@ public class DoubleEndedList<T> : IEnumerable<T>
             throw new InvalidOperationException($"Invalid initialCapacity of {initialCapacity}");
         }
         _buffer = new T[initialCapacity];
+    }
+
+    /// <summary>
+    /// Alias for PushBack
+    /// </summary>
+    public void Add(T item)
+    {
+        PushBack(item);
+    }
+
+    public void Clear()
+    {
+        for (int i = 0; i < Count; i++)
+        {
+            this[i] = default;
+        }
+
+        _start = 0;
+        _end = 0;
+    }
+
+    public bool Contains(T item)
+    {
+        return this.Any(i => i.Equals(item));
+    }
+
+    public void CopyTo(T[] array, int arrayIndex)
+    {
+        var i = arrayIndex;
+        foreach (var item in this)
+        {
+            array[i] = item;
+            i++;
+        }
+    }
+
+    public bool Remove(T item)
+    {
+        var index = IndexOf(item);
+        if (index >= 0)
+        {
+            RemoveAt(index);
+            return true;
+        }
+
+        return false;
     }
 
     public int Count
@@ -38,13 +84,60 @@ public class DoubleEndedList<T> : IEnumerable<T>
         }
     }
 
+    public bool IsReadOnly => false;
+
+    public int IndexOf(T item)
+    {
+        var i = 0;
+        foreach (var v in this)
+        {
+            if (v.Equals(item))
+            {
+                return i;
+            }
+            i++;
+        }
+
+        return -1;
+    }
+
+    public void Insert(int index, T item)
+    {
+        var i = Count;
+
+        // Move the end by 1 now, to avoid getting out of range errors
+        _end = Backwards(_end);
+        while (i > index)
+        {
+            // shift everything by 1
+            this[i] = this[i - 1];
+            i--;
+        }
+
+        // And finally put the new item in its place;
+        this[index] = item;
+    }
+
+    public void RemoveAt(int index)
+    {
+        var lastIndex = Count - 1;
+        while (index < lastIndex)
+        {
+            // shift everything back 1
+            this[index] = this[index + 1];
+            index++;
+        }
+        // Get rid of the last item, which is now duplicated
+        PopBack();
+    }
+
     public T this[int index]
     {
         get
         {
             if (index < 0 || index >= Count)
             {
-                throw new IndexOutOfRangeException();
+                throw new IndexOutOfRangeException($"Index: {index}, Count: {Count} when getting value");
             }
             var i = Backwards(_start, index);
             return _buffer[i];
@@ -53,7 +146,7 @@ public class DoubleEndedList<T> : IEnumerable<T>
         {
             if (index < 0 || index >= Count)
             {
-                throw new IndexOutOfRangeException();
+                throw new IndexOutOfRangeException($"Index: {index}, Count: {Count} when setting value");
             }
             var i = Backwards(_start, index);
             _buffer[i] = value;

@@ -203,4 +203,55 @@ public class DoubleEndedListTests
         seven.Should().Throw<IndexOutOfRangeException>();
         negative.Should().Throw<IndexOutOfRangeException>();
     }
+
+    [Test]
+    public void Remove()
+    {
+        var q = new DoubleEndedList<int>();
+        q.PushFront(3);
+        q.PushFront(2);
+        q.PushFront(1);
+        q.PushBack(4);
+        q.PushBack(5);
+        q.PushBack(6);
+
+        q.Remove(2);
+        q.Remove(5);
+
+        q.ToList().Should().BeEquivalentTo(new[] { 1, 3, 4, 6 }, c => c.WithStrictOrdering());
+        q.Count.Should().Be(4);
+    }
+
+    [Test]
+    public void RemoveFirstAndLast()
+    {
+        var q = new DoubleEndedList<int>();
+        q.PushFront(3);
+        q.PushFront(2);
+        q.PushFront(1);
+        q.PushBack(4);
+        q.PushBack(5);
+        q.PushBack(6);
+
+        q.Remove(1);
+        q.Remove(6);
+
+        q.ToList().Should().BeEquivalentTo(new[] { 2, 3, 4, 5 }, c => c.WithStrictOrdering());
+        q.Count.Should().Be(4);
+    }
+
+    [Test]
+    public void Insert()
+    {
+        var q = new DoubleEndedList<int>();
+        q.PushFront(3);
+        q.PushFront(2);
+        q.PushFront(1);
+        q.PushBack(4);
+        q.PushBack(5);
+
+        q.Insert(1, 100);
+
+        q.ToList().Should().BeEquivalentTo(new[] { 1, 100, 2, 3, 4, 5 }, c => c.WithStrictOrdering());
+    }
 }
