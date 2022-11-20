@@ -7,12 +7,12 @@ using NUnit.Framework;
 
 namespace AdventTests;
 
-public class DoubleEndedQueueTests
+public class DoubleEndedListTests
 {
     [Test]
     public void PushPopFrontSingle()
     {
-        var q = new DoubleEndedQueue<int>();
+        var q = new DoubleEndedList<int>();
         q.PushFront(100);
         q.PopFront().Should().Be(100);
     }
@@ -20,7 +20,7 @@ public class DoubleEndedQueueTests
     [Test]
     public void PushPopBackSingle()
     {
-        var q = new DoubleEndedQueue<int>();
+        var q = new DoubleEndedList<int>();
         q.PushBack(100);
         q.PopBack().Should().Be(100);
     }
@@ -28,7 +28,7 @@ public class DoubleEndedQueueTests
     [Test]
     public void PushPopSwitchSingle()
     {
-        var q = new DoubleEndedQueue<int>();
+        var q = new DoubleEndedList<int>();
         q.PushBack(100);
         q.PopFront().Should().Be(100);
     }
@@ -36,7 +36,7 @@ public class DoubleEndedQueueTests
     [Test]
     public void PushPopSwitchMultiple()
     {
-        var q = new DoubleEndedQueue<int>();
+        var q = new DoubleEndedList<int>();
         q.PushBack(100);
         q.PushBack(200);
         q.PopFront().Should().Be(100);
@@ -46,7 +46,7 @@ public class DoubleEndedQueueTests
     [Test]
     public void PushPopBackMultiple()
     {
-        var q = new DoubleEndedQueue<int>();
+        var q = new DoubleEndedList<int>();
         q.PushBack(100);
         q.PushBack(200);
         q.PopBack().Should().Be(200);
@@ -56,7 +56,7 @@ public class DoubleEndedQueueTests
     [Test]
     public void PushPopFrontMultiple()
     {
-        var q = new DoubleEndedQueue<int>();
+        var q = new DoubleEndedList<int>();
         q.PushFront(100);
         q.PushFront(200);
         q.PopFront().Should().Be(200);
@@ -66,7 +66,7 @@ public class DoubleEndedQueueTests
     [Test]
     public void TestLength()
     {
-        var q = new DoubleEndedQueue<int>();
+        var q = new DoubleEndedList<int>();
         q.Count.Should().Be(0);
         q.PushBack(1);
         q.Count.Should().Be(1);
@@ -77,7 +77,7 @@ public class DoubleEndedQueueTests
     [Test]
     public void Large()
     {
-        var q = new DoubleEndedQueue<int>();
+        var q = new DoubleEndedList<int>();
         for (int i = 0; i < 500; i++)
         {
             q.PushBack(i);
@@ -91,7 +91,7 @@ public class DoubleEndedQueueTests
     [Test]
     public void Fuzz()
     {
-        var q = new DoubleEndedQueue<int>();
+        var q = new DoubleEndedList<int>();
         var rng = new Random();
         for (int i = 0; i < 200; i++)
         {
@@ -118,7 +118,7 @@ public class DoubleEndedQueueTests
     [Test]
     public void Iterates()
     {
-        var q = new DoubleEndedQueue<int>();
+        var q = new DoubleEndedList<int>();
         q.PushFront(2);
         q.PushFront(1);
         q.PushBack(3);
@@ -129,7 +129,7 @@ public class DoubleEndedQueueTests
     [Test]
     public void IndexGet()
     {
-        var q = new DoubleEndedQueue<int>();
+        var q = new DoubleEndedList<int>();
         q.PushFront(3);
         q.PushFront(2);
         q.PushFront(1);
@@ -147,7 +147,7 @@ public class DoubleEndedQueueTests
     [Test]
     public void IndexSet()
     {
-        var q = new DoubleEndedQueue<int>();
+        var q = new DoubleEndedList<int>();
         q.PushFront(3);
         q.PushFront(2);
         q.PushFront(1);
@@ -168,7 +168,7 @@ public class DoubleEndedQueueTests
     [Test]
     public void IndexGetOutOfBounds()
     {
-        var q = new DoubleEndedQueue<int>();
+        var q = new DoubleEndedList<int>();
         q.PushFront(3);
         q.PushFront(2);
         q.PushFront(1);
@@ -187,7 +187,7 @@ public class DoubleEndedQueueTests
     [Test]
     public void IndexSetOutOfBounds()
     {
-        var q = new DoubleEndedQueue<int>();
+        var q = new DoubleEndedList<int>();
         q.PushFront(3);
         q.PushFront(2);
         q.PushFront(1);

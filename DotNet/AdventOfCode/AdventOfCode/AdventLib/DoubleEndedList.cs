@@ -7,7 +7,7 @@ namespace AdventOfCode.AdventLib;
 /// <summary>
 /// A list growable in both directions, implemented by a copy-on-resize circular buffer.
 /// </summary>
-public class DoubleEndedQueue<T> : IEnumerable<T>
+public class DoubleEndedList<T> : IEnumerable<T>
 {
     private T[] _buffer;
     private int _start = 0; // first index that actually contains an item
@@ -15,7 +15,7 @@ public class DoubleEndedQueue<T> : IEnumerable<T>
 
     private const int ResizingFactor = 2;
 
-    public DoubleEndedQueue(int initialCapacity = 1)
+    public DoubleEndedList(int initialCapacity = 1)
     {
         _buffer = new T[initialCapacity];
     }
