@@ -103,6 +103,8 @@ public class DoubleEndedList<T> : IList<T>
 
     public void Insert(int index, T item)
     {
+        // OPTIMIZE: We move everything backwards towards the back of the list, which will only be optimal 50% of the time.
+        // It'd be nice to move items to the shorter side.
         var i = Count;
 
         // Move the end by 1 now, to avoid getting out of range errors
@@ -120,6 +122,8 @@ public class DoubleEndedList<T> : IList<T>
 
     public void RemoveAt(int index)
     {
+        // OPTIMIZE: We move everything forwards from the back of the list, which will only be optimal 50% of the time.
+        // It'd be nice to move items from the shorter side.
         var lastIndex = Count - 1;
         while (index < lastIndex)
         {
