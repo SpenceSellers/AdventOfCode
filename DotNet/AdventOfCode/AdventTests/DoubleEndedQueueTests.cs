@@ -1,0 +1,126 @@
+using System;
+using AdventOfCode.AdventLib;
+using AdventTests.TestUtils;
+using FluentAssertions;
+using NUnit.Framework;
+
+namespace AdventTests;
+
+public class DoubleEndedQueueTests
+{
+    [Test]
+    public void PushPopFrontSingle()
+    {
+        var q = new DoubleEndedQueue<int>();
+        q.PushFront(100);
+        q.PopFront().Should().Be(100);
+    }
+
+    [Test]
+    public void PushPopBackSingle()
+    {
+        var q = new DoubleEndedQueue<int>();
+        q.PushBack(100);
+        q.PopBack().Should().Be(100);
+    }
+
+    [Test]
+    public void PushPopSwitchSingle()
+    {
+        var q = new DoubleEndedQueue<int>();
+        q.PushBack(100);
+        q.PopFront().Should().Be(100);
+    }
+
+    [Test]
+    public void PushPopSwitchMultiple()
+    {
+        var q = new DoubleEndedQueue<int>();
+        q.PushBack(100);
+        q.PushBack(200);
+        q.PopFront().Should().Be(100);
+        q.PopFront().Should().Be(200);
+    }
+
+    [Test]
+    public void PushPopSwitchMultipleDegenerate()
+    {
+        var q = new DoubleEndedQueue<int>();
+        q.PushFront(100);
+        q.PushFront(200);
+        q.PopBack().Should().Be(100);
+        q.PopBack().Should().Be(200);
+    }
+
+    [Test]
+    public void PushPopBackMultiple()
+    {
+        var q = new DoubleEndedQueue<int>();
+        q.PushBack(100);
+        q.PushBack(200);
+        q.PopBack().Should().Be(200);
+        q.PopBack().Should().Be(100);
+    }
+
+    [Test]
+    public void PushPopFrontMultiple()
+    {
+        var q = new DoubleEndedQueue<int>();
+        q.PushFront(100);
+        q.PushFront(200);
+        q.PopFront().Should().Be(200);
+        q.PopFront().Should().Be(100);
+    }
+
+    [Test]
+    public void TestLength()
+    {
+        var q = new DoubleEndedQueue<int>();
+        q.Count.Should().Be(0);
+        q.PushBack(1);
+        q.Count.Should().Be(1);
+        q.PushFront(1);
+        q.Count.Should().Be(2);
+    }
+
+    [Test]
+    public void Large()
+    {
+        var q = new DoubleEndedQueue<int>();
+        for (int i = 0; i < 500; i++)
+        {
+            q.PushBack(i);
+        }
+        for (int i = 0; i < 500; i++)
+        {
+            q.PopFront().Should().Be(i);
+        }
+    }
+
+    [Test]
+    public void Fuzz()
+    {
+        var q = new DoubleEndedQueue<int>();
+        var rng = new Random();
+        for (int i = 0; i < 200; i++)
+        {
+            if (rng.NextBool())
+            {
+                q.PushFront(10);
+            }
+            else
+            {
+                q.PushBack(10);
+            }
+
+            if (rng.NextBool())
+            {
+                q.PopFront();
+            }
+            else
+            {
+                q.PopBack();
+            }
+        }
+    }
+}
