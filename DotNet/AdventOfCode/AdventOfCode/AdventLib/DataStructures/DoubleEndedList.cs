@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AdventOfCode.AdventLib;
+namespace AdventOfCode.AdventLib.DataStructures;
 
 /// <summary>
 /// A list growable in both directions, implemented by a copy-on-resize circular buffer.

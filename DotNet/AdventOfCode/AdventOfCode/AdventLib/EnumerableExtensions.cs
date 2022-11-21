@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using AdventOfCode.AdventLib.DataStructures;
 using AdventOfCode.AdventLib.Grid;
 
 namespace AdventOfCode.AdventLib
@@ -207,6 +208,13 @@ namespace AdventOfCode.AdventLib
         public static IEnumerable<(int index, T value)> WithIndex<T>(this IEnumerable<T> items)
         {
             return items.Select((x, i) => (i, x));
+        }
+
+        public static DoubleEndedList<T> ToDoubleEndedList<T>(this IEnumerable<T> items)
+        {
+            var l = new DoubleEndedList<T>();
+            l.AddRangeBack(items);
+            return l;
         }
     }
 }

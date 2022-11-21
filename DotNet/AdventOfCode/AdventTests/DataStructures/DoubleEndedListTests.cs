@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using AdventOfCode.AdventLib;
+using AdventOfCode.AdventLib.DataStructures;
 using AdventTests.TestUtils;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace AdventTests;
+namespace AdventTests.DataStructures;
 
 public class DoubleEndedListTests
 {
@@ -253,5 +254,12 @@ public class DoubleEndedListTests
         q.Insert(1, 100);
 
         q.ToList().Should().BeEquivalentTo(new[] { 1, 100, 2, 3, 4, 5 }, c => c.WithStrictOrdering());
+    }
+
+    [Test]
+    public void ListToDeList()
+    {
+        var l = new List<int> { 1, 2, 3, 4 };
+        l.ToDoubleEndedList().ToList().Should().BeEquivalentTo(l, c => c.WithStrictOrdering());
     }
 }
