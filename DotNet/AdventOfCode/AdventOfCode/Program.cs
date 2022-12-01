@@ -1,6 +1,7 @@
 ﻿using AdventOfCode.Days._2019;
 using AdventOfCode.Days._2020;
 using AdventOfCode.Days._2021;
+using AdventOfCode.Days._2022;
 
 namespace AdventOfCode
 {
@@ -11,7 +12,7 @@ namespace AdventOfCode
             new ProblemRunner()
                 // .UseSampleInput()
                 // .SkipPartOne()
-                .Run(new Advent202111());
+                .Run(new Advent202201());
         }
     }
 }

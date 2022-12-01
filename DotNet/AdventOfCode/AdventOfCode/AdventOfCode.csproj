@@ -10,4 +10,8 @@
       <PackageReference Include="OptimizedPriorityQueue" Version="5.1.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Inputs" />
+    </ItemGroup>
+
 </Project>
