@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using AdventOfCode.AdventLib.Parsing;
 
@@ -7,15 +8,20 @@ public class Advent202201 : Problem
 {
     public override object PartOne(string[] input)
     {
-        var groups = new SeparatedGroupParser().Parse(input);
-        var intGroups = groups.Select(group => group.Select(int.Parse));
-        return intGroups.MaxBy(g => g.Sum()).Sum();
+        return new SeparatedGroupParser()
+            .Parse(input)
+            .Select(group => group.Select(int.Parse).Sum())
+            .Max();
     }
 
     public override object PartTwo(string[] input)
     {
-        var groups = new SeparatedGroupParser().Parse(input);
-        var intGroups = groups.Select(group => group.Select(int.Parse));
-        return intGroups.OrderByDescending(x => x.Sum()).Take(3).Select(x => x.Sum()).Sum();
+        return new SeparatedGroupParser()
+            .Parse(input)
+            .Select(group => group.Select(int.Parse))
+            .Select(x => x.Sum())
+            .OrderDescending()
+            .Take(3)
+            .Sum();
     }
 }
