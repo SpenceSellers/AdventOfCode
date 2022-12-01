@@ -18,8 +18,7 @@ public class Advent202201 : Problem
     {
         return new SeparatedGroupParser()
             .Parse(input)
-            .Select(group => group.Select(int.Parse))
-            .Select(x => x.Sum())
+            .Select(group => group.Select(int.Parse).Sum())
             .OrderDescending()
             .Take(3)
             .Sum();
