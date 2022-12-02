@@ -7,20 +7,32 @@ public class Advent202202 : Problem
 {
     public override object PartOne(string[] input)
     {
-        var items = input.Select(line => line.Split(" ").Select(piece => ParseMove(piece[0])).ToList()).ToList();
+        return input
+            .Select(line => line.Split(" ").Select(piece => ParseMove(piece[0])).Two())
+            .Select(x =>
+            {
+                var (theirs, yours) = x;
+                var outcome = Beats(yours, theirs);
 
-        var score = 0;
-        foreach (var item in items)
-        {
-            var theirs = item[0];
-            var yours = item[1];
-            var outcome = Beats(yours, theirs);
+                return ScoreSingle(yours, outcome);
+            })
+            .Sum();
+    }
 
-            score += ScoreSingle(yours, outcome);
-        }
+    public override object PartTwo(string[] input)
+    {
+        return input
+            .Select(line => line.Split(" ").Select(piece => piece[0]).Two())
+            .Select(x =>
+            {
+                var (theirsChar, yoursChar) = x;
+                var theirs = ParseMove(theirsChar);
+                var desiredOutcome = ParseOutcome(yoursChar);
+                var yourMove = MoveToCreateOutcome(theirs, desiredOutcome);
 
-        return score;
-
+                return ScoreSingle(yourMove, desiredOutcome);
+            })
+            .Sum();
     }
 
     private enum RockPaperScissor
@@ -30,26 +42,22 @@ public class Advent202202 : Problem
         Scissors
     }
 
-    private RockPaperScissor ParseMove(char c)
-    {
-        return c switch
+    private RockPaperScissor ParseMove(char c) =>
+        c switch
         {
             'A' or 'X' => RockPaperScissor.Rock,
             'B' or 'Y' => RockPaperScissor.Paper,
             'C' or 'Z' => RockPaperScissor.Scissors,
             _ => throw new ArgumentException("Invalid RockPaperScissors type")
         };
-    }
 
-    private Outcome ParseOutcomePart2(char c)
-    {
-        return c switch
+    private Outcome ParseOutcome(char c) =>
+        c switch
         {
             'X' => Outcome.Loses,
             'Y' => Outcome.Draw,
             'Z' => Outcome.Beats
         };
-    }
 
     private int ScoreSingle(RockPaperScissor move, Outcome outcome)
     {
@@ -75,9 +83,8 @@ public class Advent202202 : Problem
         Draw
     }
 
-    private Outcome Beats(RockPaperScissor a, RockPaperScissor b)
-    {
-        return (a, b) switch
+    private Outcome Beats(RockPaperScissor a, RockPaperScissor b) =>
+        (a, b) switch
         {
             (RockPaperScissor.Rock, RockPaperScissor.Paper) => Outcome.Loses,
             (RockPaperScissor.Rock, RockPaperScissor.Rock) => Outcome.Draw,
@@ -89,11 +96,9 @@ public class Advent202202 : Problem
             (RockPaperScissor.Scissors, RockPaperScissor.Paper) => Outcome.Beats,
             (RockPaperScissor.Scissors, RockPaperScissor.Scissors) => Outcome.Draw,
         };
-    }
 
-    private RockPaperScissor MoveToCreateOutcome(RockPaperScissor theirs, Outcome outcome)
-    {
-        return (theirs, outcome) switch
+    private RockPaperScissor MoveToCreateOutcome(RockPaperScissor theirs, Outcome outcome) =>
+        (theirs, outcome) switch
         {
             (_, Outcome.Draw) => theirs,
             (RockPaperScissor.Paper, Outcome.Beats) => RockPaperScissor.Scissors,
@@ -103,23 +108,4 @@ public class Advent202202 : Problem
             (RockPaperScissor.Scissors, Outcome.Beats) => RockPaperScissor.Rock,
             (RockPaperScissor.Scissors, Outcome.Loses) => RockPaperScissor.Paper,
         };
-    }
-
-    public override object PartTwo(string[] input)
-    {
-        var items = input.Select(line => line.Split(" ").Select(piece => piece[0]).ToList()).ToList();
-
-        var score = 0;
-        foreach (var item in items)
-        {
-            var theirs = ParseMove(item[0]);
-            var desiredOutcome = ParseOutcomePart2(item[1]);
-            var yourMove = MoveToCreateOutcome(theirs, desiredOutcome);
-
-            score += ScoreSingle(yourMove, desiredOutcome);
-        }
-
-        return score;
-
-    }
 }
