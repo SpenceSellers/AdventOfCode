@@ -11,10 +11,10 @@ public class Advent202202 : Problem
             .Select(line => line.Split(" ").Select(piece => ParseMove(piece[0])).Two())
             .Select(x =>
             {
-                var (theirs, yours) = x;
-                var outcome = Beats(yours, theirs);
+                var (theirMove, yourMove) = x;
+                var outcome = Beats(yourMove, theirMove);
 
-                return ScoreSingle(yours, outcome);
+                return ScoreSingle(yourMove, outcome);
             })
             .Sum();
     }
@@ -26,28 +26,34 @@ public class Advent202202 : Problem
             .Select(x =>
             {
                 var (theirsChar, yoursChar) = x;
-                var theirs = ParseMove(theirsChar);
-                var desiredOutcome = ParseOutcome(yoursChar);
-                var yourMove = MoveToCreateOutcome(theirs, desiredOutcome);
+                var theirMove = ParseMove(theirsChar);
+                var yourMove = MoveToCreateOutcome(theirMove, ParseOutcome(yoursChar));
 
-                return ScoreSingle(yourMove, desiredOutcome);
+                return ScoreSingle(yourMove, ParseOutcome(yoursChar));
             })
             .Sum();
     }
 
-    private enum RockPaperScissor
+    private enum Move
     {
         Rock,
         Paper,
         Scissors
     }
 
-    private RockPaperScissor ParseMove(char c) =>
+    private enum Outcome
+    {
+        Beats,
+        Loses,
+        Draw
+    }
+
+    private Move ParseMove(char c) =>
         c switch
         {
-            'A' or 'X' => RockPaperScissor.Rock,
-            'B' or 'Y' => RockPaperScissor.Paper,
-            'C' or 'Z' => RockPaperScissor.Scissors,
+            'A' or 'X' => Move.Rock,
+            'B' or 'Y' => Move.Paper,
+            'C' or 'Z' => Move.Scissors,
             _ => throw new ArgumentException("Invalid RockPaperScissors type")
         };
 
@@ -59,13 +65,13 @@ public class Advent202202 : Problem
             'Z' => Outcome.Beats
         };
 
-    private int ScoreSingle(RockPaperScissor move, Outcome outcome)
+    private int ScoreSingle(Move move, Outcome outcome)
     {
         var moveScore = move switch
         {
-            RockPaperScissor.Rock => 1,
-            RockPaperScissor.Paper => 2,
-            RockPaperScissor.Scissors => 3
+            Move.Rock => 1,
+            Move.Paper => 2,
+            Move.Scissors => 3
         };
         var outcomeScore = outcome switch
         {
@@ -76,36 +82,25 @@ public class Advent202202 : Problem
         return moveScore + outcomeScore;
     }
 
-    private enum Outcome
-    {
-        Beats,
-        Loses,
-        Draw
-    }
-
-    private Outcome Beats(RockPaperScissor a, RockPaperScissor b) =>
+    private Outcome Beats(Move a, Move b) =>
         (a, b) switch
         {
-            (RockPaperScissor.Rock, RockPaperScissor.Paper) => Outcome.Loses,
-            (RockPaperScissor.Rock, RockPaperScissor.Rock) => Outcome.Draw,
-            (RockPaperScissor.Rock, RockPaperScissor.Scissors) => Outcome.Beats,
-            (RockPaperScissor.Paper, RockPaperScissor.Rock) => Outcome.Beats,
-            (RockPaperScissor.Paper, RockPaperScissor.Paper) => Outcome.Draw,
-            (RockPaperScissor.Paper, RockPaperScissor.Scissors) => Outcome.Loses,
-            (RockPaperScissor.Scissors, RockPaperScissor.Rock) => Outcome.Loses,
-            (RockPaperScissor.Scissors, RockPaperScissor.Paper) => Outcome.Beats,
-            (RockPaperScissor.Scissors, RockPaperScissor.Scissors) => Outcome.Draw,
+            (Move.Rock, Move.Scissors) => Outcome.Beats,
+            (Move.Paper, Move.Rock) => Outcome.Beats,
+            (Move.Scissors, Move.Paper) => Outcome.Beats,
+            (_, _) when a == b => Outcome.Draw,
+            _ => Outcome.Loses
         };
 
-    private RockPaperScissor MoveToCreateOutcome(RockPaperScissor theirs, Outcome outcome) =>
+    private Move MoveToCreateOutcome(Move theirs, Outcome outcome) =>
         (theirs, outcome) switch
         {
             (_, Outcome.Draw) => theirs,
-            (RockPaperScissor.Paper, Outcome.Beats) => RockPaperScissor.Scissors,
-            (RockPaperScissor.Paper, Outcome.Loses) => RockPaperScissor.Rock,
-            (RockPaperScissor.Rock, Outcome.Beats) => RockPaperScissor.Paper,
-            (RockPaperScissor.Rock, Outcome.Loses) => RockPaperScissor.Scissors,
-            (RockPaperScissor.Scissors, Outcome.Beats) => RockPaperScissor.Rock,
-            (RockPaperScissor.Scissors, Outcome.Loses) => RockPaperScissor.Paper,
+            (Move.Paper, Outcome.Beats) => Move.Scissors,
+            (Move.Paper, Outcome.Loses) => Move.Rock,
+            (Move.Rock, Outcome.Beats) => Move.Paper,
+            (Move.Rock, Outcome.Loses) => Move.Scissors,
+            (Move.Scissors, Outcome.Beats) => Move.Rock,
+            (Move.Scissors, Outcome.Loses) => Move.Paper,
         };
 }
