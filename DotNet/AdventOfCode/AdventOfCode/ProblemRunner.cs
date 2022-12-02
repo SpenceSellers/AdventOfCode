@@ -47,6 +47,8 @@ namespace AdventOfCode
                 ProblemInputSource.Input => inputPath,
                 ProblemInputSource.Sample => samplePath,
             });
+            
+            Console.Out.WriteLine($"Running {problem.Year}-{problem.Day}");
 
             if (_runPartOne) RunProblem("⭐", () => problem.PartOne(lines)?.ToString());
             if (_runPartTwo) RunProblem("⭐⭐", () => problem.PartTwo(lines)?.ToString());

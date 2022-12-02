@@ -21,8 +21,6 @@ namespace AdventOfCode
             // Are you horrified?
             
             var className = GetType().Name;
-            Console.Out.WriteLine($"We are {className}");
-
             var match = new Regex(@"\D*(\d{4})(\d{2})").Match(className);
             Year = int.Parse(match.Groups[1].Value);
             Day = int.Parse(match.Groups[2].Value);
