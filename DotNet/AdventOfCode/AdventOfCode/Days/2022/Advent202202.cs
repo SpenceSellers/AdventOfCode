@@ -7,7 +7,7 @@ public class Advent202202 : Problem
 {
     public override object PartOne(string[] input)
     {
-        var items = input.Select(line => line.Split(" ").Select(piece => Parse(piece[0])).ToList()).ToList();
+        var items = input.Select(line => line.Split(" ").Select(piece => ParseMove(piece[0])).ToList()).ToList();
 
         var score = 0;
         foreach (var item in items)
@@ -30,7 +30,7 @@ public class Advent202202 : Problem
         Scissors
     }
 
-    private RockPaperScissor Parse(char c)
+    private RockPaperScissor ParseMove(char c)
     {
         return c switch
         {
@@ -38,6 +38,16 @@ public class Advent202202 : Problem
             'B' or 'Y' => RockPaperScissor.Paper,
             'C' or 'Z' => RockPaperScissor.Scissors,
             _ => throw new ArgumentException("Invalid RockPaperScissors type")
+        };
+    }
+
+    private Outcome ParseOutcomePart2(char c)
+    {
+        return c switch
+        {
+            'X' => Outcome.Loses,
+            'Y' => Outcome.Draw,
+            'Z' => Outcome.Beats
         };
     }
 
@@ -81,8 +91,35 @@ public class Advent202202 : Problem
         };
     }
 
+    private RockPaperScissor MoveToCreateOutcome(RockPaperScissor theirs, Outcome outcome)
+    {
+        return (theirs, outcome) switch
+        {
+            (_, Outcome.Draw) => theirs,
+            (RockPaperScissor.Paper, Outcome.Beats) => RockPaperScissor.Scissors,
+            (RockPaperScissor.Paper, Outcome.Loses) => RockPaperScissor.Rock,
+            (RockPaperScissor.Rock, Outcome.Beats) => RockPaperScissor.Paper,
+            (RockPaperScissor.Rock, Outcome.Loses) => RockPaperScissor.Scissors,
+            (RockPaperScissor.Scissors, Outcome.Beats) => RockPaperScissor.Rock,
+            (RockPaperScissor.Scissors, Outcome.Loses) => RockPaperScissor.Paper,
+        };
+    }
+
     public override object PartTwo(string[] input)
     {
-        throw new System.NotImplementedException();
+        var items = input.Select(line => line.Split(" ").Select(piece => piece[0]).ToList()).ToList();
+
+        var score = 0;
+        foreach (var item in items)
+        {
+            var theirs = ParseMove(item[0]);
+            var desiredOutcome = ParseOutcomePart2(item[1]);
+            var yourMove = MoveToCreateOutcome(theirs, desiredOutcome);
+
+            score += ScoreSingle(yourMove, desiredOutcome);
+        }
+
+        return score;
+
     }
 }
