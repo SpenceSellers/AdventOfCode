@@ -1,6 +1,4 @@
-using System.Diagnostics;
 using System.Linq;
-using AdventOfCode.AdventLib;
 
 namespace AdventOfCode.Days._2022;
 
@@ -20,7 +18,7 @@ public class Advent202203 : Problem
 
     public override object PartTwo(string[] input)
     {
-        return input.Chunks(3).Select(rows =>
+        return input.Chunk(3).Select(rows =>
         {
             var letters = rows[0].ToHashSet();
             letters.IntersectWith(rows[1]);
