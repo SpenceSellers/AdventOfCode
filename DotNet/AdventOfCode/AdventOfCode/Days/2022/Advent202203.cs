@@ -29,10 +29,10 @@ public class Advent202203 : Problem
         }).Sum();
     }
 
-    private int Score(char c)
-    {
-        var alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        Debug.Assert(alphabet.Length == 26 * 2); // I 100% forgot W existed the first time around...
-        return alphabet.IndexOf(c) + 1;
-    }
+    private int Score(char c) =>
+        c switch
+        {
+            >= 'a' => c - 'a',
+            _ => c - 'A' + 26
+        } + 1;
 }
