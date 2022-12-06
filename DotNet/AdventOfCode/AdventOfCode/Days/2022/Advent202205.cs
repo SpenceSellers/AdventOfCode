@@ -43,12 +43,14 @@ public class Advent202205 : Problem
         return string.Join("", state.Select(stack => stack.Last()));
     }
 
-    private (List<DoubleEndedList<char>> state, Move[] moves) ParseProblem(string[] input)
+    private record Move(int Count, int From, int To);
+
+    private (List<DoubleEndedList<char>> state, Move[] moves) ParseProblem(IEnumerable<string> input)
     {
         var (firstBlock, secondBlock) = input.SplitList("").Two();
-        var state = ParseInitialState(firstBlock.ToArray());
+        var state = ParseInitialState(firstBlock);
 
-        var regex = new Regex(@"^move (.*?) from (.*?) to (.*?)$");
+        var regex = new Regex(@"^move (.*) from (.*) to (.*)$");
 
         var moves = secondBlock.Select(line =>
         {
@@ -58,19 +60,15 @@ public class Advent202205 : Problem
         return (state, moves);
     }
 
-    private List<DoubleEndedList<char>> ParseInitialState(string[] lines)
+    private List<DoubleEndedList<char>> ParseInitialState(IEnumerable<string> lines)
     {
-        var rotated = lines.ToGrid().RotateClockwise();
-        var results = new List<DoubleEndedList<char>>();
-        for (int i = 0; i < rotated.Height; i++)
-        {
-            if (rotated.Get(new GridPoint(0, i)) != ' ')
-            {
-                results.Add(rotated.GetRow(i).Skip(1).Where(c => c != ' ').ToDoubleEndedList());
-            }
-        }
-        return results;
+        return lines.ToGrid()
+            .RotateClockwise()
+            .Rows()
+            .Where(row => row.First() != ' ')
+            .Select(row => row.Skip(1)
+                .Where(c => c != ' ')
+                .ToDoubleEndedList())
+            .ToList();
     }
-
-    private record Move(int Count, int From, int To);
 }
