@@ -12,7 +12,7 @@ public class Advent202207 : Problem
         var root = BuildFilesystem(input);
 
         return root.GetAllSubDirectories()
-            .Concat(new[] { root })
+            .Prepend(root)
             .Select(x => x.GetSize())
             .Where(x => x <= 100_000)
             .Sum();
@@ -28,7 +28,7 @@ public class Advent202207 : Problem
         var currentFree = maxSpace - currentUsed;
         var needToDelete = updateSpace - currentFree;
         return root.GetAllSubDirectories()
-            .Concat(new[] { root })
+            .Prepend(root)
             .Select(directory => directory.GetSize())
             .Where(size => size >= needToDelete)
             .Min();
@@ -44,31 +44,27 @@ public class Advent202207 : Problem
             if (line.StartsWith("$ cd ", StringComparison.Ordinal))
             {
                 var newDirectory = line.Split()[2];
-                if (newDirectory == "/")
+                switch (newDirectory)
                 {
-                    currentPath.Clear();
+                    case "/":
+                        currentPath.Clear();
+                        break;
+                    case "..":
+                        currentPath.RemoveAt(currentPath.Count - 1);
+                        break;
+                    default:
+                        currentPath.Add(newDirectory);
+                        break;
                 }
-                else if (newDirectory == "..")
-                {
-                    currentPath.RemoveAt(currentPath.Count - 1);
-                }
-                else
-                {
-                    currentPath.Add(newDirectory);
-                }
-            }
-            else if (line.StartsWith("dir", StringComparison.Ordinal))
-            {
-                // Just ignore it. We build directories by seeing files in them.
-            }
-            else if (line == "$ ls")
-            {
-                // Just ignore it
             }
             else
             {
-                // This is a file listing
                 var pieces = line.Split();
+
+                // We're going to ignore ls and dir entries. We don't need them.
+                if (!char.IsDigit(pieces[0][0])) continue;
+
+                // This is a file listing
                 var size = long.Parse(pieces[0]);
                 var fileName = pieces[1];
                 root.AddFile(CollectionsMarshal.AsSpan(currentPath), fileName, size);
@@ -78,26 +74,31 @@ public class Advent202207 : Problem
         return root;
     }
 
-    private class Directory : Entry
+    private interface IEntry
     {
-        public readonly Dictionary<string, Entry> Members = new();
+        long GetSize();
+    }
+
+    private class Directory : IEntry
+    {
+        private readonly Dictionary<string, IEntry> _members = new();
 
         public void AddFile(Span<string> path, string filename, long size)
         {
             if (path.Length == 0)
             {
-                Members[filename] = new File { Size = size };
+                _members[filename] = new File { Size = size };
                 return;
             }
 
             var nextDirName = path[0];
 
-            if (!Members.ContainsKey(nextDirName))
+            if (!_members.ContainsKey(nextDirName))
             {
-                Members[nextDirName] = new Directory();
+                _members[nextDirName] = new Directory();
             }
 
-            var nextEntry = Members[nextDirName];
+            var nextEntry = _members[nextDirName];
             if (nextEntry is not Directory nextDirectory)
             {
                 throw new Exception("Uh oh... we're trying to add a file to a file");
@@ -106,14 +107,17 @@ public class Advent202207 : Problem
             nextDirectory.AddFile(path[1..], filename, size);
         }
 
-        public override long GetSize()
+        public virtual long GetSize()
         {
-            return Members.Values.Select(entry => entry.GetSize()).Sum();
+            return _members.Values.Select(entry => entry.GetSize()).Sum();
         }
 
+        /// <summary>
+        /// Yields all directories that are contained directly and indirectly in this one. Does not emit itself.
+        /// </summary>
         public IEnumerable<Directory> GetAllSubDirectories()
         {
-            foreach (var member in Members.Values)
+            foreach (var member in _members.Values)
             {
                 if (member is Directory directory)
                 {
@@ -127,18 +131,13 @@ public class Advent202207 : Problem
         }
     }
 
-    private class File : Entry
+    private class File : IEntry
     {
         public required long Size;
 
-        public override long GetSize()
+        public virtual long GetSize()
         {
             return Size;
         }
-    }
-
-    private abstract class Entry
-    {
-        public abstract long GetSize();
     }
 }
