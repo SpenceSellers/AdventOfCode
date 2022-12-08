@@ -28,9 +28,9 @@ public class Advent202207 : Problem
         var needToDelete = updateSpace - currentFree;
         return root.GetAllSubDirectories()
             .Concat(new[] { root })
-            .Where(directory => directory.GetSize() >= needToDelete)
-            .MinBy(directory => directory.GetSize())
-            .GetSize();
+            .Select(directory => directory.GetSize())
+            .Where(size => size >= needToDelete)
+            .Min();
     }
 
     private Directory BuildFilesystem(string[] input)
