@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace AdventOfCode.Days._2022;
 
@@ -70,38 +71,40 @@ public class Advent202207 : Problem
                 var pieces = line.Split();
                 var size = long.Parse(pieces[0]);
                 var fileName = pieces[1];
-                Console.Out.WriteLine($"New file {fileName} of size {size}");
-                AddFile(root, currentPath, fileName, size);
+                root.AddFile(CollectionsMarshal.AsSpan(currentPath), fileName, size);
             }
         }
 
         return root;
     }
 
-    private void AddFile(Directory root, List<string> path, string filename, long size)
+    private class Directory : Entry
     {
-        var currentDirectory = root;
-        foreach (var directory in path)
+        public readonly Dictionary<string, Entry> Members = new();
+
+        public void AddFile(Span<string> path, string filename, long size)
         {
-            if (!currentDirectory.Members.ContainsKey(directory))
+            if (path.Length == 0)
             {
-                currentDirectory.Members[directory] = new Directory();
+                Members[filename] = new File { Size = size };
+                return;
             }
-            var nextEntry = currentDirectory.Members[directory];
-            if (nextEntry is not Directory)
+
+            var nextDirName = path[0];
+
+            if (!Members.ContainsKey(nextDirName))
+            {
+                Members[nextDirName] = new Directory();
+            }
+
+            var nextEntry = Members[nextDirName];
+            if (nextEntry is not Directory nextDirectory)
             {
                 throw new Exception("Uh oh... we're trying to add a file to a file");
             }
 
-            currentDirectory = (Directory) nextEntry;
+            nextDirectory.AddFile(path[1..], filename, size);
         }
-
-        currentDirectory.Members[filename] = new File { Size = size };
-    }
-
-    private class Directory : Entry
-    {
-        public readonly Dictionary<string, Entry> Members = new();
 
         public override long GetSize()
         {
