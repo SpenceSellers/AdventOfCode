@@ -54,13 +54,11 @@ public class Advent202207 : Problem
                 else
                 {
                     currentPath.Add(newDirectory);
-                    // TODO can we discover a directory by CDing into it? God
                 }
             }
             else if (line.StartsWith("dir", StringComparison.Ordinal))
             {
-                var directoryName = line.Split()[1];
-                Console.Out.WriteLine($"New directory {directoryName}");
+                // Just ignore it. We build directories by seeing files in them.
             }
             else if (line == "$ ls")
             {
@@ -103,7 +101,7 @@ public class Advent202207 : Problem
 
     private class Directory : Entry
     {
-        public Dictionary<string, Entry> Members = new();
+        public readonly Dictionary<string, Entry> Members = new();
 
         public override long GetSize()
         {
