@@ -17,7 +17,8 @@ public class Advent202205 : Problem
         {
             for (int i = 0; i < count; i++)
             {
-                var item = state[from].PopBack();
+                var item = state[from].PopBack
+                    ();
                 state[to].PushBack(item);
             }
         }

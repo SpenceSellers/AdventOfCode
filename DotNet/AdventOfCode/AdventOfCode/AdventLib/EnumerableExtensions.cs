@@ -210,6 +210,11 @@ namespace AdventOfCode.AdventLib
             return items.Select((x, i) => (i, x));
         }
 
+        public static int FirstIndex<T>(this IEnumerable<T> items, Func<T, bool> predicate)
+        {
+            return items.WithIndex().First(x => predicate(x.value)).index;
+        }
+
         public static DoubleEndedList<T> ToDoubleEndedList<T>(this IEnumerable<T> items)
         {
             var l = new DoubleEndedList<T>();
