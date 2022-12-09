@@ -8,6 +8,10 @@ namespace AdventOfCode.AdventLib.Grid
     {
         public static IGrid<TNew> Map<TOld, TNew>(this IGrid<TOld> grid, Func<TOld, TNew> func)
         {
+            return new MappedGrid<TOld,TNew>(grid, (_, value) => func(value));
+        }
+        public static IGrid<TNew> Map<TOld, TNew>(this IGrid<TOld> grid, Func<GridPoint, TOld, TNew> func)
+        {
             return new MappedGrid<TOld,TNew>(grid, func);
         }
 

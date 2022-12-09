@@ -1,6 +1,6 @@
 namespace AdventOfCode.AdventLib.Grid
 {
-    public class CommonGrids
+    public static class CommonGrids
     {
         /// <summary>
         /// A Grid where each cell contains its own coordinates
