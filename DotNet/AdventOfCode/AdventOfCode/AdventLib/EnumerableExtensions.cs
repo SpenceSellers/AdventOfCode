@@ -215,6 +215,17 @@ namespace AdventOfCode.AdventLib
             return items.WithIndex().First(x => predicate(x.value)).index;
         }
 
+        public static int FirstIndexOrDefault<T>(this IEnumerable<T> items, Func<T, bool> predicate, int def)
+        {
+            var result = items.WithIndex().FirstOrDefault(x => predicate(x.value), (-1, default));
+            if (result.index == -1)
+            {
+                return def;
+            }
+
+            return result.index;
+        }
+
         public static DoubleEndedList<T> ToDoubleEndedList<T>(this IEnumerable<T> items)
         {
             var l = new DoubleEndedList<T>();

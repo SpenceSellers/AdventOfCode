@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using AdventOfCode.AdventLib;
 using AdventOfCode.AdventLib.Grid;
@@ -78,6 +79,37 @@ public class Advent202208 : Problem
 
     public override object PartTwo(string[] input)
     {
-        throw new System.NotImplementedException();
+        var grid = input.ToGrid().Map(x => int.Parse(x.ToString()));
+        var region = grid.Region();
+        var sightLines = region.AsCoordinateGrid.Map(p =>
+        {
+            var ourHeight = grid.Get(p);
+            return new[] { GridDirection.Down, GridDirection.Up, GridDirection.Left, GridDirection.Right }
+                .Select(direction =>
+                {
+                    var march = March(p, direction, region).ToList();
+                    return march.FirstIndexOrDefault(tree => grid.Get(tree) >= ourHeight, march.Count - 1) + 1;
+                })
+                .Product();
+        });
+
+        return sightLines.AllCells().Max();
+    }
+
+    private IEnumerable<GridPoint> March(GridPoint initial, GridDirection direction, GridRegion region)
+    {
+        var current = initial;
+        while (true)
+        {
+            current = current.Add(direction.AsUnitPoint(GridInterpretation.Graphics));
+            if (region.ContainsPoint(current))
+            {
+                yield return current;
+            }
+            else
+            {
+                break;
+            }
+        }
     }
 }

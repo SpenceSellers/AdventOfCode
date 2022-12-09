@@ -22,5 +22,7 @@ namespace AdventOfCode.AdventLib.Grid
 
         public IEnumerable<int> XCoords() => Enumerable.Range(Origin.X, Width);
         public IEnumerable<int> YCoords() => Enumerable.Range(Origin.Y, Height);
+
+        public IDefinedSizeGrid<GridPoint> AsCoordinateGrid => CommonGrids.CoordinateGrid.Windowed(this);
     }
 }
