@@ -13,15 +13,12 @@ public class Advent202208 : Problem
     {
         var grid = input.ToGrid().Map(x => int.Parse(x.ToString()));
         var region = grid.Region();
-        return region.AsCoordinateGrid.Map(p =>
+        return grid.Map((p, ourHeight) =>
             {
-                var ourHeight = grid.Get(p);
-                return _allGridDirections.Any(direction => March(p,
-                        direction,
-                        region)
+                // "If in any direction, all points are lower than us"
+                return _allGridDirections.Any(direction => March(p, direction, region)
                     .All(marchPoint => grid.Get(marchPoint) < ourHeight));
             })
-            .AllCells()
             .Count(x => x);
     }
 
@@ -29,9 +26,9 @@ public class Advent202208 : Problem
     {
         var grid = input.ToGrid().Map(x => int.Parse(x.ToString()));
         var region = grid.Region();
-        var sightLines = region.AsCoordinateGrid.Map(p =>
+        var sightLines = grid.Map((p, ourHeight) =>
         {
-            var ourHeight = grid.Get(p);
+            // Multiply together all of the distances until we see a tree that's our height or greater
             return _allGridDirections
                 .Select(direction =>
                 {
@@ -41,6 +38,7 @@ public class Advent202208 : Problem
                 .Product();
         });
 
+        // And get the one with the max sightline product
         return sightLines.AllCells()
             .Max();
     }
