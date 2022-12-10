@@ -12,7 +12,7 @@ public class Advent202209 : Problem
         var movements = input.Select(ParseMovement).ToList();
         var head = GridPoint.Origin;
         var tail = GridPoint.Origin;
-        var visted = new HashSet<GridPoint> { tail };
+        var visited = new HashSet<GridPoint> { tail };
         foreach (var (gridDirection, distance) in movements)
         {
             for (int i = 0; i < distance; i++)
@@ -24,44 +24,43 @@ public class Advent202209 : Problem
                     tail = MoveTail(head, tail);
                 }
 
-                visted.Add(tail);
-                Console.Out.WriteLine($"{head}, {tail}");
+                visited.Add(tail);
             }
         }
 
-        return visted.Count;
+        return visited.Count;
     }
 
     public override object PartTwo(string[] input)
     {
         var movements = input.Select(ParseMovement).ToList();
-        var knots = new List<GridPoint>();
-        for (int i = 0; i < 10; i++)
+        var knots = new GridPoint[10];
+        for (int i = 0; i < knots.Length; i++)
         {
-            knots.Add(GridPoint.Origin);
+            knots[i] = GridPoint.Origin;
         }
-        var visted = new HashSet<GridPoint> { GridPoint.Origin };
+        var visited = new HashSet<GridPoint> { GridPoint.Origin };
         foreach (var (gridDirection, distance) in movements)
         {
-            for (int i = 0; i < distance; i++)
+            for (var i = 0; i < distance; i++)
             {
                 var offset = gridDirection.AsUnitPoint(GridInterpretation.Math);
                 knots[0] += offset;
-                for (int knotIndex = 1; knotIndex < knots.Count; knotIndex++)
+                for (var knotIndex = 1; knotIndex < knots.Length; knotIndex++)
                 {
-                    var currentKnot = knots[knotIndex];
+                    ref var currentKnot = ref knots[knotIndex];
                     var higherKnot = knots[knotIndex - 1];
                     if (!AreTouching(higherKnot, currentKnot))
                     {
-                        knots[knotIndex] = MoveTail(higherKnot, currentKnot);
+                       currentKnot = MoveTail(higherKnot, currentKnot);
                     }
 
                 }
-                visted.Add(knots.Last());
+                visited.Add(knots.Last());
             }
         }
 
-        return visted.Count;
+        return visited.Count;
     }
 
     private GridPoint MoveTail(GridPoint head, GridPoint tail)
