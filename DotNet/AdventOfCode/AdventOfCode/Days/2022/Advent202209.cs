@@ -32,6 +32,38 @@ public class Advent202209 : Problem
         return visted.Count;
     }
 
+    public override object PartTwo(string[] input)
+    {
+        var movements = input.Select(ParseMovement).ToList();
+        var knots = new List<GridPoint>();
+        for (int i = 0; i < 10; i++)
+        {
+            knots.Add(GridPoint.Origin);
+        }
+        var visted = new HashSet<GridPoint> { GridPoint.Origin };
+        foreach (var (gridDirection, distance) in movements)
+        {
+            for (int i = 0; i < distance; i++)
+            {
+                var offset = gridDirection.AsUnitPoint(GridInterpretation.Math);
+                knots[0] += offset;
+                for (int knotIndex = 1; knotIndex < knots.Count; knotIndex++)
+                {
+                    var currentKnot = knots[knotIndex];
+                    var higherKnot = knots[knotIndex - 1];
+                    if (!AreTouching(higherKnot, currentKnot))
+                    {
+                        knots[knotIndex] = MoveTail(higherKnot, currentKnot);
+                    }
+
+                }
+                visted.Add(knots.Last());
+            }
+        }
+
+        return visted.Count;
+    }
+
     private GridPoint MoveTail(GridPoint head, GridPoint tail)
     {
         return tail + (head - tail).UnitAxes;
@@ -57,10 +89,5 @@ public class Advent202209 : Problem
         };
 
         return new Movement(direction, int.Parse(sDistance));
-    }
-
-    public override object PartTwo(string[] input)
-    {
-        throw new System.NotImplementedException();
     }
 }
