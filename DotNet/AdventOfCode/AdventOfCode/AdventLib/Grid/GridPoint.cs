@@ -6,8 +6,9 @@ namespace AdventOfCode.AdventLib.Grid
     /// <summary>
     /// A point in 2D integer space. Negative coordinates are fine.
     /// </summary>
-    public record GridPoint(int X, int Y)
+    public readonly record struct GridPoint(int X, int Y)
     // I benchmarked "struct" to cause looped grid accesses to be about 30% faster on 2022-11-15
+    // It makes 2022 day 9 almost twice as fast
     {
         public static GridPoint Origin => new(0, 0);
         public GridPoint Add(GridPoint other) => new(X + other.X, Y + other.Y);

@@ -10,23 +10,7 @@ public class Advent202209 : Problem
     public override object PartOne(string[] input)
     {
         var movements = input.Select(ParseMovement).ToList();
-        var head = GridPoint.Origin;
-        var tail = GridPoint.Origin;
-        var visited = new HashSet<GridPoint> { tail };
-        foreach (var (gridDirection, distance) in movements)
-        {
-            for (int i = 0; i < distance; i++)
-            {
-                var offset = gridDirection.AsUnitPoint(GridInterpretation.Math);
-                head += offset;
-                if (!AreTouching(head, tail))
-                {
-                    tail = MoveTail(head, tail);
-                }
-
-                visited.Add(tail);
-            }
-        }
+        var visited = SimulateKnots(2, movements);
 
         return visited.Count;
     }
@@ -34,33 +18,49 @@ public class Advent202209 : Problem
     public override object PartTwo(string[] input)
     {
         var movements = input.Select(ParseMovement).ToList();
-        var knots = new GridPoint[10];
+        var visited = SimulateKnots(10, movements);
+
+        return visited.Count;
+    }
+
+    private HashSet<GridPoint> SimulateKnots(int numKnots, List<Movement> movements)
+    {
+        var knots = new GridPoint[numKnots];
         for (int i = 0; i < knots.Length; i++)
         {
             knots[i] = GridPoint.Origin;
         }
-        var visited = new HashSet<GridPoint> { GridPoint.Origin };
-        foreach (var (gridDirection, distance) in movements)
-        {
-            for (var i = 0; i < distance; i++)
-            {
-                var offset = gridDirection.AsUnitPoint(GridInterpretation.Math);
-                knots[0] += offset;
-                for (var knotIndex = 1; knotIndex < knots.Length; knotIndex++)
-                {
-                    ref var currentKnot = ref knots[knotIndex];
-                    var higherKnot = knots[knotIndex - 1];
-                    if (!AreTouching(higherKnot, currentKnot))
-                    {
-                       currentKnot = MoveTail(higherKnot, currentKnot);
-                    }
 
-                }
+        var visited = new HashSet<GridPoint> { GridPoint.Origin };
+        foreach (var (directionToMove, distanceToMove) in movements)
+        {
+            for (var i = 0; i < distanceToMove; i++)
+            {
+                // Move the head according to the instructions
+                var offset = directionToMove.AsUnitPoint(GridInterpretation.Math);
+                knots[0] += offset;
+
+                // And now move the rest of the knots
+                UpdateFollowingKnots(knots);
+
                 visited.Add(knots.Last());
             }
         }
 
-        return visited.Count;
+        return visited;
+    }
+
+    private void UpdateFollowingKnots(GridPoint[] knots)
+    {
+        for (var knotIndex = 1; knotIndex < knots.Length; knotIndex++)
+        {
+            ref var currentKnot = ref knots[knotIndex];
+            var higherKnot = knots[knotIndex - 1];
+            if (!AreTouching(higherKnot, currentKnot))
+            {
+                currentKnot = MoveTail(higherKnot, currentKnot);
+            }
+        }
     }
 
     private GridPoint MoveTail(GridPoint head, GridPoint tail)

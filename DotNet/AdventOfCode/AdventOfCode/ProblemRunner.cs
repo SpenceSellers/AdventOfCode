@@ -16,6 +16,7 @@ namespace AdventOfCode
         }
         private bool _runPartOne = true;
         private bool _runPartTwo = true;
+        private int _timesToRun = 1;
         private ProblemInputSource _inputSource = ProblemInputSource.Input;
 
         public ProblemRunner SkipPartOne()
@@ -33,6 +34,12 @@ namespace AdventOfCode
         public ProblemRunner UseSampleInput()
         {
             _inputSource = ProblemInputSource.Sample;
+            return this;
+        }
+
+        public ProblemRunner RunTimes(int runTimes)
+        {
+            _timesToRun = runTimes;
             return this;
         }
 
@@ -60,10 +67,19 @@ namespace AdventOfCode
             {
                 var stopwatch = new Stopwatch();
                 stopwatch.Start();
-                var result = func();
+                object result = null;
+                for (int i = 0; i < _timesToRun; i++)
+                {
+                    result = func();
+                }
                 stopwatch.Stop();
                 Console.WriteLine($"== {title} ==");
                 Console.WriteLine($"Complete in {stopwatch.ElapsedMilliseconds} ms");
+                if (_timesToRun != 1)
+                {
+                    var average = (double)stopwatch.ElapsedMilliseconds / _timesToRun;
+                    Console.Out.WriteLine($"Across {_timesToRun} runs (Mean {average} ms)");
+                }
                 Console.WriteLine(result);
             }
             catch (NotImplementedException e)
