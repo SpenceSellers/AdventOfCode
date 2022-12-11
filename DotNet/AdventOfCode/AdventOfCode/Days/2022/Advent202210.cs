@@ -15,24 +15,13 @@ public class Advent202210 : Problem
         var score = 0;
         foreach (var line in input)
         {
-            int cycleSpan;
-            var toAdd = 0;
-            if (line == "noop")
-            {
-                cycleSpan = 1;
-            }
-            else
-            {
-                toAdd = int.Parse(line.Split()[1]);
-                cycleSpan = 2;
-            }
+            var (cycleSpan, toAdd) = ParseLine(line);
 
             for (int i = 0; i < cycleSpan; i++)
             {
                 var sampledCycle = cycle + cycleSpan - i;
                 if (ShouldCaptureCycle(sampledCycle))
                 {
-                    Console.Out.WriteLine($"Capturing sampled cycle {sampledCycle}, cycle={cycle}, x = {x}, score adding {sampledCycle * x }");
                     score += sampledCycle * x;
                 }
             }
@@ -57,29 +46,19 @@ public class Advent202210 : Problem
         var display = new SolidGrid<bool>(40, 10, false);
         foreach (var line in input)
         {
-            int cycleSpan;
-            var toAdd = 0;
-            if (line == "noop")
-            {
-                cycleSpan = 1;
-            }
-            else
-            {
-                toAdd = int.Parse(line.Split()[1]);
-                cycleSpan = 2;
-            }
+            var (cycleSpan, toAdd) = ParseLine(line);
 
             for (int i = 0; i < cycleSpan; i++)
             {
                 var sampledCycle = cycle + cycleSpan - i;
-                var cyclePos = sampledCycle % 40;
-                var row = sampledCycle / 40;
-
                 // Why minus one? I have no idea. Is it because cycles are supposed to be 1-indexed?
                 // Changing the first cycle to one doesn't help at all.
-                if (Math.Abs(cyclePos - x - 1 ) <= 1)
+                var cyclePos = sampledCycle % 40 - 1;
+                var row = sampledCycle / 40;
+
+                if (Math.Abs(cyclePos - x ) <= 1)
                 {
-                    display.Set(new GridPoint(cyclePos, row), true);
+                    display.Set(new GridPoint(Math.Max(0, cyclePos ), row), true);
                 }
             }
 
@@ -89,5 +68,15 @@ public class Advent202210 : Problem
 
         display.Trace();
         return null;
+    }
+
+    private static (int cycleSpan, int toAdd) ParseLine(string line)
+    {
+        var (cycleSpan, toAdd) = line switch
+        {
+            "noop" => (1, 0),
+            _ => (2, int.Parse(line.Split()[1]))
+        };
+        return (cycleSpan, toAdd);
     }
 }
