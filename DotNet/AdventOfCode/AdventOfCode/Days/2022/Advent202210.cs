@@ -19,6 +19,7 @@ public class Advent202210 : Problem
 
             for (int i = 0; i < cycleSpan; i++)
             {
+                // Why do we have to count BACKWARDS here? Help
                 var sampledCycle = cycle + cycleSpan - i;
                 if (ShouldCaptureCycle(sampledCycle))
                 {
@@ -43,22 +44,20 @@ public class Advent202210 : Problem
         var x = 1;
         var cycle = 0;
         var score = 0;
-        var display = new SolidGrid<bool>(40, 10, false);
+        var display = new SolidGrid<bool>(40, 6, false);
         foreach (var line in input)
         {
             var (cycleSpan, toAdd) = ParseLine(line);
 
             for (int i = 0; i < cycleSpan; i++)
             {
-                var sampledCycle = cycle + cycleSpan - i;
-                // Why minus one? I have no idea. Is it because cycles are supposed to be 1-indexed?
-                // Changing the first cycle to one doesn't help at all.
-                var cyclePos = sampledCycle % 40 - 1;
+                var sampledCycle = cycle + i;
+                var cyclePos = sampledCycle % 40;
                 var row = sampledCycle / 40;
 
                 if (Math.Abs(cyclePos - x ) <= 1)
                 {
-                    display.Set(new GridPoint(Math.Max(0, cyclePos ), row), true);
+                    display.Set(new GridPoint(cyclePos, row), true);
                 }
             }
 
