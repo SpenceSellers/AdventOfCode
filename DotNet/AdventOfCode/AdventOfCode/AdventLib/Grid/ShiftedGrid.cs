@@ -13,7 +13,7 @@ namespace AdventOfCode.AdventLib.Grid
         
         public T Get(GridPoint point)
         {
-            return _grid.Get(point - _origin);
+            return _grid.Get(point + _origin);
         }
     }
 }

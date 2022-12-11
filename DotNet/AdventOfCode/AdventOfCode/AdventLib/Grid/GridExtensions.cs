@@ -60,5 +60,10 @@ namespace AdventOfCode.AdventLib.Grid
                 return grid.Get(mappedPoint);
             });
         }
+
+        public static IGrid<T> Shift<T>(this IGrid<T> grid, GridPoint offset)
+        {
+            return new ShiftedGrid<T>(offset, grid);
+        }
     }
 }
