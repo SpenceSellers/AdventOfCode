@@ -17,10 +17,11 @@ public class Advent202210 : Problem
         {
             var (cycleSpan, toAdd) = ParseLine(line);
 
+            // Loop through all the cycles that this instruction is going to consume
             for (int i = 0; i < cycleSpan; i++)
             {
-                // Why do we have to count BACKWARDS here? Help
-                var sampledCycle = cycle + cycleSpan - i;
+                // Why plus one? Part 2 works without this.
+                var sampledCycle = cycle + i + 1;
                 if (ShouldCaptureCycle(sampledCycle))
                 {
                     score += sampledCycle * x;
@@ -43,12 +44,12 @@ public class Advent202210 : Problem
     {
         var x = 1;
         var cycle = 0;
-        var score = 0;
         var display = new SolidGrid<bool>(40, 6, false);
         foreach (var line in input)
         {
             var (cycleSpan, toAdd) = ParseLine(line);
 
+            // Loop through all the cycles that this instruction is going to consume
             for (int i = 0; i < cycleSpan; i++)
             {
                 var sampledCycle = cycle + i;
@@ -71,11 +72,10 @@ public class Advent202210 : Problem
 
     private static (int cycleSpan, int toAdd) ParseLine(string line)
     {
-        var (cycleSpan, toAdd) = line switch
+        return line switch
         {
             "noop" => (1, 0),
             _ => (2, int.Parse(line.Split()[1]))
         };
-        return (cycleSpan, toAdd);
     }
 }

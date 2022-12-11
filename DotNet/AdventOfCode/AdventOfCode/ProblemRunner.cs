@@ -9,11 +9,12 @@ namespace AdventOfCode
 
     public class ProblemRunner
     {
-        public enum ProblemInputSource
+        private enum ProblemInputSource
         {
             Input,
             Sample
         }
+
         private bool _runPartOne = true;
         private bool _runPartTwo = true;
         private int _timesToRun = 1;
@@ -54,8 +55,8 @@ namespace AdventOfCode
                 ProblemInputSource.Input => inputPath,
                 ProblemInputSource.Sample => samplePath,
             });
-            
-            Console.Out.WriteLine($"Running {problem.Year}-{problem.Day}");
+
+            Console.Out.WriteLine($"Running {problem.Year}-{problem.Day} using {_inputSource}");
 
             if (_runPartOne) RunProblem("⭐", () => problem.PartOne(lines)?.ToString());
             if (_runPartTwo) RunProblem("⭐⭐", () => problem.PartTwo(lines)?.ToString());
@@ -65,6 +66,7 @@ namespace AdventOfCode
         {
             try
             {
+                Console.WriteLine($"== {title} ==");
                 var stopwatch = new Stopwatch();
                 stopwatch.Start();
                 object result = null;
@@ -73,7 +75,6 @@ namespace AdventOfCode
                     result = func();
                 }
                 stopwatch.Stop();
-                Console.WriteLine($"== {title} ==");
                 Console.WriteLine($"Complete in {stopwatch.ElapsedMilliseconds} ms");
                 if (_timesToRun != 1)
                 {
