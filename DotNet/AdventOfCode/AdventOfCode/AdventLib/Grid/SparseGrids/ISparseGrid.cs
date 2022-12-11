@@ -1,4 +1,4 @@
-namespace AdventOfCode.AdventLib.Grid
+namespace AdventOfCode.AdventLib.Grid.SparseGrids
 {
     /// <summary>
     /// A grid where not every cell contains a value.

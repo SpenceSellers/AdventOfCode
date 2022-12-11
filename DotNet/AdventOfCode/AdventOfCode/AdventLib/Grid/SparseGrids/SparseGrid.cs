@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AdventOfCode.AdventLib.Grid
+namespace AdventOfCode.AdventLib.Grid.SparseGrids
 {
     public class SparseGrid<T> : IMutableGrid<T>, IFiniteSparseGrid<T>
     {
         private readonly Dictionary<GridPoint, T> _cells = new();
         public T Get(GridPoint point)
         {
-            return _cells.ContainsKey(point) ? _cells[point] : throw new NonexistentCellException(point);
+            return _cells.TryGetValue(point, out var value) ? value : throw new NonexistentCellException(point);
         }
 
         public void Set(GridPoint point, T value)
@@ -53,9 +53,9 @@ namespace AdventOfCode.AdventLib.Grid
             return new GeneratedGrid<T>(point => this.GetOrDefault(point, defaultValue));
         }
 
-        public IDefinedSizeGrid<T> AsDefinedSizeNotPreservingCoordinates()
+        public IDefinedSizeGrid<T> AsDefinedSizeNotPreservingCoordinates(T fillingEmptyWith = default)
         {
-            return FillingEmptySpacesWith(default).Windowed(BoundingRegion());
+            return FillingEmptySpacesWith(fillingEmptyWith).Windowed(BoundingRegion());
         }
     }
 }

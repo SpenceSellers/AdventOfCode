@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using AdventOfCode.AdventLib.Grid;
+using AdventOfCode.AdventLib.Grid.SparseGrids;
 
 namespace AdventOfCode.Days._2022;
 
@@ -44,7 +42,7 @@ public class Advent202210 : Problem
     {
         var x = 1;
         var cycle = 0;
-        var display = new SolidGrid<bool>(40, 6, false);
+        var display = new SparseGrid<bool>();
         foreach (var line in input)
         {
             var (cycleSpan, toAdd) = ParseLine(line);
@@ -66,7 +64,7 @@ public class Advent202210 : Problem
             cycle += cycleSpan;
         }
 
-        display.Trace();
+        display.AsDefinedSizeNotPreservingCoordinates().Trace();
         return null;
     }
 

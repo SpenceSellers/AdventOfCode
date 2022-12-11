@@ -10,15 +10,16 @@ namespace AdventOfCode.AdventLib.Grid
             _baseGrid = baseGrid;
             _windowRegion = windowRegion;
         }
-        
+
         public T Get(GridPoint point)
         {
-            // if (!_windowRegion.ContainsPoint(point))
-            // {
-            //     throw new NonexistentCellException(point);
-            // }
-            
-            // Test and fix for negative positions?
+            // It's important that we check against OUR region, not the underlying grid's region.
+            // The whole point is that we're hiding that region.
+            if (!this.Region().ContainsPoint(point))
+            {
+                throw new NonexistentCellException(point);
+            }
+
             var mappedPoint = new GridPoint(point.X + _windowRegion.Origin.X, point.Y + _windowRegion.Origin.Y);
             return _baseGrid.Get(mappedPoint);
         }

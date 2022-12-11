@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AdventOfCode.AdventLib;
 using AdventOfCode.AdventLib.Grid;
 
 namespace AdventOfCode.Days._2022;
