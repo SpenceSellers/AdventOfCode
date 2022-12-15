@@ -13,12 +13,64 @@ public class AStarNode
 public class UnreachableGoalException : Exception
 {
 }
+
 public class AStarSearch<T>
 {
-    public T Start;
-    public T Goal;
-    public Func<T, long> Heuristic;
-    public Func<T, IEnumerable<(T, long)>> Neighbors;
+    public required T Start { init; get; }
+    public required Func<T, bool> IsGoal { init; get; }
+    // Leaving out the heuristic creates an Djikstra's search
+    public Func<T, long> Heuristic = _ => 0;
+
+    public required Func<T, IEnumerable<(T neighbor, long weight)>> Neighbors { init; get; }
+
+    public List<T> Search()
+    {
+        // var openSet = new PriorityQueue<T, long>();
+        // openSet.Enqueue(Start, Heuristic(Start));
+        var openSet = new HashSet<T> {Start};
+        
+        // The cheapest path from start to N currently known
+        var cameFrom = new Dictionary<T, T>();
+
+        var cheapestToHereSoFar = new Dictionary<T, long>
+        {
+            [Start] = 0
+        };
+
+        var cheapestPathToGoalBestGuess = new Dictionary<T, long>
+        {
+            [Start] = Heuristic(Start)
+        };
+
+        while (openSet.Any())
+        {
+            var current = openSet.MinBy(x => cheapestPathToGoalBestGuess.GetValueOrDefault(x, long.MaxValue));
+
+            if (IsGoal(current))
+            {
+                return ReconstructPath(cameFrom, current);
+            }
+
+            openSet.Remove(current);
+
+            foreach (var (neighbor, weight) in Neighbors(current))
+            {
+                var scoreForThisPath = cheapestToHereSoFar.GetValueOrDefault(current, long.MaxValue) + weight;
+                if (scoreForThisPath < cheapestToHereSoFar.GetValueOrDefault(neighbor, long.MaxValue))
+                {
+                    cameFrom[neighbor] = current;
+                    cheapestToHereSoFar[neighbor] = scoreForThisPath;
+                    cheapestPathToGoalBestGuess[neighbor] = scoreForThisPath + Heuristic(neighbor);
+                    if (!openSet.Contains(neighbor))
+                    {
+                        openSet.Add(neighbor);
+                    }
+                }
+            }
+        }
+
+        throw new UnreachableGoalException();
+    }
 
     private List<T> ReconstructPath(Dictionary<T, T> cameFrom, T current)
     {
@@ -31,50 +83,5 @@ public class AStarSearch<T>
 
         path.Reverse();
         return path;
-    }
-
-    public List<T> Search()
-    {
-        var openSet = new HashSet<T> {Start};
-
-        // The cheapest path from start to N currently known
-        var cameFrom = new Dictionary<T, T>();
-
-        // The cheapest path from start to N currently known
-        var gScore = new Dictionary<T, long>();
-        gScore[Start] = 0;
-
-        var fScore = new Dictionary<T, long>();
-        fScore[Start] = Heuristic(Start);
-
-        while (openSet.Any())
-        {
-            var current = openSet.MinBy(x => fScore.GetValueOrDefault(x, long.MaxValue));
-
-            // Todo make this a IsGoal function
-            if (current.Equals(Goal))
-            {
-                return ReconstructPath(cameFrom, current);
-            }
-
-            openSet.Remove(current);
-
-            foreach (var (neighbor, weight) in Neighbors(current))
-            {
-                var tenativeGscore = gScore.GetValueOrDefault(current, long.MaxValue) + weight;
-                if (tenativeGscore < gScore.GetValueOrDefault(neighbor, long.MaxValue))
-                {
-                    cameFrom[neighbor] = current;
-                    gScore[neighbor] = tenativeGscore;
-                    fScore[neighbor] = tenativeGscore + Heuristic(neighbor);
-                    if (!openSet.Contains(neighbor))
-                    {
-                        openSet.Add(neighbor);
-                    }
-                }
-            }
-        }
-
-        throw new UnreachableGoalException();
     }
 }

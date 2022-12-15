@@ -23,7 +23,8 @@ public class Advent202212 : Problem
         var search = new AStarSearch<GridPoint>
         {
             Start = start,
-            Goal = end,
+            IsGoal = g => g == end,
+            // The heuristic ended up not mattering. 
             Heuristic = gp => (gp - end).ManhattanDistanceFromOrigin(),
             // Heuristic = gp => 0,
             Neighbors = gp => gp.Adjacent4.Where(neighbor =>
@@ -65,7 +66,7 @@ public class Advent202212 : Problem
             var search = new AStarSearch<GridPoint>
             {
                 Start = start,
-                Goal = end,
+                IsGoal = g => g == end,
                 Heuristic = gp => (gp - end).ManhattanDistanceFromOrigin(),
                 // Heuristic = gp => 0,
                 Neighbors = gp => gp.Adjacent4.Where(neighbor =>
