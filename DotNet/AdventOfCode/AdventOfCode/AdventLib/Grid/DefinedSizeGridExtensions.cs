@@ -158,5 +158,10 @@ namespace AdventOfCode.AdventLib.Grid
         {
             return grid.AllCells().Count(predicate);
         }
+
+        public static GridPoint FindPosition<T>(this IDefinedSizeGrid<T> grid, Func<T, bool> predicate)
+        {
+            return grid.AllEntries().First(x => predicate(x.CellValue)).Point;
+        }
     }
 }
