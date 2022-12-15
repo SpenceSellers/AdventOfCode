@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using AdventOfCode.AdventLib;
 using AdventOfCode.AdventLib.AStar;
@@ -24,6 +25,7 @@ public class Advent202212 : Problem
             Start = start,
             Goal = end,
             Heuristic = gp => (gp - end).ManhattanDistanceFromOrigin(),
+            // Heuristic = gp => 0,
             Neighbors = gp => gp.Adjacent4.Where(neighbor =>
             {
                 if (!grid.Region().ContainsPoint(neighbor))
@@ -40,12 +42,60 @@ public class Advent202212 : Problem
             }).Select(x => (x, 1L)),
         };
 
-        var results =  search.Search();
+        var results = search.Search();
         return results.Count - 1;
     }
 
     public override object PartTwo(string[] input)
     {
-        throw new System.NotImplementedException();
+        var grid = input.ToGrid().Map(c => c switch
+        {
+            'S' => 0,
+            'E' => 27,
+            _ => c - 'a' + 1
+        });
+        var end = grid.FindPosition(c => c == 27);
+
+        var allStarts = grid.AllEntries().Where(e => e.CellValue is 0 or 1).Select(x => x.Point).ToList();
+
+        var i = 0;
+        var distances = allStarts.Select(start =>
+        {
+            Console.Out.WriteLine($"{i}/{allStarts.Count}");
+            var search = new AStarSearch<GridPoint>
+            {
+                Start = start,
+                Goal = end,
+                Heuristic = gp => (gp - end).ManhattanDistanceFromOrigin(),
+                // Heuristic = gp => 0,
+                Neighbors = gp => gp.Adjacent4.Where(neighbor =>
+                {
+                    if (!grid.Region().ContainsPoint(neighbor))
+                    {
+                        return false;
+                    }
+
+                    if (grid.Get(neighbor) - grid.Get(gp) <= 1)
+                    {
+                        return true;
+                    }
+
+                    return false;
+                }).Select(x => (x, 1L)),
+            };
+
+            i++;
+            try
+            {
+                var results = search.Search();
+                return results.Count - 1;
+            }
+            catch (UnreachableGoalException)
+            {
+                return int.MaxValue;
+            }
+        }).ToList();
+
+        return distances.Min();
     }
 }

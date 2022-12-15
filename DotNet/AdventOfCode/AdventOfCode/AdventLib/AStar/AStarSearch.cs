@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace AdventOfCode.AdventLib.AStar;
@@ -7,6 +8,10 @@ namespace AdventOfCode.AdventLib.AStar;
 public class AStarNode
 {
     
+}
+
+public class UnreachableGoalException : Exception
+{
 }
 public class AStarSearch<T>
 {
@@ -44,7 +49,6 @@ public class AStarSearch<T>
 
         while (openSet.Any())
         {
-            Console.Out.WriteLine($"Openset {openSet.Count}");
             var current = openSet.MinBy(x => fScore.GetValueOrDefault(x, long.MaxValue));
 
             // Todo make this a IsGoal function
@@ -71,6 +75,6 @@ public class AStarSearch<T>
             }
         }
 
-        throw new Exception("It's impossible to reach the goal");
+        throw new UnreachableGoalException();
     }
 }
