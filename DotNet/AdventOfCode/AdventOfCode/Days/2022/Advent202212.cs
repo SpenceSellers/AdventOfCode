@@ -60,9 +60,9 @@ public class Advent202212 : Problem
         var allStarts = grid.AllEntries().Where(e => e.CellValue is 0 or 1).Select(x => x.Point).ToList();
 
         var i = 0;
-        var distances = allStarts.Select(start =>
+        // I know how do to this the right way. I don't care.
+        var distances = allStarts.AsParallel().Select(start =>
         {
-            Console.Out.WriteLine($"{i}/{allStarts.Count}");
             var search = new AStarSearch<GridPoint>
             {
                 Start = start,

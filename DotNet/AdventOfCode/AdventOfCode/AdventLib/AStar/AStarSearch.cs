@@ -19,6 +19,10 @@ public class AStarSearch<T>
     public required T Start { init; get; }
     public required Func<T, bool> IsGoal { init; get; }
     // Leaving out the heuristic creates an Djikstra's search
+    
+    /// <summary>
+    /// It's OK if this is too small, but you'll get the wrong answer if you make the answer too big.
+    /// </summary>
     public Func<T, long> Heuristic = _ => 0;
 
     public required Func<T, IEnumerable<(T neighbor, long weight)>> Neighbors { init; get; }
@@ -44,6 +48,7 @@ public class AStarSearch<T>
 
         while (openSet.Any())
         {
+            // TODO: This is slow, it'd be best to keep the elements in sorted order to begin with.
             var current = openSet.MinBy(x => cheapestPathToGoalBestGuess.GetValueOrDefault(x, long.MaxValue));
 
             if (IsGoal(current))
