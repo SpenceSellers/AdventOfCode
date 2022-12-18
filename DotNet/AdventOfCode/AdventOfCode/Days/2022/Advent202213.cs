@@ -11,11 +11,7 @@ public class Advent202213 : Problem
 {
     public override object PartOne(string[] input)
     {
-        var pairs = input.SplitList(x => x == "")
-            .Select(chunk => chunk.Select(line => JsonSerializer.Deserialize<List<JsonElement>>(line)
-                .Select(TranslateToSanity)
-                .ToList()).ToList())
-            .ToList();
+        var pairs = ParseInput(input);
 
         return pairs.Select((pair, index) =>
         {
@@ -28,7 +24,16 @@ public class Advent202213 : Problem
                 return 0;
             }
         }).Sum();
+    }
 
+    private List<List<List<object>>> ParseInput(string[] input)
+    {
+        return input.SplitList(x => x == "")
+            .Select(chunk => chunk.Select(line => JsonSerializer.Deserialize<List<JsonElement>>(line)
+                    .Select(TranslateToSanity)
+                    .ToList())
+                .ToList())
+            .ToList();
     }
 
     private object TranslateToSanity(JsonElement elem)
@@ -112,6 +117,21 @@ public class Advent202213 : Problem
 
     public override object PartTwo(string[] input)
     {
-        throw new System.NotImplementedException();
+        var pairs = ParseInput(input);
+        var packets = pairs.SelectMany(x => x).ToList();
+        var divider1 = new List<object>{new List<object> { 2 }};
+        packets.Add(divider1);
+        var divider2 = new List<object>{new List<object> { 6 }};
+        packets.Add(divider2);
+
+        var comparer = Comparer<List<object>>.Create((x, y) => Compare(x, y) switch
+        {
+            Ordering.Bigger => 1,
+            Ordering.Smaller => -1,
+            Ordering.Equal => 0
+        });
+        packets.Sort(comparer);
+
+        return (packets.FindIndex(x => x == divider1) + 1) * (packets.FindIndex(x => x == divider2) + 1);
     }
 }
