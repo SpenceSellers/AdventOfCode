@@ -48,57 +48,56 @@ public class Advent202213 : Problem
     // I'm sorry you had to look at this.
     private Ordering Compare(object left, object right)
     {
-        if (left is int li && right is int ri)
+        switch (left)
         {
-            if (li == ri)
+            case int li when right is int ri:
             {
-                return Ordering.Equal;
-            }
-
-            if (li < ri)
-            {
-                return Ordering.Smaller;
-            }
-
-            return Ordering.Bigger;
-        }
-
-        if (left is List<object> ll && right is List<object> rl)
-        {
-            var i = 0;
-            while (true)
-            {
-                if (i >= ll.Count && i >= rl.Count)
+                if (li == ri)
                 {
-                    // Same length, no difference
                     return Ordering.Equal;
                 }
 
-                if (i >= ll.Count && i < rl.Count)
+                if (li < ri)
                 {
-                    // Left list ran out first
                     return Ordering.Smaller;
                 }
 
-                if (i < ll.Count && i >= rl.Count)
-                {
-                    // Right list ran out first
-                    return Ordering.Bigger;
-                }
-
-                var comparison = Compare(ll[i], rl[i]);
-                if (comparison != Ordering.Equal)
-                {
-                    return comparison;
-                }
-
-                i++;
+                return Ordering.Bigger;
             }
-        }
+            case List<object> ll when right is List<object> rl:
+            {
+                var i = 0;
+                while (true)
+                {
+                    if (i >= ll.Count && i >= rl.Count)
+                    {
+                        // Same length, no difference
+                        return Ordering.Equal;
+                    }
 
-        if (left is int && right is List<object>)
-        {
-            return Compare(new List<object> { left }, right);
+                    if (i >= ll.Count && i < rl.Count)
+                    {
+                        // Left list ran out first
+                        return Ordering.Smaller;
+                    }
+
+                    if (i < ll.Count && i >= rl.Count)
+                    {
+                        // Right list ran out first
+                        return Ordering.Bigger;
+                    }
+
+                    var comparison = Compare(ll[i], rl[i]);
+                    if (comparison != Ordering.Equal)
+                    {
+                        return comparison;
+                    }
+
+                    i++;
+                }
+            }
+            case int when right is List<object>:
+                return Compare(new List<object> { left }, right);
         }
 
         if (left is List<object> && right is int)
