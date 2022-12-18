@@ -45,6 +45,7 @@ public class Advent202213 : Problem
         };
     }
 
+    // I'm sorry you had to look at this.
     private Ordering Compare(object left, object right)
     {
         if (left is int li && right is int ri)
