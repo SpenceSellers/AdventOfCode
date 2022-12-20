@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AdventOfCode.AdventLib;
@@ -19,7 +20,7 @@ public class Advent202214 : Problem
         var count = 0;
         while (true)
         {
-            var settling = SettlingPoint(startingPoint, grid, maxY);
+            var settling = SettlingPoint(startingPoint, grid, maxY, true);
             if (settling == null)
             {
                 break;
@@ -39,18 +40,55 @@ public class Advent202214 : Problem
         return count;
     }
 
-    private GridPoint[] FallOffsets = { new(0, 1), new(-1, 1), new(1, 1) };
-    private GridPoint? SettlingPoint(GridPoint start, SparseGrid<ICell> grid, int maxY)
+    public override object PartTwo(string[] input)
+    {
+        var parsedInput = input.Select(x => ParseLine(x).ToList()).ToList();
+        var grid = ParseWalls(parsedInput);
+        var region = grid.BoundingRegion();
+        var maxY = region.Origin.Y + region.Height ; // The 10 is for pure paranoia
+        var startingPoint = new GridPoint(500, 0);
+
+        var count = 0;
+        while (true)
+        {
+            var settling = SettlingPoint(startingPoint, grid, maxY, false);
+            if (settling == startingPoint)
+            {
+                // 1 is for the starting point.
+                count++;
+                break;
+            }
+            
+            Console.Out.WriteLine(settling);
+
+            grid.Set(settling.Value, new Sand());
+            count++;
+        }
+
+        grid.AsDefinedSizeNotPreservingCoordinates().Map(x => x switch
+        {
+            Rock _ => '█',
+            Sand _ => '░',
+            _ => ' '
+        }).Trace();
+
+        return count;
+        
+    }
+
+    private readonly GridPoint[] _fallOffsets = { new(0, 1), new(-1, 1), new(1, 1) };
+
+    private GridPoint? SettlingPoint(GridPoint start, SparseGrid<ICell> grid, int maxY, bool voiding)
     {
         var currentPoint = start;
         while (true)
         {
             if (currentPoint.Y >= maxY)
             {
-                return null; // We're fallen blow maxY
+                return voiding ? null : currentPoint; // We're fallen blow maxY
             }
             var couldMove = false;
-            foreach (var fallOffset in FallOffsets)
+            foreach (var fallOffset in _fallOffsets)
             {
                 var possibleNext = currentPoint + fallOffset;
                 if (!grid.ContainsPoint(possibleNext))
@@ -68,7 +106,7 @@ public class Advent202214 : Problem
             }
         }
     }
-    
+
     private SparseGrid<ICell> ParseWalls(IEnumerable<IEnumerable<GridPoint>> paths)
     {
         var grid = new SparseGrid<ICell>();
@@ -101,10 +139,5 @@ public class Advent202214 : Problem
             var (x, y) = coord.Split(",").Select(int.Parse).Two();
             return new GridPoint(x, y);
         });
-    }
-
-    public override object PartTwo(string[] input)
-    {
-        throw new System.NotImplementedException();
     }
 }
