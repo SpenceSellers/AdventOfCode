@@ -11,11 +11,8 @@ public class Advent202214 : Problem
 {
     public override object PartOne(string[] input)
     {
-        var parsedInput = input.Select(x => ParseLine(x).ToList()).ToList();
-        var grid = ParseWalls(parsedInput);
-        var region = grid.BoundingRegion();
-        var maxY = region.Origin.Y + region.Height + 10; // The 10 is for pure paranoia
         var startingPoint = new GridPoint(500, 0);
+        var (grid, maxY) = ParseProblem(input);
 
         var count = 0;
         while (true)
@@ -42,11 +39,8 @@ public class Advent202214 : Problem
 
     public override object PartTwo(string[] input)
     {
-        var parsedInput = input.Select(x => ParseLine(x).ToList()).ToList();
-        var grid = ParseWalls(parsedInput);
-        var region = grid.BoundingRegion();
-        var maxY = region.Origin.Y + region.Height ; // The 10 is for pure paranoia
         var startingPoint = new GridPoint(500, 0);
+        var (grid, maxY) = ParseProblem(input);
 
         var count = 0;
         while (true)
@@ -58,8 +52,6 @@ public class Advent202214 : Problem
                 count++;
                 break;
             }
-            
-            Console.Out.WriteLine(settling);
 
             grid.Set(settling.Value, new Sand());
             count++;
@@ -73,7 +65,16 @@ public class Advent202214 : Problem
         }).Trace();
 
         return count;
-        
+
+    }
+
+    private (SparseGrid<ICell> grid, int maxY) ParseProblem(string[] input)
+    {
+        var parsedInput = input.Select(x => ParseLine(x).ToList()).ToList();
+        var grid = ParseWalls(parsedInput);
+        var region = grid.BoundingRegion();
+        var maxY = region.Origin.Y + region.Height;
+        return (grid, maxY);
     }
 
     private readonly GridPoint[] _fallOffsets = { new(0, 1), new(-1, 1), new(1, 1) };
