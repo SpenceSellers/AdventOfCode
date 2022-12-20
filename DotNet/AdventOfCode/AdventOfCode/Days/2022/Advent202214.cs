@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using AdventOfCode.AdventLib;
@@ -27,12 +26,7 @@ public class Advent202214 : Problem
             count++;
         }
 
-        grid.AsDefinedSizeNotPreservingCoordinates().Map(x => x switch
-        {
-            Rock _ => '█',
-            Sand _ => '░',
-            _ => ' '
-        }).Trace();
+        Print(grid);
 
         return count;
     }
@@ -57,12 +51,7 @@ public class Advent202214 : Problem
             count++;
         }
 
-        grid.AsDefinedSizeNotPreservingCoordinates().Map(x => x switch
-        {
-            Rock _ => '█',
-            Sand _ => '░',
-            _ => ' '
-        }).Trace();
+        Print(grid);
 
         return count;
 
@@ -140,5 +129,15 @@ public class Advent202214 : Problem
             var (x, y) = coord.Split(",").Select(int.Parse).Two();
             return new GridPoint(x, y);
         });
+    }
+
+    private static void Print(SparseGrid<ICell> grid)
+    {
+        grid.AsDefinedSizeNotPreservingCoordinates().Map(x => x switch
+        {
+            Rock _ => '█',
+            Sand _ => '░',
+            _ => ' '
+        }).Trace();
     }
 }
