@@ -85,7 +85,7 @@ namespace AdventOfCode.AdventLib.Grid
             }
         }
 
-        public IEnumerable<GridPoint> PointsBetween(GridPoint start, GridPoint end, bool inclusiveStart = true, bool inclusiveEnd = true)
+        public static IEnumerable<GridPoint> PointsBetween(GridPoint start, GridPoint end, bool inclusiveStart = true, bool inclusiveEnd = true)
         {
             var increment = (end - start).UnitAxes;
             var current = start;
