@@ -15,7 +15,6 @@ public class Advent202214 : Problem
         var region = grid.BoundingRegion();
         var maxY = region.Origin.Y + region.Height + 10; // The 10 is for pure paranoia
         var startingPoint = new GridPoint(500, 0);
-        // rockWalls.AsDefinedSizeNotPreservingCoordinates().Trace();
 
         var count = 0;
         while (true)
@@ -29,6 +28,13 @@ public class Advent202214 : Problem
             grid.Set(settling.Value, new Sand());
             count++;
         }
+
+        grid.AsDefinedSizeNotPreservingCoordinates().Map(x => x switch
+        {
+            Rock _ => '█',
+            Sand _ => '░',
+            _ => ' '
+        }).Trace();
 
         return count;
     }
