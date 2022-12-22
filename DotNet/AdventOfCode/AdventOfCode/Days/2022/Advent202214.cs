@@ -26,7 +26,7 @@ public class Advent202214 : Problem
             count++;
         }
 
-        Print(grid);
+        // Print(grid);
 
         return count;
     }
@@ -51,7 +51,7 @@ public class Advent202214 : Problem
             count++;
         }
 
-        Print(grid);
+        // Print(grid);
 
         return count;
 
