@@ -55,61 +55,19 @@ public class Advent202215 : Problem
     {
         var knowledge = input.Select(ParseLine).ToArray();
         var distances = ToDistances(knowledge);
-        var count = 0;
-        var coreCount = 20;
         var size = 4000000;
-        // var size = 20;
-        for (int i = 0; i < coreCount; i++)
+
+        foreach (var (centerPoint, distance) in distances)
         {
-            var i1 = i;
-            Task.Run(() => FindSolution(size, distances, coreCount, i1));
-            // ThreadPool.QueueUserWorkItem((x) => );
-            // return FindSolution(size, distances, coreCount, i);
-        }
-        
-        Thread.Sleep(-1);
-
-        return null;
-    }
-
-    private static object FindSolution(int size, Dictionary<GridPoint, int> distances, int workSize, int offset)
-    {
-        Console.Out.WriteLine($"Thread started {offset}");
-        for (int x = 0; x <= size; x++)
-        {
-            if (x % workSize != offset)
+            foreach (var candidatePoint in centerPoint.PointsManhattanDistanceFrom(distance + 1))
             {
-                continue;
-            }
-            if (x < 100 || x % 100 == 0)
-            {
-                Console.Out.WriteLine($"x={x}, {(((double)x) / size) * 100}%");
-            }
-
-            for (int y = 0; y <= size; y++)
-            {
-                var point = new GridPoint(x, y);
-                var any = false;
-                foreach (var kv in distances)
+                if (!distances.AsParallel().Any(kv => (candidatePoint - kv.Key).ManhattanDistanceFromOrigin() <= kv.Value))
                 {
-                    if ((point - kv.Key).ManhattanDistanceFromOrigin() <= kv.Value)
-                    {
-                        any = true;
-                        break;
-                    }
-                }
 
-                if (!any)
-                {
-                    Console.Out.WriteLine(point);
-                    Console.Out.WriteLine((point.X * 4000000) + point.Y);
-                    Environment.Exit(0);
-                    return (point.X * 4000000) + point.Y;
+                    return (long) candidatePoint.X * 4000000 + candidatePoint.Y;
                 }
             }
         }
-        
-        Console.Out.WriteLine($"Offset {offset} Complete.");
 
         return null;
     }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AdventOfCode.AdventLib.Grid
 {
@@ -101,6 +102,19 @@ namespace AdventOfCode.AdventLib.Grid
                     yield return current;
                 }
             }
+        }
+
+        public IEnumerable<GridPoint> PointsManhattanDistanceFrom(int distance)
+        {
+            var topCorner = this + new GridPoint(0, -distance);
+            var rightCorner = this + new GridPoint(distance, 0);
+            var bottomCorner = this + new GridPoint(0, distance);
+            var leftCorner = this + new GridPoint(-distance, 0);
+
+            return PointsBetween(topCorner, rightCorner, false)
+                .Concat(PointsBetween(rightCorner, bottomCorner, false))
+                .Concat(PointsBetween(bottomCorner, leftCorner, false))
+                .Concat(PointsBetween(leftCorner, topCorner, false));
         }
     }
 }
