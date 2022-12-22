@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using AdventOfCode.AdventLib;
 using AdventOfCode.AdventLib.Grid;
 
@@ -53,13 +56,37 @@ public class Advent202215 : Problem
         var knowledge = input.Select(ParseLine).ToArray();
         var distances = ToDistances(knowledge);
         var count = 0;
-        for (int x = 0; x <= 4000000; x++)
+        var coreCount = 20;
+        var size = 4000000;
+        // var size = 20;
+        for (int i = 0; i < coreCount; i++)
         {
+            var i1 = i;
+            Task.Run(() => FindSolution(size, distances, coreCount, i1));
+            // ThreadPool.QueueUserWorkItem((x) => );
+            // return FindSolution(size, distances, coreCount, i);
+        }
+        
+        Thread.Sleep(-1);
+
+        return null;
+    }
+
+    private static object FindSolution(int size, Dictionary<GridPoint, int> distances, int workSize, int offset)
+    {
+        Console.Out.WriteLine($"Thread started {offset}");
+        for (int x = 0; x <= size; x++)
+        {
+            if (x % workSize != offset)
+            {
+                continue;
+            }
             if (x < 100 || x % 100 == 0)
             {
-                Console.Out.WriteLine($"x={x}, {(((double) x)/4000000) * 100}%");
+                Console.Out.WriteLine($"x={x}, {(((double)x) / size) * 100}%");
             }
-            for (int y = 0; y <= 4000000; y++)
+
+            for (int y = 0; y <= size; y++)
             {
                 var point = new GridPoint(x, y);
                 var any = false;
@@ -75,10 +102,14 @@ public class Advent202215 : Problem
                 if (!any)
                 {
                     Console.Out.WriteLine(point);
+                    Console.Out.WriteLine((point.X * 4000000) + point.Y);
+                    Environment.Exit(0);
                     return (point.X * 4000000) + point.Y;
                 }
             }
         }
+        
+        Console.Out.WriteLine($"Offset {offset} Complete.");
 
         return null;
     }
