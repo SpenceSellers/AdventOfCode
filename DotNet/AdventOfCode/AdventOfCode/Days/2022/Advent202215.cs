@@ -53,14 +53,29 @@ public class Advent202215 : Problem
         var knowledge = input.Select(ParseLine).ToArray();
         var distances = ToDistances(knowledge);
         var count = 0;
-        for (int x = 0; x <= 20; x++)
+        for (int x = 0; x <= 4000000; x++)
         {
-            for (int y = 0; y <= 20; y++)
+            if (x < 100 || x % 100 == 0)
+            {
+                Console.Out.WriteLine($"x={x}, {(((double) x)/4000000) * 100}%");
+            }
+            for (int y = 0; y <= 4000000; y++)
             {
                 var point = new GridPoint(x, y);
-                if (!distances.Any(kv => (point - kv.Key).ManhattanDistanceFromOrigin() <= kv.Value))
+                var any = false;
+                foreach (var kv in distances)
+                {
+                    if ((point - kv.Key).ManhattanDistanceFromOrigin() <= kv.Value)
+                    {
+                        any = true;
+                        break;
+                    }
+                }
+
+                if (!any)
                 {
                     Console.Out.WriteLine(point);
+                    return (point.X * 4000000) + point.Y;
                 }
             }
         }

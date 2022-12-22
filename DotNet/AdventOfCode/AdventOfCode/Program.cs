@@ -10,9 +10,9 @@ namespace AdventOfCode
         static void Main(string[] args)
         {
             new ProblemRunner()
-                .UseSampleInput()
+                // .UseSampleInput()
                 .SkipPartOne()
-                .RunTimes(100)
+                // .RunTimes(100)
                 .Run(new Advent202215());
         }
     }
