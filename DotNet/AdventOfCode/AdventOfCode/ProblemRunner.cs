@@ -9,13 +9,15 @@ namespace AdventOfCode
 
     public class ProblemRunner
     {
-        public enum ProblemInputSource
+        private enum ProblemInputSource
         {
             Input,
             Sample
         }
+
         private bool _runPartOne = true;
         private bool _runPartTwo = true;
+        private int _timesToRun = 1;
         private ProblemInputSource _inputSource = ProblemInputSource.Input;
 
         public ProblemRunner SkipPartOne()
@@ -36,6 +38,12 @@ namespace AdventOfCode
             return this;
         }
 
+        public ProblemRunner RunTimes(int runTimes)
+        {
+            _timesToRun = runTimes;
+            return this;
+        }
+
         public void Run(Problem problem)
         {
             var inputPath = FilePath(problem, "input");
@@ -48,6 +56,8 @@ namespace AdventOfCode
                 ProblemInputSource.Sample => samplePath,
             });
 
+            Console.Out.WriteLine($"Running {problem.Year}-{problem.Day} using {_inputSource}");
+
             if (_runPartOne) RunProblem("⭐", () => problem.PartOne(lines)?.ToString());
             if (_runPartTwo) RunProblem("⭐⭐", () => problem.PartTwo(lines)?.ToString());
         }
@@ -56,12 +66,21 @@ namespace AdventOfCode
         {
             try
             {
+                Console.WriteLine($"== {title} ==");
                 var stopwatch = new Stopwatch();
                 stopwatch.Start();
-                var result = func();
+                object result = null;
+                for (int i = 0; i < _timesToRun; i++)
+                {
+                    result = func();
+                }
                 stopwatch.Stop();
-                Console.WriteLine($"== {title} ==");
                 Console.WriteLine($"Complete in {stopwatch.ElapsedMilliseconds} ms");
+                if (_timesToRun != 1)
+                {
+                    var average = (double)stopwatch.ElapsedMilliseconds / _timesToRun;
+                    Console.Out.WriteLine($"Across {_timesToRun} runs (Mean {average} ms)");
+                }
                 Console.WriteLine(result);
             }
             catch (NotImplementedException e)

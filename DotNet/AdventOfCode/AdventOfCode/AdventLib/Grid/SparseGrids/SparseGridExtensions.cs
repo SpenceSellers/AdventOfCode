@@ -1,4 +1,4 @@
-namespace AdventOfCode.AdventLib.Grid
+namespace AdventOfCode.AdventLib.Grid.SparseGrids
 {
     public static class SparseGridExtensions
     {

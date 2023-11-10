@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AdventOfCode.AdventLib;
 using AdventOfCode.AdventLib.Grid;
+using AdventOfCode.AdventLib.Grid.SparseGrids;
 
 namespace AdventOfCode.Days._2021
 {

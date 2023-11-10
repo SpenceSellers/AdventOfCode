@@ -13,6 +13,11 @@ namespace AdventOfCode.AdventLib.Grid
 
         public static IDefinedSizeGrid<TNew> Map<TOld, TNew>(this IDefinedSizeGrid<TOld> grid, Func<TOld, TNew> func)
         {
+            return new DefinedSizeMappedGrid<TOld,TNew>(grid, (_, value) => func(value));
+        }
+
+        public static IDefinedSizeGrid<TNew> Map<TOld, TNew>(this IDefinedSizeGrid<TOld> grid, Func<GridPoint, TOld, TNew> func)
+        {
             return new DefinedSizeMappedGrid<TOld,TNew>(grid, func);
         }
 
@@ -147,6 +152,16 @@ namespace AdventOfCode.AdventLib.Grid
         public static IEnumerable<IEnumerable<T>> Columns<T>(this IDefinedSizeGrid<T> grid)
         {
             return grid.Region().XCoords().Select(grid.GetColumn);
+        }
+
+        public static int Count<T>(this IDefinedSizeGrid<T> grid, Func<T, bool> predicate)
+        {
+            return grid.AllCells().Count(predicate);
+        }
+
+        public static GridPoint FindPosition<T>(this IDefinedSizeGrid<T> grid, Func<T, bool> predicate)
+        {
+            return grid.AllEntries().First(x => predicate(x.CellValue)).Point;
         }
     }
 }

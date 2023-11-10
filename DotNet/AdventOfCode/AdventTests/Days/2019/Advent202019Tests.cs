@@ -1,10 +1,9 @@
 using System.Collections.Generic;
-using AdventOfCode.Days;
 using AdventOfCode.Days._2020;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace AdventTests.Days
+namespace AdventTests.Days._2019
 {
     public class Advent202019Tests
     {

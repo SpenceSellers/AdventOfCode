@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using AdventOfCode.AdventLib;
 using AdventOfCode.AdventLib.Grid;
+using AdventOfCode.AdventLib.Grid.SparseGrids;
 using AdventOfCode.AdventLib.Parsing;
 
 namespace AdventOfCode.Days._2021

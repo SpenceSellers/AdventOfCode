@@ -23,5 +23,29 @@ namespace AdventTests.Grid
             windowed.Get(new GridPoint(1, 1)).Should().Be('L');
             windowed.Get(new GridPoint(1, 0)).Should().Be('I');
         }
+
+        [Test]
+        public void ShouldNotSupportAccessOutsideOfWindow()
+        {
+            var region = new GridRegion(new GridPoint(-10, -10), 20, 20);
+            var windowed = CommonGrids.CoordinateGrid.Windowed(region);
+
+
+            var outsideNegative = () => windowed.Get(new GridPoint(-10, -10));
+            var inside = () => windowed.Get(new GridPoint(10, 10));
+
+            outsideNegative.Should().Throw<NonexistentCellException>();
+            inside.Should().NotThrow();
+        }
+
+        [Test]
+        public void ShouldAllowNegativeWindows()
+        {
+            var region = new GridRegion(new GridPoint(-10, -10), 20, 20);
+            var windowed = CommonGrids.CoordinateGrid.Windowed(region);
+
+            windowed.Get(new GridPoint(0, 0)).Should().Be(new GridPoint(-10, -10));
+            windowed.Get(new GridPoint(11, 11)).Should().Be(new GridPoint(1, 1));
+        }
     }
 }

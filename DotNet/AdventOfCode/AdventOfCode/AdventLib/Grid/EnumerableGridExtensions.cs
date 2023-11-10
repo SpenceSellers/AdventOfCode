@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using AdventOfCode.AdventLib.Grid.SparseGrids;
 
 namespace AdventOfCode.AdventLib.Grid
 {
