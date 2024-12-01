@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Callable, override
 
-from grid.point import Point
+from grid.point import Point, Region
 
 
 class Grid[T](ABC):
@@ -37,6 +37,29 @@ class ComputedGrid[T](Grid[T]):
     @override
     def __getitem__(self, p: Point) -> T:
         return self.func(p)
+
+class WindowedGrid[T](Grid[T]):
+    def __init__(self, grid: Grid[T], region: Region):
+        self.grid = grid
+        self.region = region
+
+    @override
+    def __getitem__(self, p: Point) -> T:
+        if not self.region.contains_point(p):
+            raise GridDoesNotContainPointError
+
+        return self.grid[p - self.region.lower_left]
+
+    @override
+    def __setitem__(self, p: Point, value: T):
+        if not self.region.contains_point(p):
+            raise GridDoesNotContainPointError
+        self.grid[p - self.region.lower_left] = value
+
+    @override
+    def contains_point(self, p: Point) -> bool:
+        return self.region.contains_point(p) and self.grid.contains_point(p - self.region.lower_left)
+
 
 class NotMutableGridError(Exception):
     pass

@@ -7,9 +7,9 @@ import humanize
 import re
 
 
-def run_advent(part: int, func: Callable[..., Any]):
+def run_advent(part: int, func: Callable[..., Any], sample: bool = False):
     year, day = _parse_day_from_module(_get_entry_point_module())
-    file = _read_input_file(year, day)
+    file = _read_input_file(year, day, sample)
     input = [l.rstrip() for l in file.splitlines()]
     start = time.time()
     res = func(input)
@@ -19,8 +19,11 @@ def run_advent(part: int, func: Callable[..., Any]):
     if res is not None:
         print(res)
 
-def _read_input_file(year: int, day: int) -> str:
-    filename = f'inputs/input_{year}_{day}.txt'
+def _read_input_file(year: int, day: int, sample: bool) -> str:
+    if sample:
+        filename = f'inputs/sample_{year}_{day}.txt'
+    else:
+        filename = f'inputs/input_{year}_{day}.txt'
     if not os.path.exists(filename):
         print(f"Input file {filename} does not exist. Creating.")
         with open(filename, 'w'): pass
