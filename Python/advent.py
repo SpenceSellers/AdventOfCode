@@ -5,12 +5,47 @@ import time
 from datetime import timedelta
 import humanize
 import re
+import click
+
+part_1_func: Callable[..., Any] | None = None
+part_2_func: Callable[..., Any] | None = None
+
+def part_1(f: Callable[..., Any]):
+    global part_1_func
+    part_1_func = f
+    return f
+
+def part_2(f: Callable[..., Any]):
+    global part_2_func
+    part_2_func = f
+    return f
+
+@click.command()
+@click.option('--sample/--real', '-s', default=False, help="Whether to use the sample input or the real input")
+@click.option('--p1', is_flag=True, help="Run part 1?")
+@click.option('--p2', is_flag=True, help="Run part 2?")
+def run(*, sample: bool = False, p1: bool, p2: bool):
+    if not part_1_func and not part_2_func:
+        raise ValueError("Neither part 1 nor part 2 defined.")
+
+    if not p1 and not p2:
+        # Setting neither defaults to setting both.
+        p1 = bool(part_1_func)
+        p2 = bool(part_2_func)
+    if p1:
+        if not part_1_func:
+            raise ValueError("You asked to run part 1, but part 1 is not defined.")
+        run_advent(1, part_1_func, sample=sample)
+    if p2:
+        if not part_2_func:
+            raise ValueError("You asked to run part 2, but part 2 is not defined.")
+        run_advent(2, part_2_func, sample=sample)
 
 
 def run_advent(part: int, func: Callable[..., Any], sample: bool = False):
     year, day = _parse_day_from_module(_get_entry_point_module())
     file = _read_input_file(year, day, sample)
-    input = [l.rstrip() for l in file.splitlines()]
+    input = [line.rstrip() for line in file.splitlines()]
     start = time.time()
     res = func(input)
     end = time.time()
