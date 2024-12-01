@@ -1,20 +1,22 @@
 from collections import Counter
-import math
 import advent
 
-def part1(lines: list[str]):
+
+def parse_left_right(lines: list[str]) -> tuple[list[int], list[int]]:
     left: list[int] = []
     right: list[int] = []
     for line in lines:
-        l, r = [int(x) for x in line.split(' ') if x != '']
+        l, r = [int(x) for x in line.split(" ") if x != ""]
         left.append(l)
         right.append(r)
+    return left, right
+
+
+def part1(lines: list[str]):
+    left, right = parse_left_right(lines)
 
     left.sort()
     right.sort()
-
-    print(left)
-    print(right)
 
     sum = 0
     for a, b in zip(left, right):
@@ -23,12 +25,7 @@ def part1(lines: list[str]):
 
 
 def part2(lines: list[str]):
-    left: list[int] = []
-    right: list[int] = []
-    for line in lines:
-        l, r = [int(x) for x in line.split(' ') if x != '']
-        left.append(l)
-        right.append(r)
+    left, right = parse_left_right(lines)
 
     right_counts = Counter(right)
     sum = 0
@@ -38,5 +35,5 @@ def part2(lines: list[str]):
     print(sum)
 
 
-
-advent.run_advent(1, part2, sample=False)
+advent.run_advent(1, part1, sample=False)
+advent.run_advent(2, part2, sample=False)

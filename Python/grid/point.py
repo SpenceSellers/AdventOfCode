@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+
 @dataclass(slots=True, frozen=True)
 class Point:
     x: int
@@ -19,6 +20,7 @@ class Point:
 
     def manhattan_distance(self, other: "Point") -> int:
         return abs(self.x - other.x) + abs(self.y - other.y)
+
 
 @dataclass(slots=True)
 class Region:
@@ -50,24 +52,19 @@ class Region:
         return True
 
     @staticmethod
-    def from_corners(p1: Point, p2: Point, inclusive: bool=False) -> "Region":
+    def from_corners(p1: Point, p2: Point, inclusive: bool = False) -> "Region":
         min_x = min(p1.x, p2.x)
         min_y = min(p1.y, p2.y)
         max_x = max(p1.x, p2.x)
         max_y = max(p1.y, p2.y)
-        
+
         lower_left = Point(min_x, min_y)
-        
+
         width = max_x - min_x
         height = max_y - min_y
 
         if inclusive:
             width = width + 1
             height = height + 1
-        
+
         return Region(lower_left, width, height)
-
-    
-
-    
-

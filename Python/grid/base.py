@@ -29,6 +29,7 @@ class MappedGrid[Old, New](Grid[New]):
     def contains_point(self, p: Point) -> bool:
         return self.grid.contains_point(p)
 
+
 class ComputedGrid[T](Grid[T]):
     def __init__(self, func: Callable[[Point], T]) -> None:
         super().__init__()
@@ -37,6 +38,7 @@ class ComputedGrid[T](Grid[T]):
     @override
     def __getitem__(self, p: Point) -> T:
         return self.func(p)
+
 
 class WindowedGrid[T](Grid[T]):
     def __init__(self, grid: Grid[T], region: Region):
@@ -58,11 +60,14 @@ class WindowedGrid[T](Grid[T]):
 
     @override
     def contains_point(self, p: Point) -> bool:
-        return self.region.contains_point(p) and self.grid.contains_point(p - self.region.lower_left)
+        return self.region.contains_point(p) and self.grid.contains_point(
+            p - self.region.lower_left
+        )
 
 
 class NotMutableGridError(Exception):
     pass
+
 
 class GridDoesNotContainPointError(Exception):
     pass

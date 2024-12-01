@@ -19,24 +19,26 @@ def run_advent(part: int, func: Callable[..., Any], sample: bool = False):
     if res is not None:
         print(res)
 
+
 def _read_input_file(year: int, day: int, sample: bool) -> str:
     if sample:
-        filename = f'inputs/sample_{year}_{day}.txt'
+        filename = f"inputs/sample_{year}_{day}.txt"
     else:
-        filename = f'inputs/input_{year}_{day}.txt'
+        filename = f"inputs/input_{year}_{day}.txt"
     if not os.path.exists(filename):
         print(f"Input file {filename} does not exist. Creating.")
-        with open(filename, 'w'): pass
-    with open(filename, 'r') as f:
+        with open(filename, "w"):
+            pass
+    with open(filename, "r") as f:
         return f.read()
 
 
 def _get_entry_point_module():
     """Get the name of the module that was used to start the program."""
-    if '__main__' in sys.modules:
+    if "__main__" in sys.modules:
         # When run with python -m, the main module's name is stored in __spec__.name
-        main_module = sys.modules['__main__']
-        if hasattr(main_module, '__spec__') and main_module.__spec__ is not None:
+        main_module = sys.modules["__main__"]
+        if hasattr(main_module, "__spec__") and main_module.__spec__ is not None:
             return main_module.__spec__.name
     raise ValueError("Cannot get module name")
 
@@ -51,9 +53,10 @@ def _parse_day_from_module(module_name: str) -> tuple[int, int]:
     Returns:
         Tuple of (year, day) as integers
     """
-    pattern = r'day_(\d{4})_(\d{2})'
+    pattern = r"day_(\d{4})_(\d{2})"
     match = re.search(pattern, module_name)
     if not match:
-        raise ValueError(f"Could not parse year and day from module name: {module_name}")
+        raise ValueError(
+            f"Could not parse year and day from module name: {module_name}"
+        )
     return int(match.group(1)), int(match.group(2))
-
