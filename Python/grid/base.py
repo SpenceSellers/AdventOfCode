@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Callable, override
+from typing import Callable, Iterator, override
 
 from grid.point import Point, Region
 
@@ -14,6 +14,27 @@ class Grid[T](ABC):
 
     def contains_point(self, p: Point) -> bool:
         return True
+
+    def get_bounding_box(self) -> Region | None:
+        return None
+
+    def grab_from_direction(
+        self, start: Point, direction: Point, n: int
+    ) -> Iterator[T]:
+        for i in range(n):
+            yield self[start + direction * i]
+
+    def __str__(self) -> str:
+        if region := self.get_bounding_box():
+            rows: list[str] = []
+            for y in region.all_ys():
+                row: list[T] = []
+                for x in region.all_xs():
+                    item = self[Point(x, y)]
+                    row.append(item)
+                rows.append("".join(row))  # type: ignore
+            return "\n".join(rows)
+        return super.__str__(self)  # type: ignore
 
 
 class MappedGrid[Old, New](Grid[New]):

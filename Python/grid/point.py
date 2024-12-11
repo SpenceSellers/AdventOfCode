@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Iterator
 
 
 @dataclass(slots=True, frozen=True)
@@ -51,6 +52,17 @@ class Region:
             return False
         return True
 
+    def all_points(self) -> Iterator[Point]:
+        for y in self.all_ys():
+            for x in self.all_xs():
+                yield Point(x, y)
+
+    def all_xs(self) -> Iterator[int]:
+        yield from range(self.lower_left.x, self.lower_left.x + self.width)
+
+    def all_ys(self) -> Iterator[int]:
+        yield from range(self.lower_left.y, self.lower_left.y + self.height)
+
     @staticmethod
     def from_corners(p1: Point, p2: Point, inclusive: bool = False) -> "Region":
         min_x = min(p1.x, p2.x)
@@ -68,3 +80,15 @@ class Region:
             height = height + 1
 
         return Region(lower_left, width, height)
+
+
+SOUTH = Point(0, 1)
+NORTH = Point(0, -1)
+EAST = Point(1, 0)
+WEST = Point(-1, 0)
+NORTHEAST = Point(1, -1)
+SOUTHEAST = Point(1, 1)
+NORTHWEST = Point(-1, -1)
+SOUTHWEST = Point(-1, 1)
+
+DIRECTIONS_8 = [NORTH, NORTHEAST, EAST, SOUTHEAST, SOUTH, SOUTHWEST, WEST, NORTHWEST]

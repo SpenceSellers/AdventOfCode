@@ -2,7 +2,7 @@ from grid.base import Grid, GridDoesNotContainPointError
 from grid.point import Point, Region
 
 
-from typing import Callable, override
+from typing import Callable, Sequence, override
 
 
 class SolidGrid[T](Grid[T]):
@@ -19,6 +19,14 @@ class SolidGrid[T](Grid[T]):
             for x in range(width):
                 row.append(constructor_fn(Point(x, y)))
             self.rows.append(row)
+
+    @staticmethod
+    def from_2d_list[TX](items: Sequence[Sequence[TX]]) -> "SolidGrid[TX]":
+        height = len(items)
+        if height <= 0:
+            raise ValueError("Cannot construct grid from empty list")
+        width = len(items[0])
+        return SolidGrid[TX](width, height, lambda p: items[p.y][p.x])
 
     @property
     def region(self) -> Region:
@@ -39,3 +47,7 @@ class SolidGrid[T](Grid[T]):
     @override
     def contains_point(self, p: Point) -> bool:
         return 0 <= p.y < self.height and 0 <= p.x < self.width
+
+    @override
+    def get_bounding_box(self) -> Region | None:
+        return self.region
