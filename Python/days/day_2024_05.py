@@ -39,10 +39,6 @@ def reorder(rules: list[tuple[int, int]], update: list[int]):
 
     new_update: list[int] = []
     for item in update:
-        if not new_update:
-            new_update.append(item)
-            continue
-
         for i in range(len(new_update) + 1):
             trial = new_update.copy()
             trial.insert(i, item)
