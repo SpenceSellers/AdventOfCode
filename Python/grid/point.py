@@ -22,6 +22,9 @@ class Point:
     def manhattan_distance(self, other: "Point") -> int:
         return abs(self.x - other.x) + abs(self.y - other.y)
 
+    def rotate_cw_90(self) -> "Point":
+        return Point(-self.y, self.x)
+
 
 @dataclass(slots=True)
 class Region:

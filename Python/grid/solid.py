@@ -32,6 +32,9 @@ class SolidGrid[T](Grid[T]):
     def region(self) -> Region:
         return Region(Point(0, 0), self.width, self.height)
 
+    def copy(self) -> "SolidGrid[T]":
+        return SolidGrid(self.width, self.height, lambda p: self[p])
+
     @override
     def __getitem__(self, p: Point) -> T:
         if not self.contains_point(p):
